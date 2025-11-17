@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Button" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">sans-serif</item>
+
+        <item name="android:layout_marginStart">@dimen/_3sdp</item>
+        <item name="android:layout_marginEnd">@dimen/_3sdp</item>
+        <item name="android:layout_marginTop">@dimen/_3sdp</item>
+        <item name="android:layout_marginBottom">@dimen/_3sdp</item>
+    </style>
+    <style name="Button.Number">
+        <item name="android:textSize">36sp</item>
+        <item name="android:autoSizeMaxTextSize">36sp</item>
+        <item name="android:autoSizeMinTextSize">1sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:background">@drawable/background_button_number</item>
+    </style>
+    <style name="Button.Operator">
+        <item name="android:textSize">46sp</item>
+        <item name="android:autoSizeMaxTextSize">46sp</item>
+        <item name="android:autoSizeMinTextSize">1sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:background">@drawable/background_button_operator</item>
+    </style>
+    <style name="Button.Equals">
+        <item name="android:textSize">54sp</item>
+        <item name="android:autoSizeMaxTextSize">54sp</item>
+        <item name="android:autoSizeMinTextSize">1sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:background">@drawable/background_button_equals</item>
+        <item name="android:text">@string/equals_button</item>
+    </style>
+    <style name="Button.ScientificFunction">
+        <item name="android:textSize">30sp</item>
+        <item name="android:autoSizeMaxTextSize">30sp</item>
+        <item name="android:autoSizeMinTextSize">1sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:background">@drawable/background_extra_button</item>
+    </style>
+    <style name="ExtraButton" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+
+        <item name="android:background">@drawable/background_extra_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+
+        <item name="android:layout_marginStart">@dimen/_3sdp</item>
+        <item name="android:layout_marginEnd">@dimen/_3sdp</item>
+
+        <item name="android:textSize">32sp</item>
+        <item name="android:autoSizeMaxTextSize">32sp</item>
+        <item name="android:autoSizeMinTextSize">1sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+    </style>
+
+
+
+    <style name="Expression" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+
+        <item name="android:layout_marginStart">21dp</item>
+        <item name="android:layout_marginEnd">21dp</item>
+        <item name="android:layout_marginTop">@dimen/_4sdp</item>
+
+        <item name="android:layoutDirection">ltr</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:gravity">bottom|right</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:inputType">textMultiLine|textNoSuggestions</item>
+
+        <item name="android:textSize">86sp</item>
+        <item name="android:autoSizeMaxTextSize">86sp</item>
+        <item name="android:autoSizeMinTextSize">44sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+    </style>
+    <style name="Expression.Result">
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">@dimen/_4sdp</item>
+
+        <item name="android:textSize">56sp</item>
+        <item name="android:autoSizeMaxTextSize">56sp</item>
+        <item name="android:autoSizeMinTextSize">8sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">none</item>
+        <item name="android:soundEffectsEnabled">false</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+
+    <style name="NavigationTabs" parent="Widget.Material3.TabLayout">
+        <item name="android:layout_width">144dp</item>
+        <item name="android:layout_height">0dp</item>
+
+        <item name="android:background">@drawable/background_tab</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="tabGravity">center</item>
+        <item name="tabIndicatorAnimationMode">linear</item>
+        <item name="tabIconTint">?attr/colorOnSurface</item>
+        <item name="tabIndicator">@drawable/tab_indicator</item>
+        <item name="tabIndicatorColor">?attr/colorPrimaryContainer</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorGravity">center</item>
+        <item name="tabIndicatorHeight">48dp</item>
+        <item name="tabMode">fixed</item>
+    </style>
+
+    <style name="DegreeTitleText" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+
+        <item name="android:layout_marginStart">10dp</item>
+
+        <item name="android:paddingHorizontal">16dp</item>
+
+        <item name="android:background">@drawable/degree_button_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:text">@string/deg</item>
+    </style>
+
+    <style name="Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="menu">@menu/options_menu</item>
+    </style>
+
+    <style name="AppBarConstraintLayoutCalculator">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">48dp</item>
+
+        <item name="android:layout_marginTop">@dimen/_4sdp</item>
+
+        <item name="android:layoutDirection">locale</item>
+    </style>
+</resources>

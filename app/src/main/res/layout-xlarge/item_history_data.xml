@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <View
+        android:id="@+id/dividingLine"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:background="?attr/colorSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dateText"
+        style="@style/DateText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dividingLine"
+        tool:text="20 March 2023" />
+
+    <TextView
+        android:id="@+id/expressionText"
+        style="@style/ExpressionText"
+        app:layout_constraintEnd_toStartOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateText"
+        tool:text="(2400+3^2+100)-20%2323232424242" />
+
+    <TextView
+        android:id="@+id/resultText"
+        style="@style/ExpressionText.ResultText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expressionText"
+        tool:text="493.128543424242424324242423432423424" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/HistoryToolbar"
+        app:layout_constraintBottom_toBottomOf="@id/resultText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/expressionText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

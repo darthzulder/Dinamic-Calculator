@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    tools:context=".fragments.ScientificFunctionFragment">
+
+    <TextView
+        android:id="@+id/absButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:text="@string/absolute"
+        app:layout_constraintBottom_toTopOf="@id/sinButton"
+        app:layout_constraintEnd_toStartOf="@id/lnButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lnButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginTop="0dp"
+        android:text="@string/ln"
+        app:layout_constraintBottom_toTopOf="@id/cosButton"
+        app:layout_constraintEnd_toStartOf="@id/logButton"
+        app:layout_constraintStart_toEndOf="@id/absButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/logButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
+        android:text="@string/log"
+        app:layout_constraintBottom_toTopOf="@id/tanButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/lnButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sinButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginStart="0dp"
+        android:text="@string/sin"
+        app:layout_constraintBottom_toTopOf="@id/asinButton"
+        app:layout_constraintEnd_toStartOf="@id/cosButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/absButton" />
+
+    <TextView
+        android:id="@+id/cosButton"
+        style="@style/Button.ScientificFunction"
+        android:text="@string/cos"
+        app:layout_constraintBottom_toTopOf="@id/acosButton"
+        app:layout_constraintEnd_toStartOf="@id/tanButton"
+        app:layout_constraintStart_toEndOf="@id/sinButton"
+        app:layout_constraintTop_toBottomOf="@id/lnButton" />
+
+    <TextView
+        android:id="@+id/tanButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginEnd="0dp"
+        android:text="@string/tan"
+        app:layout_constraintBottom_toTopOf="@id/atanButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cosButton"
+        app:layout_constraintTop_toBottomOf="@id/logButton" />
+
+    <TextView
+        android:id="@+id/asinButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginStart="0dp"
+        android:text="@string/asin"
+        app:layout_constraintBottom_toTopOf="@id/eButton"
+        app:layout_constraintEnd_toStartOf="@id/acosButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sinButton" />
+
+    <TextView
+        android:id="@+id/acosButton"
+        style="@style/Button.ScientificFunction"
+        android:text="@string/acos"
+        app:layout_constraintBottom_toTopOf="@id/expButton"
+        app:layout_constraintEnd_toStartOf="@id/atanButton"
+        app:layout_constraintStart_toEndOf="@id/asinButton"
+        app:layout_constraintTop_toBottomOf="@id/cosButton" />
+
+    <TextView
+        android:id="@+id/atanButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/atan"
+        app:layout_constraintBottom_toBottomOf="@id/acosButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/acosButton"
+        app:layout_constraintTop_toBottomOf="@id/tanButton" />
+
+    <TextView
+        android:id="@+id/eButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginBottom="0dp"
+        android:layout_marginStart="0dp"
+        android:text="@string/e"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/expButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/asinButton" />
+
+    <TextView
+        android:id="@+id/expButton"
+        style="@style/Button.ScientificFunction"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:text="@string/exp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/acosButton"
+        app:layout_constraintStart_toEndOf="@id/eButton"
+        app:layout_constraintTop_toBottomOf="@id/acosButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

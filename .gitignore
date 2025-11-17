@@ -1,0 +1,6 @@
+/.idea/
+/.gradle/
+/local.properties
+/.kotlin/
+/app/build/
+/app/release/

@@ -1,0 +1,1 @@
+Calculator You egy letisztúlt számológép az egyszerű feladatok megoldására.

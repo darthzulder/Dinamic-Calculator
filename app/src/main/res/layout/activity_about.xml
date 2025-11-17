@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".AboutActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="?attr/collapsingToolbarLayoutLargeStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
+            app:contentScrim="?attr/colorSurface"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleCollapseMode="scale">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                style="@style/appBar_settings"
+                app:title="@string/title_about" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/helpMeSelectionText"
+                style="@style/sectionText"
+                android:layout_marginTop="24dp"
+                android:text="@string/help_selection_text" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rateLayout"
+                style="@style/optionLayout"
+                android:layout_marginTop="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/rateImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_star" />
+
+                <TextView
+                    android:id="@+id/rateTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_rate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/rateImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/rateText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_rate"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/rateImage"
+                    app:layout_constraintTop_toBottomOf="@id/rateTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/translateLayout"
+                style="@style/optionLayout">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/translateImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_translate" />
+
+                <TextView
+                    android:id="@+id/translateTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_translate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/translateImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/shareText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_translate"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/translateImage"
+                    app:layout_constraintTop_toBottomOf="@id/translateTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/donateLayout"
+                style="@style/optionLayout">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/donateImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_attach_money" />
+
+                <TextView
+                    android:id="@+id/donateTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_donate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/donateImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/donateText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_donate"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/donateImage"
+                    app:layout_constraintTop_toBottomOf="@id/donateTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/supportSelectionText"
+                style="@style/sectionText"
+                android:text="@string/support_selection_text" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/emailLayout"
+                style="@style/optionLayout"
+                android:layout_marginTop="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/emailImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_email" />
+
+                <TextView
+                    android:id="@+id/emailTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_email"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/emailImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/emailText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_email"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/emailImage"
+                    app:layout_constraintTop_toBottomOf="@id/emailTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/infoSelectionText"
+                style="@style/sectionText"
+                android:text="@string/info_selection_text" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/openSourceLayout"
+                style="@style/optionLayout"
+                android:layout_marginTop="8dp" >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/openSourceImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_coding" />
+
+                <TextView
+                    android:id="@+id/openSourceTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_open_source"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/openSourceImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/openSourceText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_open_source"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/openSourceImage"
+                    app:layout_constraintTop_toBottomOf="@id/openSourceTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/licensesLayout"
+                style="@style/optionLayout" >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/licensesImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_license" />
+
+                <TextView
+                    android:id="@+id/licensesTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_licenses"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/licensesImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/licensesText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_licenses"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/licensesImage"
+                    app:layout_constraintTop_toBottomOf="@id/licensesTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/privacyPolicyLayout"
+                style="@style/optionLayout">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/privacyPolicyImage"
+                    style="@style/optionImage"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_privacy" />
+
+                <TextView
+                    android:id="@+id/privacyPolicyTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_privacy_policy"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/privacyPolicyImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/privacyPolicyText"
+                    style="@style/optionDescriptionText"
+                    android:text="@string/description_privacy_policy"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/privacyPolicyImage"
+                    app:layout_constraintTop_toBottomOf="@id/privacyPolicyTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/versionLayout"
+                style="@style/optionLayout">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/versionImage"
+                    style="@style/optionImage"
+                    android:padding="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_info" />
+
+                <TextView
+                    android:id="@+id/versionTitleText"
+                    style="@style/optionTitleText"
+                    android:text="@string/title_version_app"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/versionImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/versionText"
+                    style="@style/optionDescriptionText"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/versionImage"
+                    app:layout_constraintTop_toBottomOf="@id/versionTitleText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/loveLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/loveTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/love_text"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="18sp" />
+
+
+                <TextView
+                    android:id="@+id/tapMeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="48dp"
+                    android:text="@string/tap_me"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

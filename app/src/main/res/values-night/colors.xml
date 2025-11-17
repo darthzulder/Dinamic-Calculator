@@ -1,0 +1,1995 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="done">#FFFFFF</color>
+
+
+
+
+    <!--    Сolor 0 Dark Peach-->
+    <color name="colorOriginal_0">#d98586</color>
+
+
+    <color name="colorPrimary_0">#FEB2B2</color>
+    <color name="colorOnPrimary_0">#5F131B</color>
+    <color name="colorPrimaryContainer_0">#9B4145</color>
+    <color name="colorOnPrimaryContainer_0">#FED9D8</color>
+
+    <color name="colorSecondary_0">#E5BCBB</color>
+    <color name="colorOnSecondary_0">#442929</color>
+    <color name="colorSecondaryContainer_0">#5D3F3F</color>
+    <color name="colorOnSecondaryContainer_0">#FED9D8</color>
+
+    <color name="colorTertiary_0">#E4C08C</color>
+    <color name="colorOnTertiary_0">#422C05</color>
+    <color name="colorTertiaryContainer_0">#5B421A</color>
+    <color name="colorOnTertiaryContainer_0">#FEDCAD</color>
+
+    <color name="colorSurface_0">#201A1A</color>
+    <color name="colorOnSurface_0">#EBDFDE</color>
+    <color name="colorSurfaceVariant_0">#3B2D2D</color>
+    <color name="colorOnSurfaceVariant_0">#D6C0C0</color>
+    <color name="colorSurfaceContainer_0">#271d1d</color>
+
+    <color name="colorOutline_0">#9F8B8B</color>
+
+    <color name="colorOnSurfaceInverse_0">#362F2E</color>
+    <color name="colorSurfaceInverse_0">#D6C0C0</color>
+    <color name="colorPrimaryInverse_0">#7E2A2F</color>
+
+
+
+    <!--    Сolor Black & White-->
+    <color name="colorOriginal_Black_And_White">#808080</color>
+
+
+    <color name="colorPrimary_Black_And_White">#cccccc</color>
+    <color name="colorOnPrimary_Black_And_White">#333333</color>
+    <color name="colorPrimaryContainer_Black_And_White">#666666</color>
+    <color name="colorOnPrimaryContainer_Black_And_White">#e6e6e6</color>
+
+    <color name="colorSecondary_Black_And_White">#b3b3b3</color>
+    <color name="colorOnSecondary_Black_And_White">#333333</color>
+    <color name="colorSecondaryContainer_Black_And_White">#4d4d4d</color>
+    <color name="colorOnSecondaryContainer_Black_And_White">#cccccc</color>
+
+    <color name="colorTertiary_Black_And_White">#cccccc</color>
+    <color name="colorOnTertiary_Black_And_White">#333333</color>
+    <color name="colorTertiaryContainer_Black_And_White">#4d4d4d</color>
+    <color name="colorOnTertiaryContainer_Black_And_White">#e6e6e6</color>
+
+    <color name="colorSurface_Black_And_White">#1a1a1a</color>
+    <color name="colorOnSurface_Black_And_White">#e6e6e6</color>
+    <color name="colorSurfaceVariant_Black_And_White">#333333</color>
+    <color name="colorOnSurfaceVariant_Black_And_White">#cccccc</color>
+    <color name="colorSurfaceContainer_Black_And_White">#1b2122</color>
+
+    <color name="colorOutline_Black_And_White">#999999</color>
+
+    <color name="colorOnSurfaceInverse_Black_And_White">#333333</color>
+    <color name="colorSurfaceInverse_Black_And_White">#cccccc</color>
+    <color name="colorPrimaryInverse_Black_And_White">#4d4d4d</color>
+
+
+
+
+
+
+    <!--    Сolor 1 Hue 0-->
+    <color name="colorOriginal_1">#984061</color>
+
+
+    <color name="colorPrimary_1">#FEAFC7</color>
+    <color name="colorOnPrimary_1">#5E1133</color>
+    <color name="colorPrimaryContainer_1">#974061</color>
+    <color name="colorOnPrimaryContainer_1">#FED8E1</color>
+
+    <color name="colorSecondary_1">#E1BCC5</color>
+    <color name="colorOnSecondary_1">#422931</color>
+    <color name="colorSecondaryContainer_1">#5A3F47</color>
+    <color name="colorOnSecondaryContainer_1">#FED8E1</color>
+
+    <color name="colorTertiary_1">#EEBC93</color>
+    <color name="colorOnTertiary_1">#48290C</color>
+    <color name="colorTertiaryContainer_1">#623F20</color>
+    <color name="colorOnTertiaryContainer_1">#FEDBC1</color>
+
+    <color name="colorSurface_1">#201A1B</color>
+    <color name="colorOnSurface_1">#EADFE0</color>
+    <color name="colorSurfaceVariant_1">#3A2D30</color>
+    <color name="colorOnSurfaceVariant_1">#D4C1C5</color>
+    <color name="colorSurfaceContainer_1">#261d20</color>
+
+    <color name="colorOutline_1">#9D8B8F</color>
+
+    <color name="colorOnSurfaceInverse_1">#352F30</color>
+    <color name="colorSurfaceInverse_1">#201A1B</color>
+    <color name="colorPrimaryInverse_1">#7B2949</color>
+
+
+    <!--    Сolor 2 Hue 6-->
+    <color name="colorOriginal_2">#9a4058</color>
+
+
+    <color name="colorPrimary_2">#FEB0BF</color>
+    <color name="colorOnPrimary_2">#5F112A</color>
+    <color name="colorPrimaryContainer_2">#994057</color>
+    <color name="colorOnPrimaryContainer_2">#FED8DE</color>
+
+    <color name="colorSecondary_2">#E3BCC2</color>
+    <color name="colorOnSecondary_2">#43292E</color>
+    <color name="colorSecondaryContainer_2">#5B3F44</color>
+    <color name="colorOnSecondaryContainer_2">#FED8DE</color>
+
+    <color name="colorTertiary_2">#EBBD90</color>
+    <color name="colorOnTertiary_2">#462A08</color>
+    <color name="colorTertiaryContainer_2">#5F401D</color>
+    <color name="colorOnTertiaryContainer_2">#FEDBBB</color>
+
+    <color name="colorSurface_2">#201A1B</color>
+    <color name="colorOnSurface_2">#EBDFDF</color>
+    <color name="colorSurfaceVariant_2">#3A2D2F</color>
+    <color name="colorOnSurfaceVariant_2">#D5C1C3</color>
+    <color name="colorSurfaceContainer_2">#261d1f</color>
+
+    <color name="colorOutline_2">#9E8B8E</color>
+
+    <color name="colorOnSurfaceInverse_2">#352F30</color>
+    <color name="colorSurfaceInverse_2">#CEC3C4</color>
+    <color name="colorPrimaryInverse_2">#7C2940</color>
+
+
+    <!--    Сolor 3 Hue 12-->
+    <color name="colorOriginal_3">#9b404e</color>
+
+
+    <color name="colorPrimary_3">#FEB1B8</color>
+    <color name="colorOnPrimary_3">#5F1223</color>
+    <color name="colorPrimaryContainer_3">#9A404E</color>
+    <color name="colorOnPrimaryContainer_3">#FED8DB</color>
+
+    <color name="colorSecondary_3">#E4BCBE</color>
+    <color name="colorOnSecondary_3">#43292C</color>
+    <color name="colorSecondaryContainer_3">#5C3F42</color>
+    <color name="colorOnSecondaryContainer_3">#FED8DB</color>
+
+    <color name="colorTertiary_3">#E7BF8D</color>
+    <color name="colorOnTertiary_3">#442B06</color>
+    <color name="colorTertiaryContainer_3">#5D411B</color>
+    <color name="colorOnTertiaryContainer_3">#FEDCB5</color>
+
+    <color name="colorSurface_3">#201A1A</color>
+    <color name="colorOnSurface_3">#EBDFDF</color>
+    <color name="colorSurfaceVariant_3">#3B2D2E</color>
+    <color name="colorOnSurfaceVariant_3">#D6C0C1</color>
+    <color name="colorSurfaceContainer_3">#271d1e</color>
+
+    <color name="colorOutline_3">#9E8B8C</color>
+
+    <color name="colorOnSurfaceInverse_3">#362F2F</color>
+    <color name="colorSurfaceInverse_3">#CFC3C3</color>
+    <color name="colorPrimaryInverse_3">#7D2938</color>
+
+
+    <!--    Сolor 4 Hue 18-->
+    <color name="colorOriginal_4">#9c4144</color>
+
+
+    <color name="colorPrimary_4">#FEB2B1</color>
+    <color name="colorOnPrimary_4">#5F131A</color>
+    <color name="colorPrimaryContainer_4">#9B4144</color>
+    <color name="colorOnPrimaryContainer_4">#FED9D8</color>
+
+    <color name="colorSecondary_4">#E5BCBA</color>
+    <color name="colorOnSecondary_4">#442929</color>
+    <color name="colorSecondaryContainer_4">#5D3F3F</color>
+    <color name="colorOnSecondaryContainer_4">#FED9D8</color>
+
+    <color name="colorTertiary_4">#E3C08C</color>
+    <color name="colorOnTertiary_4">#422C05</color>
+    <color name="colorTertiaryContainer_4">#5B431A</color>
+    <color name="colorOnTertiaryContainer_4">#FEDDAC</color>
+
+    <color name="colorSurface_4">#201A1A</color>
+    <color name="colorOnSurface_4">#EBDFDE</color>
+    <color name="colorSurfaceVariant_4">#3B2D2D</color>
+    <color name="colorOnSurfaceVariant_4">#D6C0C0</color>
+    <color name="colorSurfaceContainer_4">#271d1d</color>
+
+    <color name="colorOutline_4">#9F8B8A</color>
+
+    <color name="colorOnSurfaceInverse_4">#362F2E</color>
+    <color name="colorSurfaceInverse_4">#CFC3C2</color>
+    <color name="colorPrimaryInverse_4">#7E2A2E</color>
+
+
+    <!--    Сolor 5 Hue 24-->
+    <color name="colorOriginal_5">#9c413b</color>
+
+
+    <color name="colorPrimary_5">#FEB2AB</color>
+    <color name="colorOnPrimary_5">#5F1412</color>
+    <color name="colorPrimaryContainer_5">#9B413B</color>
+    <color name="colorOnPrimaryContainer_5">#FED9D5</color>
+
+    <color name="colorSecondary_5">#E6BCB7</color>
+    <color name="colorOnSecondary_5">#442927</color>
+    <color name="colorSecondaryContainer_5">#5D3F3C</color>
+    <color name="colorOnSecondaryContainer_5">#FED9D5</color>
+
+    <color name="colorTertiary_5">#E0C28B</color>
+    <color name="colorOnTertiary_5">#3F2D04</color>
+    <color name="colorTertiaryContainer_5">#584419</color>
+    <color name="colorOnTertiaryContainer_5">#FDDDA5</color>
+
+    <color name="colorSurface_5">#201A19</color>
+    <color name="colorOnSurface_5">#ECDFDD</color>
+    <color name="colorSurfaceVariant_5">#3B2D2C</color>
+    <color name="colorOnSurfaceVariant_5">#D7C1BE</color>
+    <color name="colorSurfaceContainer_5">#271d1c</color>
+
+    <color name="colorOutline_5">#9F8B89</color>
+
+    <color name="colorOnSurfaceInverse_5">#362F2E</color>
+    <color name="colorSurfaceInverse_5">#CFC3C1</color>
+    <color name="colorPrimaryInverse_5">#7D2B25</color>
+
+
+    <!--    Сolor 6 Hue 30-->
+    <color name="colorOriginal_6">#9c413b</color>
+
+
+    <color name="colorPrimary_6">#FEB3A4</color>
+    <color name="colorOnPrimary_6">#5E1608</color>
+    <color name="colorPrimaryContainer_6">#9B4331</color>
+    <color name="colorOnPrimaryContainer_6">#FED9D2</color>
+
+    <color name="colorSecondary_6">#E6BCB3</color>
+    <color name="colorOnSecondary_6">#442A24</color>
+    <color name="colorSecondaryContainer_6">#5D3F39</color>
+    <color name="colorOnSecondaryContainer_6">#FED9D2</color>
+
+    <color name="colorTertiary_6">#DBC38B</color>
+    <color name="colorOnTertiary_6">#3D2F04</color>
+    <color name="colorTertiaryContainer_6">#554519</color>
+    <color name="colorOnTertiaryContainer_6">#F8DFA5</color>
+
+    <color name="colorSurface_6">#201A19</color>
+    <color name="colorOnSurface_6">#ECDFDC</color>
+    <color name="colorSurfaceVariant_6">#3B2D2A</color>
+    <color name="colorOnSurfaceVariant_6">#D7C1BC</color>
+    <color name="colorSurfaceContainer_6">#271d1b</color>
+
+    <color name="colorOutline_6">#9F8B87</color>
+
+    <color name="colorOnSurfaceInverse_6">#362F2D</color>
+    <color name="colorSurfaceInverse_6">#CFC3C0</color>
+    <color name="colorPrimaryInverse_6">#7D2C1C</color>
+
+
+    <!--    Сolor 7 Hue 36-->
+    <color name="colorOriginal_7">#9b4428</color>
+
+
+    <color name="colorPrimary_7">#FEB49D</color>
+    <color name="colorOnPrimary_7">#5E1701</color>
+    <color name="colorPrimaryContainer_7">#9A4428</color>
+    <color name="colorOnPrimaryContainer_7">#FEDACF</color>
+
+    <color name="colorSecondary_7">#E6BCB0</color>
+    <color name="colorOnSecondary_7">#442A22</color>
+    <color name="colorSecondaryContainer_7">#5D4037</color>
+    <color name="colorOnSecondaryContainer_7">#FEDACF</color>
+
+    <color name="colorTertiary_7">#D7C58C</color>
+    <color name="colorOnTertiary_7">#3A3005</color>
+    <color name="colorTertiaryContainer_7">#52461A</color>
+    <color name="colorOnTertiaryContainer_7">#F4E1A6</color>
+
+    <color name="colorSurface_7">#201A18</color>
+    <color name="colorOnSurface_7">#ECDFDB</color>
+    <color name="colorSurfaceVariant_7">#3B2D29</color>
+    <color name="colorOnSurfaceVariant_7">#D7C1BB</color>
+    <color name="colorSurfaceContainer_7">#271d1b</color>
+
+    <color name="colorOutline_7">#9F8B86</color>
+
+    <color name="colorOnSurfaceInverse_7">#362F2D</color>
+    <color name="colorSurfaceInverse_7">#CFC3C0</color>
+    <color name="colorPrimaryInverse_7">#7C2D13</color>
+
+
+    <!--    Сolor 8 Hue 42-->
+    <color name="colorOriginal_8">#99461d</color>
+
+
+    <color name="colorPrimary_8">#FEB495</color>
+    <color name="colorOnPrimary_8">#581E00</color>
+    <color name="colorPrimaryContainer_8">#98461D</color>
+    <color name="colorOnPrimaryContainer_8">#FEDACC</color>
+
+    <color name="colorSecondary_8">#E5BDAD</color>
+    <color name="colorOnSecondary_8">#442A1F</color>
+    <color name="colorSecondaryContainer_8">#5D4034</color>
+    <color name="colorOnSecondaryContainer_8">#FEDACC</color>
+
+    <color name="colorTertiary_8">#D1C68E</color>
+    <color name="colorOnTertiary_8">#373106</color>
+    <color name="colorTertiaryContainer_8">#4E471B</color>
+    <color name="colorOnTertiaryContainer_8">#EEE2A8</color>
+
+    <color name="colorSurface_8">#201A18</color>
+    <color name="colorOnSurface_8">#ECDFDB</color>
+    <color name="colorSurfaceVariant_8">#3B2D28</color>
+    <color name="colorOnSurfaceVariant_8">#D7C1B9</color>
+    <color name="colorSurfaceContainer_8">#271e1a</color>
+
+    <color name="colorOutline_8">#9F8C84</color>
+
+    <color name="colorOnSurfaceInverse_8">#362F2C</color>
+    <color name="colorSurfaceInverse_8">#CFC3BF</color>
+    <color name="colorPrimaryInverse_8">#7A2F06</color>
+
+
+    <!--    Сolor 9 Hue 48-->
+    <color name="colorOriginal_9">#974811</color>
+
+
+    <color name="colorPrimary_9">#FEB58D</color>
+    <color name="colorOnPrimary_9">#532200</color>
+    <color name="colorPrimaryContainer_9">#964811</color>
+    <color name="colorOnPrimaryContainer_9">#FEDAC9</color>
+
+    <color name="colorSecondary_9">#E5BDA9</color>
+    <color name="colorOnSecondary_9">#432B1D</color>
+    <color name="colorSecondaryContainer_9">#5C4132</color>
+    <color name="colorOnSecondaryContainer_9">#FEDAC9</color>
+
+    <color name="colorTertiary_9">#CCC890</color>
+    <color name="colorOnTertiary_9">#343208</color>
+    <color name="colorTertiaryContainer_9">#4B481D</color>
+    <color name="colorOnTertiaryContainer_9">#E9E4AA</color>
+
+    <color name="colorSurface_9">#201A17</color>
+    <color name="colorOnSurface_9">#EBDFDA</color>
+    <color name="colorSurfaceVariant_9">#3B2E27</color>
+    <color name="colorOnSurfaceVariant_9">#D6C1B8</color>
+    <color name="colorSurfaceContainer_9">#271e19</color>
+
+    <color name="colorOutline_9">#9E8C83</color>
+
+    <color name="colorOnSurfaceInverse_9">#362F2C</color>
+    <color name="colorSurfaceInverse_9">#CFC3BE</color>
+    <color name="colorPrimaryInverse_9">#763300</color>
+
+
+    <!--    Сolor 10 Hue 54-->
+    <color name="colorOriginal_10">#944a02</color>
+
+
+    <color name="colorPrimary_10">#FEB684</color>
+    <color name="colorOnPrimary_10">#502500</color>
+    <color name="colorPrimaryContainer_10">#934A02</color>
+    <color name="colorOnPrimaryContainer_10">#FEDBC5</color>
+
+    <color name="colorSecondary_10">#E3BEA7</color>
+    <color name="colorOnSecondary_10">#422B1B</color>
+    <color name="colorSecondaryContainer_10">#5B412F</color>
+    <color name="colorOnSecondaryContainer_10">#FEDBC5</color>
+
+    <color name="colorTertiary_10">#C7C993</color>
+    <color name="colorOnTertiary_10">#31320B</color>
+    <color name="colorTertiaryContainer_10">#47491F</color>
+    <color name="colorOnTertiaryContainer_10">#E4E5AD</color>
+
+    <color name="colorSurface_10">#201A17</color>
+    <color name="colorOnSurface_10">#EBDFD9</color>
+    <color name="colorSurfaceVariant_10">#3A2E26</color>
+    <color name="colorOnSurfaceVariant_10">#D6C2B6</color>
+    <color name="colorSurfaceContainer_10">#261e19</color>
+
+    <color name="colorOutline_10">#9E8C82</color>
+
+    <color name="colorOnSurfaceInverse_10">#362F2B</color>
+    <color name="colorSurfaceInverse_10">#CFC3BE</color>
+    <color name="colorPrimaryInverse_10">#713700</color>
+
+
+    <!--    Сolor 11 Hue 60-->
+    <color name="colorOriginal_11">#8f4e00</color>
+
+
+    <color name="colorPrimary_11">#FEB67A</color>
+    <color name="colorOnPrimary_11">#4C2700</color>
+    <color name="colorPrimaryContainer_11">#8E4E00</color>
+    <color name="colorOnPrimaryContainer_11">#FEDBC1</color>
+
+    <color name="colorSecondary_11">#E2BFA4</color>
+    <color name="colorOnSecondary_11">#412C19</color>
+    <color name="colorSecondaryContainer_11">#5A422E</color>
+    <color name="colorOnSecondaryContainer_11">#FEDBC1</color>
+
+    <color name="colorTertiary_11">#C3CA96</color>
+    <color name="colorOnTertiary_11">#2D330E</color>
+    <color name="colorTertiaryContainer_11">#434A22</color>
+    <color name="colorOnTertiaryContainer_11">#DFE6B0</color>
+
+    <color name="colorSurface_11">#201B17</color>
+    <color name="colorOnSurface_11">#EBDFD9</color>
+    <color name="colorSurfaceVariant_11">#3A2E25</color>
+    <color name="colorOnSurfaceVariant_11">#D5C2B5</color>
+    <color name="colorSurfaceContainer_11">#261e18</color>
+
+    <color name="colorOutline_11">#9D8D81</color>
+
+    <color name="colorOnSurfaceInverse_11">#352F2B</color>
+    <color name="colorSurfaceInverse_11">#CEC3BD</color>
+    <color name="colorPrimaryInverse_11">#6D3A00</color>
+
+
+    <!--    Сolor 12 Hue 66-->
+    <color name="colorOriginal_12">#895100</color>
+
+
+    <color name="colorPrimary_12">#FEB76C</color>
+    <color name="colorOnPrimary_12">#492900</color>
+    <color name="colorPrimaryContainer_12">#885100</color>
+    <color name="colorOnPrimaryContainer_12">#FEDBBB</color>
+
+    <color name="colorSecondary_12">#E0C0A2</color>
+    <color name="colorOnSecondary_12">#402C18</color>
+    <color name="colorSecondaryContainer_12">#59422C</color>
+    <color name="colorOnSecondaryContainer_12">#FDDCBD</color>
+
+    <color name="colorTertiary_12">#BECB9A</color>
+    <color name="colorOnTertiary_12">#2A3411</color>
+    <color name="colorTertiaryContainer_12">#404B25</color>
+    <color name="colorOnTertiaryContainer_12">#DAE7B4</color>
+
+    <color name="colorSurface_12">#201B16</color>
+    <color name="colorOnSurface_12">#EAE0D8</color>
+    <color name="colorSurfaceVariant_12">#392E25</color>
+    <color name="colorOnSurfaceVariant_12">#D4C2B4</color>
+    <color name="colorSurfaceContainer_12">#251e17</color>
+
+    <color name="colorOutline_12">#9C8D80</color>
+
+    <color name="colorOnSurfaceInverse_12">#352F2B</color>
+    <color name="colorSurfaceInverse_12">#CEC4BD</color>
+    <color name="colorPrimaryInverse_12">#683C00</color>
+
+
+    <!--    Сolor 13 Hue 72-->
+    <color name="colorOriginal_13">#845400</color>
+
+
+    <color name="colorPrimary_13">#FEB85A</color>
+    <color name="colorOnPrimary_13">#462A00</color>
+    <color name="colorPrimaryContainer_13">#835400</color>
+    <color name="colorOnPrimaryContainer_13">#FEDCB5</color>
+
+    <color name="colorSecondary_13">#DDC1A1</color>
+    <color name="colorOnSecondary_13">#3F2D17</color>
+    <color name="colorSecondaryContainer_13">#57432B</color>
+    <color name="colorOnSecondaryContainer_13">#FBDDBB</color>
+
+    <color name="colorTertiary_13">#B9CC9E</color>
+    <color name="colorOnTertiary_13">#263514</color>
+    <color name="colorTertiaryContainer_13">#3C4C28</color>
+    <color name="colorOnTertiaryContainer_13">#D5E8B9</color>
+
+    <color name="colorSurface_13">#1F1B16</color>
+    <color name="colorOnSurface_13">#EAE0D8</color>
+    <color name="colorSurfaceVariant_13">#382F24</color>
+    <color name="colorOnSurfaceVariant_13">#D2C3B3</color>
+    <color name="colorSurfaceContainer_13">#251e17</color>
+
+    <color name="colorOutline_13">#9B8D7F</color>
+
+    <color name="colorOnSurfaceInverse_13">#35302A</color>
+    <color name="colorSurfaceInverse_13">#CDC4BC</color>
+    <color name="colorPrimaryInverse_13">#643F00</color>
+
+
+    <!--    Сolor 14 Hue 78-->
+    <color name="colorOriginal_14">#7f5700</color>
+
+
+    <color name="colorPrimary_14">#FABA4A</color>
+    <color name="colorOnPrimary_14">#432C00</color>
+    <color name="colorPrimaryContainer_14">#7F5700</color>
+    <color name="colorOnPrimaryContainer_14">#FEDDAC</color>
+
+    <color name="colorSecondary_14">#DAC2A0</color>
+    <color name="colorOnSecondary_14">#3D2E16</color>
+    <color name="colorSecondaryContainer_14">#55442A</color>
+    <color name="colorOnSecondaryContainer_14">#F8DEBA</color>
+
+    <color name="colorTertiary_14">#B4CDA3</color>
+    <color name="colorOnTertiary_14">#223518</color>
+    <color name="colorTertiaryContainer_14">#384C2C</color>
+    <color name="colorOnTertiaryContainer_14">#D0E9BE</color>
+
+    <color name="colorSurface_14">#1F1B16</color>
+    <color name="colorOnSurface_14">#E9E0D8</color>
+    <color name="colorSurfaceVariant_14">#372F24</color>
+    <color name="colorOnSurfaceVariant_14">#D1C3B3</color>
+    <color name="colorSurfaceContainer_14">#241f17</color>
+
+    <color name="colorOutline_14">#9A8E7F</color>
+
+    <color name="colorOnSurfaceInverse_14">#34302A</color>
+    <color name="colorSurfaceInverse_14">#CCC4BC</color>
+    <color name="colorPrimaryInverse_14">#604100</color>
+
+
+    <!--    Сolor 15 Hue 84-->
+    <color name="colorOriginal_15">#7a5900</color>
+
+
+    <color name="colorPrimary_15">#F3BD48</color>
+    <color name="colorOnPrimary_15">#402D00</color>
+    <color name="colorPrimaryContainer_15">#7A5900</color>
+    <color name="colorOnPrimaryContainer_15">#FEDDA1</color>
+
+    <color name="colorSecondary_15">#D7C39F</color>
+    <color name="colorOnSecondary_15">#3B2F15</color>
+    <color name="colorSecondaryContainer_15">#53452A</color>
+    <color name="colorOnSecondaryContainer_15">#F5DFBA</color>
+
+    <color name="colorTertiary_15">#B0CEA7</color>
+    <color name="colorOnTertiary_15">#1E361B</color>
+    <color name="colorTertiaryContainer_15">#344D30</color>
+    <color name="colorOnTertiaryContainer_15">#CCEAC2</color>
+
+    <color name="colorSurface_15">#1E1B16</color>
+    <color name="colorOnSurface_15">#E8E0D8</color>
+    <color name="colorSurfaceVariant_15">#363024</color>
+    <color name="colorOnSurfaceVariant_15">#D0C4B3</color>
+    <color name="colorSurfaceContainer_15">#241f17</color>
+
+    <color name="colorOutline_15">#988E7F</color>
+
+    <color name="colorOnSurfaceInverse_15">#34302A</color>
+    <color name="colorSurfaceInverse_15">#CCC4BC</color>
+    <color name="colorPrimaryInverse_15">#5C4200</color>
+
+
+    <!--    Сolor 16 Hue 90-->
+    <color name="colorOriginal_16">#765b00</color>
+
+
+    <color name="colorPrimary_16">#ECC048</color>
+    <color name="colorOnPrimary_16">#3E2E00</color>
+    <color name="colorPrimaryContainer_16">#765B00</color>
+    <color name="colorOnPrimaryContainer_16">#FEDE92</color>
+
+    <color name="colorSecondary_16">#D5C49F</color>
+    <color name="colorOnSecondary_16">#392F15</color>
+    <color name="colorSecondaryContainer_16">#51462A</color>
+    <color name="colorOnSecondaryContainer_16">#F2E0BA</color>
+
+    <color name="colorTertiary_16">#ADCEAB</color>
+    <color name="colorOnTertiary_16">#1A361E</color>
+    <color name="colorTertiaryContainer_16">#314D33</color>
+    <color name="colorOnTertiaryContainer_16">#C8EAC6</color>
+
+    <color name="colorSurface_16">#1E1B16</color>
+    <color name="colorOnSurface_16">#E7E0D8</color>
+    <color name="colorSurfaceVariant_16">#353024</color>
+    <color name="colorOnSurfaceVariant_16">#CEC4B3</color>
+    <color name="colorSurfaceContainer_16">#231f17</color>
+
+    <color name="colorOutline_16">#978F7F</color>
+
+    <color name="colorOnSurfaceInverse_16">#33302A</color>
+    <color name="colorSurfaceInverse_16">#CBC5BC</color>
+    <color name="colorPrimaryInverse_16">#594400</color>
+
+
+    <!--    Сolor 17 Hue 96-->
+    <color name="colorOriginal_17">#705d00</color>
+
+
+    <color name="colorPrimary_17">#E2C44A</color>
+    <color name="colorOnPrimary_17">#3A3000</color>
+    <color name="colorPrimaryContainer_17">#705D00</color>
+    <color name="colorOnPrimaryContainer_17">#FEE06F</color>
+
+    <color name="colorSecondary_17">#D1C5A0</color>
+    <color name="colorOnSecondary_17">#373016</color>
+    <color name="colorSecondaryContainer_17">#4E462A</color>
+    <color name="colorOnSecondaryContainer_17">#EEE1BB</color>
+
+    <color name="colorTertiary_17">#A9CFB0</color>
+    <color name="colorOnTertiary_17">#163722</color>
+    <color name="colorTertiaryContainer_17">#2D4E37</color>
+    <color name="colorOnTertiaryContainer_17">#C5EBCC</color>
+
+    <color name="colorSurface_17">#1D1B16</color>
+    <color name="colorOnSurface_17">#E7E1D8</color>
+    <color name="colorSurfaceVariant_17">#343024</color>
+    <color name="colorOnSurfaceVariant_17">#CCC5B3</color>
+    <color name="colorSurfaceContainer_17">#221f17</color>
+
+    <color name="colorOutline_17">#968F7F</color>
+
+    <color name="colorOnSurfaceInverse_17">#33302A</color>
+    <color name="colorSurfaceInverse_17">#CAC5BC</color>
+    <color name="colorPrimaryInverse_17">#544600</color>
+
+
+    <!--    Сolor 18 Hue 102-->
+    <color name="colorOriginal_18">#6b5f00</color>
+
+
+    <color name="colorPrimary_18">#DAC74E</color>
+    <color name="colorOnPrimary_18">#373100</color>
+    <color name="colorPrimaryContainer_18">#6B5F00</color>
+    <color name="colorOnPrimaryContainer_18">#F7E367</color>
+
+    <color name="colorSecondary_18">#CEC6A1</color>
+    <color name="colorOnSecondary_18">#353117</color>
+    <color name="colorSecondaryContainer_18">#4C472B</color>
+    <color name="colorOnSecondaryContainer_18">#EBE2BC</color>
+
+    <color name="colorTertiary_18">#A6CFB5</color>
+    <color name="colorOnTertiary_18">#123725</color>
+    <color name="colorTertiaryContainer_18">#2A4E3A</color>
+    <color name="colorOnTertiaryContainer_18">#C2EBD0</color>
+
+    <color name="colorSurface_18">#1D1C16</color>
+    <color name="colorOnSurface_18">#E6E1D8</color>
+    <color name="colorSurfaceVariant_18">#333024</color>
+    <color name="colorOnSurfaceVariant_18">#CBC5B4</color>
+    <color name="colorSurfaceContainer_18">#212017</color>
+
+    <color name="colorOutline_18">#949080</color>
+
+    <color name="colorOnSurfaceInverse_18">#32302A</color>
+    <color name="colorSurfaceInverse_18">#C9C5BC</color>
+    <color name="colorPrimaryInverse_18">#504700</color>
+
+
+    <!--    Сolor 19 Hue 108-->
+    <color name="colorOriginal_19">#656100</color>
+
+
+    <color name="colorPrimary_19">#D0CA54</color>
+    <color name="colorOnPrimary_19">#343200</color>
+    <color name="colorPrimaryContainer_19">#656100</color>
+    <color name="colorOnPrimaryContainer_19">#EDE66C</color>
+
+    <color name="colorSecondary_19">#CBC7A3</color>
+    <color name="colorOnSecondary_19">#333118</color>
+    <color name="colorSecondaryContainer_19">#4A482C</color>
+    <color name="colorOnSecondaryContainer_19">#E7E3BD</color>
+
+    <color name="colorTertiary_19">#A4CFBA</color>
+    <color name="colorOnTertiary_19">#0D3728</color>
+    <color name="colorTertiaryContainer_19">#264E3E</color>
+    <color name="colorOnTertiaryContainer_19">#BFEBD5</color>
+
+    <color name="colorSurface_19">#1C1C16</color>
+    <color name="colorOnSurface_19">#E5E1D8</color>
+    <color name="colorSurfaceVariant_19">#323125</color>
+    <color name="colorOnSurfaceVariant_19">#C9C6B4</color>
+    <color name="colorSurfaceContainer_19">#212018</color>
+
+    <color name="colorOutline_19">#939080</color>
+
+    <color name="colorOnSurfaceInverse_19">#32302B</color>
+    <color name="colorSurfaceInverse_19">#C9C5BD</color>
+    <color name="colorPrimaryInverse_19">#4C4900</color>
+
+
+    <!--    Сolor 20 Hue 113-->
+    <color name="colorOriginal_20">#5e6300</color>
+
+
+    <color name="colorPrimary_20">#C8CC59</color>
+    <color name="colorOnPrimary_20">#313300</color>
+    <color name="colorPrimaryContainer_20">#5F6200</color>
+    <color name="colorOnPrimaryContainer_20">#E4E872</color>
+
+    <color name="colorSecondary_20">#C8C7A4</color>
+    <color name="colorOnSecondary_20">#313219</color>
+    <color name="colorSecondaryContainer_20">#48482D</color>
+    <color name="colorOnSecondaryContainer_20">#E4E4BF</color>
+
+    <color name="colorTertiary_20">#A2CFBD</color>
+    <color name="colorOnTertiary_20">#09372B</color>
+    <color name="colorTertiaryContainer_20">#244E41</color>
+    <color name="colorOnTertiaryContainer_20">#BEEBD9</color>
+
+    <color name="colorSurface_20">#1C1C17</color>
+    <color name="colorOnSurface_20">#E4E1D9</color>
+    <color name="colorSurfaceVariant_20">#313125</color>
+    <color name="colorOnSurfaceVariant_20">#C8C6B5</color>
+    <color name="colorSurfaceContainer_20">#202018</color>
+
+    <color name="colorOutline_20">#929081</color>
+
+    <color name="colorOnSurfaceInverse_20">#31312B</color>
+    <color name="colorSurfaceInverse_20">#C8C5BD</color>
+    <color name="colorPrimaryInverse_20">#484A00</color>
+
+
+    <!--    Сolor 21 Hue 120-->
+    <color name="colorOriginal_21">#5e6300</color>
+
+
+    <color name="colorPrimary_21">#BCCF62</color>
+    <color name="colorOnPrimary_21">#2C3400</color>
+    <color name="colorPrimaryContainer_21">#576500</color>
+    <color name="colorOnPrimaryContainer_21">#D8EB7A</color>
+
+    <color name="colorSecondary_21">#C5C8A7</color>
+    <color name="colorOnSecondary_21">#2F321B</color>
+    <color name="colorSecondaryContainer_21">#45492F</color>
+    <color name="colorOnSecondaryContainer_21">#E1E4C1</color>
+
+    <color name="colorTertiary_21">#A1CFC2</color>
+    <color name="colorOnTertiary_21">#05372E</color>
+    <color name="colorTertiaryContainer_21">#224E45</color>
+    <color name="colorOnTertiaryContainer_21">#BCEBDE</color>
+
+    <color name="colorSurface_21">#1C1C17</color>
+    <color name="colorOnSurface_21">#E4E1D9</color>
+    <color name="colorSurfaceVariant_21">#303126</color>
+    <color name="colorOnSurfaceVariant_21">#C6C6B6</color>
+    <color name="colorSurfaceContainer_21">#1f2018</color>
+
+    <color name="colorOutline_21">#909182</color>
+
+    <color name="colorOnSurfaceInverse_21">#31312B</color>
+    <color name="colorSurfaceInverse_21">#C7C5BE</color>
+    <color name="colorPrimaryInverse_21">#414C00</color>
+
+
+    <!--    Сolor 22 Hue 126-->
+    <color name="colorOriginal_22">#4d6706</color>
+
+
+    <color name="colorPrimary_22">#B1D16B</color>
+    <color name="colorOnPrimary_22">#263500</color>
+    <color name="colorPrimaryContainer_22">#4D6706</color>
+    <color name="colorOnPrimaryContainer_22">#CDEE82</color>
+
+    <color name="colorSecondary_22">#C1C9A9</color>
+    <color name="colorOnSecondary_22">#2C331C</color>
+    <color name="colorSecondaryContainer_22">#424A31</color>
+    <color name="colorOnSecondaryContainer_22">#DDE5C4</color>
+
+    <color name="colorTertiary_22">#A0CFC7</color>
+    <color name="colorOnTertiary_22">#023732</color>
+    <color name="colorTertiaryContainer_22">#204E48</color>
+    <color name="colorOnTertiaryContainer_22">#BBEBE2</color>
+
+    <color name="colorSurface_22">#1B1C17</color>
+    <color name="colorOnSurface_22">#E3E2DA</color>
+    <color name="colorSurfaceVariant_22">#2F3227</color>
+    <color name="colorOnSurfaceVariant_22">#C5C7B7</color>
+    <color name="colorSurfaceContainer_22">#1f2019</color>
+
+    <color name="colorOutline_22">#8F9183</color>
+
+    <color name="colorOnSurfaceInverse_22">#30312C</color>
+    <color name="colorSurfaceInverse_22">#C7C6BE</color>
+    <color name="colorPrimaryInverse_22">#394E00</color>
+
+
+    <!--    Сolor 23 Hue 132-->
+    <color name="colorOriginal_23">#446915</color>
+
+
+    <color name="colorPrimary_23">#A7D374</color>
+    <color name="colorOnPrimary_23">#1E3700</color>
+    <color name="colorPrimaryContainer_23">#436814</color>
+    <color name="colorOnPrimaryContainer_23">#C2F08C</color>
+
+    <color name="colorSecondary_23">#BECAAC</color>
+    <color name="colorOnSecondary_23">#2A331E</color>
+    <color name="colorSecondaryContainer_23">#404A33</color>
+    <color name="colorOnSecondaryContainer_23">#DAE6C7</color>
+
+    <color name="colorTertiary_23">#9FCFCA</color>
+    <color name="colorOnTertiary_23">#003735</color>
+    <color name="colorTertiaryContainer_23">#1F4E4B</color>
+    <color name="colorOnTertiaryContainer_23">#BAEBE7</color>
+
+    <color name="colorSurface_23">#1B1C18</color>
+    <color name="colorOnSurface_23">#E2E2DA</color>
+    <color name="colorSurfaceVariant_23">#2E3228</color>
+    <color name="colorOnSurfaceVariant_23">#C4C7B9</color>
+    <color name="colorSurfaceContainer_23">#1e201a</color>
+
+    <color name="colorOutline_23">#8D9184</color>
+
+    <color name="colorOnSurfaceInverse_23">#30312C</color>
+    <color name="colorSurfaceInverse_23">#C6C6BF</color>
+    <color name="colorPrimaryInverse_23">#2E4F00</color>
+
+
+    <!--    Сolor 24 Hue 138-->
+    <color name="colorOriginal_24">#396a1f</color>
+
+
+    <color name="colorPrimary_24">#9CD57D</color>
+    <color name="colorOnPrimary_24">#123800</color>
+    <color name="colorPrimaryContainer_24">#396A1F</color>
+    <color name="colorOnPrimaryContainer_24">#B8F295</color>
+
+    <color name="colorSecondary_24">#BCCAAE</color>
+    <color name="colorOnSecondary_24">#283420</color>
+    <color name="colorSecondaryContainer_24">#3E4A35</color>
+    <color name="colorOnSecondaryContainer_24">#D8E6CA</color>
+
+    <color name="colorTertiary_24">#9FCECE</color>
+    <color name="colorOnTertiary_24">#003737</color>
+    <color name="colorTertiaryContainer_24">#1E4E4E</color>
+    <color name="colorOnTertiaryContainer_24">#BAEAEA</color>
+
+    <color name="colorSurface_24">#1A1C18</color>
+    <color name="colorOnSurface_24">#E2E2DB</color>
+    <color name="colorSurfaceVariant_24">#2D3229</color>
+    <color name="colorOnSurfaceVariant_24">#C2C7BA</color>
+    <color name="colorSurfaceContainer_24">#1d211a</color>
+
+    <color name="colorOutline_24">#8C9185</color>
+
+    <color name="colorOnSurfaceInverse_24">#2F312D</color>
+    <color name="colorSurfaceInverse_24">#C5C6BF</color>
+    <color name="colorPrimaryInverse_24">#215105</color>
+
+
+    <!--    Сolor 25 Hue 144-->
+    <color name="colorOriginal_25">#2c6b29</color>
+
+
+    <color name="colorPrimary_25">#91D686</color>
+    <color name="colorOnPrimary_25">#003A05</color>
+    <color name="colorPrimaryContainer_25">#2B6B28</color>
+    <color name="colorOnPrimaryContainer_25">#ACF39F</color>
+
+    <color name="colorSecondary_25">#B9CBB1</color>
+    <color name="colorOnSecondary_25">#263422</color>
+    <color name="colorSecondaryContainer_25">#3C4B38</color>
+    <color name="colorOnSecondaryContainer_25">#D5E7CD</color>
+
+    <color name="colorTertiary_25">#9FCED2</color>
+    <color name="colorOnTertiary_25">#00363A</color>
+    <color name="colorTertiaryContainer_25">#1E4D51</color>
+    <color name="colorOnTertiaryContainer_25">#BBEAEE</color>
+
+    <color name="colorSurface_25">#1A1C19</color>
+    <color name="colorOnSurface_25">#E1E2DC</color>
+    <color name="colorSurfaceVariant_25">#2C322A</color>
+    <color name="colorOnSurfaceVariant_25">#C1C7BB</color>
+    <color name="colorSurfaceContainer_25">#1d211b</color>
+
+    <color name="colorOutline_25">#8B9287</color>
+
+    <color name="colorOnSurfaceInverse_25">#2F312D</color>
+    <color name="colorSurfaceInverse_25">#C5C6C0</color>
+    <color name="colorPrimaryInverse_25">#0F5212</color>
+
+
+    <!--    Сolor 26 Hue 150-->
+    <color name="colorOriginal_26">#1b6d31</color>
+
+
+    <color name="colorPrimary_26">#87D88F</color>
+    <color name="colorOnPrimary_26">#003913</color>
+    <color name="colorPrimaryContainer_26">#1A6C30</color>
+    <color name="colorOnPrimaryContainer_26">#A2F5A9</color>
+
+    <color name="colorSecondary_26">#B7CBB4</color>
+    <color name="colorOnSecondary_26">#243424</color>
+    <color name="colorSecondaryContainer_26">#3A4B3A</color>
+    <color name="colorOnSecondaryContainer_26">#D3E7D0</color>
+
+    <color name="colorTertiary_26">#A0CDD5</color>
+    <color name="colorOnTertiary_26">#00363D</color>
+    <color name="colorTertiaryContainer_26">#1F4D54</color>
+    <color name="colorOnTertiaryContainer_26">#BCE9F2</color>
+
+    <color name="colorSurface_26">#1A1C19</color>
+    <color name="colorOnSurface_26">#E1E2DC</color>
+    <color name="colorSurfaceVariant_26">#2B322B</color>
+    <color name="colorOnSurfaceVariant_26">#C0C8BD</color>
+    <color name="colorSurfaceContainer_26">#1c211c</color>
+
+    <color name="colorOutline_26">#8A9288</color>
+
+    <color name="colorOnSurfaceInverse_26">#2E312D</color>
+    <color name="colorSurfaceInverse_26">#C5C6C1</color>
+    <color name="colorPrimaryInverse_26">#00531F</color>
+
+
+    <!--    Сolor 27 Hue 156-->
+    <color name="colorOriginal_27">#006d3b</color>
+
+
+    <color name="colorPrimary_27">#7DD99A</color>
+    <color name="colorOnPrimary_27">#00391C</color>
+    <color name="colorPrimaryContainer_27">#006D3B</color>
+    <color name="colorOnPrimaryContainer_27">#98F6B4</color>
+
+    <color name="colorSecondary_27">#B5CBB7</color>
+    <color name="colorOnSecondary_27">#223527</color>
+    <color name="colorSecondaryContainer_27">#384B3C</color>
+    <color name="colorOnSecondaryContainer_27">#D1E7D3</color>
+
+    <color name="colorTertiary_27">#A1CDD9</color>
+    <color name="colorOnTertiary_27">#023640</color>
+    <color name="colorTertiaryContainer_27">#214C57</color>
+    <color name="colorOnTertiaryContainer_27">#BDE9F5</color>
+
+    <color name="colorSurface_27">#191C19</color>
+    <color name="colorOnSurface_27">#E0E2DD</color>
+    <color name="colorSurfaceVariant_27">#2B322C</color>
+    <color name="colorOnSurfaceVariant_27">#C0C8BE</color>
+    <color name="colorSurfaceContainer_27">#1c211c</color>
+
+    <color name="colorOutline_27">#8A9289</color>
+
+    <color name="colorOnSurfaceInverse_27">#2E312E</color>
+    <color name="colorSurfaceInverse_27">#C4C6C1</color>
+    <color name="colorPrimaryInverse_27">#00522B</color>
+
+
+    <!--    Сolor 28 Hue 162-->
+    <color name="colorOriginal_28">#006c4b</color>
+
+
+    <color name="colorPrimary_28">#74D9A3</color>
+    <color name="colorOnPrimary_28">#003822</color>
+    <color name="colorPrimaryContainer_28">#006C45</color>
+    <color name="colorOnPrimaryContainer_28">#8FF6BD</color>
+
+    <color name="colorSecondary_28">#B4CBBA</color>
+    <color name="colorOnSecondary_28">#203529</color>
+    <color name="colorSecondaryContainer_28">#374B3E</color>
+    <color name="colorOnSecondaryContainer_28">#CFE7D6</color>
+
+    <color name="colorTertiary_28">#A3CCDB</color>
+    <color name="colorOnTertiary_28">#043542</color>
+    <color name="colorTertiaryContainer_28">#224C59</color>
+    <color name="colorOnTertiaryContainer_28">#BEE8F8</color>
+
+    <color name="colorSurface_28">#191C1A</color>
+    <color name="colorOnSurface_28">#E0E2DE</color>
+    <color name="colorSurfaceVariant_28">#2A322D</color>
+    <color name="colorOnSurfaceVariant_28">#BFC8BF</color>
+    <color name="colorSurfaceContainer_28">#1b211d</color>
+
+    <color name="colorOutline_28">#89928A</color>
+
+    <color name="colorOnSurfaceInverse_28">#2E312E</color>
+    <color name="colorSurfaceInverse_28">#C4C6C2</color>
+    <color name="colorPrimaryInverse_28">#005233</color>
+
+
+    <!--    Сolor 29 Hue 168-->
+    <color name="colorOriginal_29">#006c4e</color>
+
+
+    <color name="colorPrimary_29">#69DAAD</color>
+    <color name="colorOnPrimary_29">#003827</color>
+    <color name="colorPrimaryContainer_29">#006C4E</color>
+    <color name="colorOnPrimaryContainer_29">#86F7C8</color>
+
+    <color name="colorSecondary_29">#B2CBBD</color>
+    <color name="colorOnSecondary_29">#1F352B</color>
+    <color name="colorSecondaryContainer_29">#354B41</color>
+    <color name="colorOnSecondaryContainer_29">#CEE8D9</color>
+
+    <color name="colorTertiary_29">#A5CBDE</color>
+    <color name="colorOnTertiary_29">#083544</color>
+    <color name="colorTertiaryContainer_29">#254B5B</color>
+    <color name="colorOnTertiaryContainer_29">#C0E7FB</color>
+
+    <color name="colorSurface_29">#191C1A</color>
+    <color name="colorOnSurface_29">#E0E2DE</color>
+    <color name="colorSurfaceVariant_29">#2A322E</color>
+    <color name="colorOnSurfaceVariant_29">#BEC8C1</color>
+    <color name="colorSurfaceContainer_29">#1b211e</color>
+
+    <color name="colorOutline_29">#88928C</color>
+
+    <color name="colorOnSurfaceInverse_29">#2E312F</color>
+    <color name="colorSurfaceInverse_29">#C4C6C3</color>
+    <color name="colorPrimaryInverse_29">#00513A</color>
+
+
+    <!--    Сolor 30 Hue 174-->
+    <color name="colorOriginal_30">#006c55</color>
+
+
+    <color name="colorPrimary_30">#61DAB6</color>
+    <color name="colorOnPrimary_30">#00382B</color>
+    <color name="colorPrimaryContainer_30">#006B55</color>
+    <color name="colorOnPrimaryContainer_30">#7FF7D1</color>
+
+    <color name="colorSecondary_30">#B1CBC0</color>
+    <color name="colorOnSecondary_30">#1E352D</color>
+    <color name="colorSecondaryContainer_30">#344C43</color>
+    <color name="colorOnSecondaryContainer_30">#CDE8DC</color>
+
+    <color name="colorTertiary_30">#A7CAE1</color>
+    <color name="colorOnTertiary_30">#0D3446</color>
+    <color name="colorTertiaryContainer_30">#274B5D</color>
+    <color name="colorOnTertiaryContainer_30">#C3E7FD</color>
+
+    <color name="colorSurface_30">#191C1B</color>
+    <color name="colorOnSurface_30">#E0E2DF</color>
+    <color name="colorSurfaceVariant_30">#29322F</color>
+    <color name="colorOnSurfaceVariant_30">#BEC8C2</color>
+    <color name="colorSurfaceContainer_30">#1b211e</color>
+
+    <color name="colorOutline_30">#88928D</color>
+
+    <color name="colorOnSurfaceInverse_30">#2E312F</color>
+    <color name="colorSurfaceInverse_30">#C3C6C3</color>
+    <color name="colorPrimaryInverse_30">#00513F</color>
+
+
+    <!--    Сolor 31 Hue 180-->
+    <color name="colorOriginal_31">#006b5b</color>
+
+
+    <color name="colorPrimary_31">#59DAC0</color>
+    <color name="colorOnPrimary_31">#00382E</color>
+    <color name="colorPrimaryContainer_31">#006B5B</color>
+    <color name="colorOnPrimaryContainer_31">#79F7DB</color>
+
+    <color name="colorSecondary_31">#B0CBC3</color>
+    <color name="colorOnSecondary_31">#1D352F</color>
+    <color name="colorSecondaryContainer_31">#334B45</color>
+    <color name="colorOnSecondaryContainer_31">#CCE7DF</color>
+
+    <color name="colorTertiary_31">#A9CAE3</color>
+    <color name="colorOnTertiary_31">#113348</color>
+    <color name="colorTertiaryContainer_31">#2A4A5F</color>
+    <color name="colorOnTertiaryContainer_31">#C7E5FE</color>
+
+    <color name="colorSurface_31">#191C1B</color>
+    <color name="colorOnSurface_31">#DFE2E0</color>
+    <color name="colorSurfaceVariant_31">#29322F</color>
+    <color name="colorOnSurfaceVariant_31">#BEC8C3</color>
+    <color name="colorSurfaceContainer_31">#1b211f</color>
+
+    <color name="colorOutline_31">#88928E</color>
+
+    <color name="colorOnSurfaceInverse_31">#2E3130</color>
+    <color name="colorSurfaceInverse_31">#C3C6C4</color>
+    <color name="colorPrimaryInverse_31">#005144</color>
+
+
+    <!--    Сolor 32 Hue 186-->
+    <color name="colorOriginal_32">#006b61</color>
+
+
+    <color name="colorPrimary_32">#53DAC9</color>
+    <color name="colorOnPrimary_32">#003732</color>
+    <color name="colorPrimaryContainer_32">#006A60</color>
+    <color name="colorOnPrimaryContainer_32">#73F7E5</color>
+
+    <color name="colorSecondary_32">#B0CBC5</color>
+    <color name="colorOnSecondary_32">#1C3531</color>
+    <color name="colorSecondaryContainer_32">#334B47</color>
+    <color name="colorOnSecondaryContainer_32">#CBE7E1</color>
+
+    <color name="colorTertiary_32">#ACC9E5</color>
+    <color name="colorOnTertiary_32">#153349</color>
+    <color name="colorTertiaryContainer_32">#2D4961</color>
+    <color name="colorOnTertiaryContainer_32">#CBE4FE</color>
+
+    <color name="colorSurface_32">#191C1B</color>
+    <color name="colorOnSurface_32">#DFE2E0</color>
+    <color name="colorSurfaceVariant_32">#293230</color>
+    <color name="colorOnSurfaceVariant_32">#BDC8C5</color>
+    <color name="colorSurfaceContainer_32">#1a2120</color>
+
+    <color name="colorOutline_32">#88928F</color>
+
+    <color name="colorOnSurfaceInverse_32">#2D3130</color>
+    <color name="colorSurfaceInverse_32">#C3C6C4</color>
+    <color name="colorPrimaryInverse_32">#005048</color>
+
+
+    <!--    Сolor 33 Hue 192-->
+    <color name="colorOriginal_33">#006a66</color>
+
+
+    <color name="colorPrimary_33">#4ED9D2</color>
+    <color name="colorOnPrimary_33">#003735</color>
+    <color name="colorPrimaryContainer_33">#006A66</color>
+    <color name="colorOnPrimaryContainer_33">#70F6EF</color>
+
+    <color name="colorSecondary_33">#AFCBC8</color>
+    <color name="colorOnSecondary_33">#1B3533</color>
+    <color name="colorSecondaryContainer_33">#324B49</color>
+    <color name="colorOnSecondaryContainer_33">#CBE7E4</color>
+
+    <color name="colorTertiary_33">#AFC8E6</color>
+    <color name="colorOnTertiary_33">#19324A</color>
+    <color name="colorTertiaryContainer_33">#314962</color>
+    <color name="colorOnTertiaryContainer_33">#CFE3FE</color>
+
+    <color name="colorSurface_33">#191C1C</color>
+    <color name="colorOnSurface_33">#DFE2E1</color>
+    <color name="colorSurfaceVariant_33">#293231</color>
+    <color name="colorOnSurfaceVariant_33">#BDC8C6</color>
+    <color name="colorSurfaceContainer_33">#1a2120</color>
+
+    <color name="colorOutline_33">#879290</color>
+
+    <color name="colorOnSurfaceInverse_33">#2D3131</color>
+    <color name="colorSurfaceInverse_33">#C3C6C5</color>
+    <color name="colorPrimaryInverse_33">#00504D</color>
+
+
+    <!--    Сolor 34 Hue 198-->
+    <color name="colorOriginal_34">#006a6b</color>
+
+
+    <color name="colorPrimary_34">#4CD9DA</color>
+    <color name="colorOnPrimary_34">#003737</color>
+    <color name="colorPrimaryContainer_34">#00696A</color>
+    <color name="colorOnPrimaryContainer_34">#6FF5F7</color>
+
+    <color name="colorSecondary_34">#AFCBCA</color>
+    <color name="colorOnSecondary_34">#1B3435</color>
+    <color name="colorSecondaryContainer_34">#324B4B</color>
+    <color name="colorOnSecondaryContainer_34">#CBE7E6</color>
+
+    <color name="colorTertiary_34">#B2C7E8</color>
+    <color name="colorOnTertiary_34">#1D314B</color>
+    <color name="colorTertiaryContainer_34">#344863</color>
+    <color name="colorOnTertiaryContainer_34">#D2E2FE</color>
+
+    <color name="colorSurface_34">#191C1C</color>
+    <color name="colorOnSurface_34">#DFE2E1</color>
+    <color name="colorSurfaceVariant_34">#293232</color>
+    <color name="colorOnSurfaceVariant_34">#BDC7C7</color>
+    <color name="colorSurfaceContainer_34">#1a2121</color>
+
+    <color name="colorOutline_34">#889291</color>
+
+    <color name="colorOnSurfaceInverse_34">#2D3131</color>
+    <color name="colorSurfaceInverse_34">#C3C6C5</color>
+    <color name="colorPrimaryInverse_34">#004F50</color>
+
+
+    <!--    Сolor 35 Hue 204-->
+    <color name="colorOriginal_35">#006970</color>
+
+
+    <color name="colorPrimary_35">#4DD8E3</color>
+    <color name="colorOnPrimary_35">#00363A</color>
+    <color name="colorPrimaryContainer_35">#006970</color>
+    <color name="colorOnPrimaryContainer_35">#7DF3FE</color>
+
+    <color name="colorSecondary_35">#B0CACD</color>
+    <color name="colorOnSecondary_35">#1B3437</color>
+    <color name="colorSecondaryContainer_35">#324B4D</color>
+    <color name="colorOnSecondaryContainer_35">#CBE7E9</color>
+
+    <color name="colorTertiary_35">#B6C6E9</color>
+    <color name="colorOnTertiary_35">#21304C</color>
+    <color name="colorTertiaryContainer_35">#384764</color>
+    <color name="colorOnTertiaryContainer_35">#D6E1FE</color>
+
+    <color name="colorSurface_35">#191C1D</color>
+    <color name="colorOnSurface_35">#DFE2E2</color>
+    <color name="colorSurfaceVariant_35">#293233</color>
+    <color name="colorOnSurfaceVariant_35">#BDC7C8</color>
+    <color name="colorSurfaceContainer_35">#1a2121</color>
+
+    <color name="colorOutline_35">#889292</color>
+
+    <color name="colorOnSurfaceInverse_35">#2D3131</color>
+    <color name="colorSurfaceInverse_35">#C3C6C6</color>
+    <color name="colorPrimaryInverse_35">#004F54</color>
+
+
+    <!--    Сolor 36 Hue 210-->
+    <color name="colorOriginal_36">#006974</color>
+
+
+    <color name="colorPrimary_36">#4FD7E9</color>
+    <color name="colorOnPrimary_36">#00363C</color>
+    <color name="colorPrimaryContainer_36">#006973</color>
+    <color name="colorOnPrimaryContainer_36">#94F0FE</color>
+
+    <color name="colorSecondary_36">#B0CACF</color>
+    <color name="colorOnSecondary_36">#1C3438</color>
+    <color name="colorSecondaryContainer_36">#334B4F</color>
+    <color name="colorOnSecondaryContainer_36">#CCE6EB</color>
+
+    <color name="colorTertiary_36">#B9C5E9</color>
+    <color name="colorOnTertiary_36">#24304D</color>
+    <color name="colorTertiaryContainer_36">#3A4664</color>
+    <color name="colorOnTertiaryContainer_36">#D8E1FE</color>
+
+    <color name="colorSurface_36">#191C1D</color>
+    <color name="colorOnSurface_36">#E0E2E2</color>
+    <color name="colorSurfaceVariant_36">#293234</color>
+    <color name="colorOnSurfaceVariant_36">#BEC7C9</color>
+    <color name="colorSurfaceContainer_36">#1b2122</color>
+
+    <color name="colorOutline_36">#889193</color>
+
+    <color name="colorOnSurfaceInverse_36">#2E3132</color>
+    <color name="colorSurfaceInverse_36">#C3C6C6</color>
+    <color name="colorPrimaryInverse_36">#004F57</color>
+
+
+    <!--    Сolor 37 Hue 216-->
+    <color name="colorOriginal_37">#006879</color>
+
+
+    <color name="colorPrimary_37">#54D6F2</color>
+    <color name="colorOnPrimary_37">#003640</color>
+    <color name="colorPrimaryContainer_37">#006879</color>
+    <color name="colorOnPrimaryContainer_37">#A8ECFE</color>
+
+    <color name="colorSecondary_37">#B1CAD1</color>
+    <color name="colorOnSecondary_37">#1C343A</color>
+    <color name="colorSecondaryContainer_37">#334A50</color>
+    <color name="colorOnSecondaryContainer_37">#CDE6ED</color>
+
+    <color name="colorTertiary_37">#BDC4EA</color>
+    <color name="colorOnTertiary_37">#282F4D</color>
+    <color name="colorTertiaryContainer_37">#3E4565</color>
+    <color name="colorOnTertiaryContainer_37">#DCE0FE</color>
+
+    <color name="colorSurface_37">#191C1D</color>
+    <color name="colorOnSurface_37">#E0E2E3</color>
+    <color name="colorSurfaceVariant_37">#293234</color>
+    <color name="colorOnSurfaceVariant_37">#BEC7CA</color>
+    <color name="colorSurfaceContainer_37">#1b2122</color>
+
+    <color name="colorOutline_37">#889194</color>
+
+    <color name="colorOnSurfaceInverse_37">#2E3132</color>
+    <color name="colorSurfaceInverse_37">#C3C6C7</color>
+    <color name="colorPrimaryInverse_37">#004E5B</color>
+
+
+    <!--    Сolor 38 Hue 222-->
+    <color name="colorOriginal_38">#00677e</color>
+
+
+    <color name="colorPrimary_38">#5BD4F9</color>
+    <color name="colorOnPrimary_38">#003543</color>
+    <color name="colorPrimaryContainer_38">#00677E</color>
+    <color name="colorOnPrimaryContainer_38">#B4EAFE</color>
+
+    <color name="colorSecondary_38">#B2C9D3</color>
+    <color name="colorOnSecondary_38">#1D333B</color>
+    <color name="colorSecondaryContainer_38">#344A52</color>
+    <color name="colorOnSecondaryContainer_38">#CEE5EF</color>
+
+    <color name="colorTertiary_38">#C1C2EA</color>
+    <color name="colorOnTertiary_38">#2B2E4D</color>
+    <color name="colorTertiaryContainer_38">#424465</color>
+    <color name="colorOnTertiaryContainer_38">#DFDFFE</color>
+
+    <color name="colorSurface_38">#191C1D</color>
+    <color name="colorOnSurface_38">#E0E2E3</color>
+    <color name="colorSurfaceVariant_38">#293235</color>
+    <color name="colorOnSurfaceVariant_38">#BEC7CB</color>
+    <color name="colorSurfaceContainer_38">#1b2023</color>
+
+    <color name="colorOutline_38">#889195</color>
+
+    <color name="colorOnSurfaceInverse_38">#2E3132</color>
+    <color name="colorSurfaceInverse_38">#C4C6C7</color>
+    <color name="colorPrimaryInverse_38">#004E60</color>
+
+
+    <!--    Сolor 39 Hue 228-->
+    <color name="colorOriginal_39">#006784</color>
+
+
+    <color name="colorPrimary_39">#65D2FE</color>
+    <color name="colorOnPrimary_39">#003546</color>
+    <color name="colorPrimaryContainer_39">#006782</color>
+    <color name="colorOnPrimaryContainer_39">#BCE8FE</color>
+
+    <color name="colorSecondary_39">#B3C9D5</color>
+    <color name="colorOnSecondary_39">#1F333C</color>
+    <color name="colorSecondaryContainer_39">#354A53</color>
+    <color name="colorOnSecondaryContainer_39">#CFE5F1</color>
+
+    <color name="colorTertiary_39">#C5C1E9</color>
+    <color name="colorOnTertiary_39">#2E2D4D</color>
+    <color name="colorTertiaryContainer_39">#454364</color>
+    <color name="colorOnTertiaryContainer_39">#E2DEFE</color>
+
+    <color name="colorSurface_39">#191C1E</color>
+    <color name="colorOnSurface_39">#E0E1E3</color>
+    <color name="colorSurfaceVariant_39">#2A3236</color>
+    <color name="colorOnSurfaceVariant_39">#BFC7CC</color>
+    <color name="colorSurfaceContainer_39">#1b2023</color>
+
+    <color name="colorOutline_39">#899196</color>
+
+    <color name="colorOnSurfaceInverse_39">#2E3132</color>
+    <color name="colorSurfaceInverse_39">#C4C6C7</color>
+    <color name="colorPrimaryInverse_39">#004D64</color>
+
+
+    <!--    Сolor 40 Hue 234-->
+    <color name="colorOriginal_40">#00668a</color>
+
+
+    <color name="colorPrimary_40">#7ACFFE</color>
+    <color name="colorOnPrimary_40">#003549</color>
+    <color name="colorPrimaryContainer_40">#006689</color>
+    <color name="colorOnPrimaryContainer_40">#C2E7FE</color>
+
+    <color name="colorSecondary_40">#B4C8D6</color>
+    <color name="colorOnSecondary_40">#20333E</color>
+    <color name="colorSecondaryContainer_40">#364955</color>
+    <color name="colorOnSecondaryContainer_40">#D0E4F3</color>
+
+    <color name="colorTertiary_40">#C9C0E9</color>
+    <color name="colorOnTertiary_40">#322C4C</color>
+    <color name="colorTertiaryContainer_40">#484264</color>
+    <color name="colorOnTertiaryContainer_40">#E5DDFE</color>
+
+    <color name="colorSurface_40">#191C1E</color>
+    <color name="colorOnSurface_40">#E0E1E4</color>
+    <color name="colorSurfaceVariant_40">#2A3136</color>
+    <color name="colorOnSurfaceVariant_40">#BFC6CC</color>
+    <color name="colorSurfaceContainer_40">#1c2023</color>
+
+    <color name="colorOutline_40">#899196</color>
+
+    <color name="colorOnSurfaceInverse_40">#2E3133</color>
+    <color name="colorSurfaceInverse_40">#C4C5C8</color>
+    <color name="colorPrimaryInverse_40">#004C68</color>
+
+
+    <!--    Сolor 41 Hue 240-->
+    <color name="colorOriginal_41">#006590</color>
+
+
+    <color name="colorPrimary_41">#86CDFE</color>
+    <color name="colorOnPrimary_41">#00344D</color>
+    <color name="colorPrimaryContainer_41">#00658F</color>
+    <color name="colorOnPrimaryContainer_41">#C7E5FE</color>
+
+    <color name="colorSecondary_41">#B6C8D7</color>
+    <color name="colorOnSecondary_41">#21323E</color>
+    <color name="colorSecondaryContainer_41">#384956</color>
+    <color name="colorOnSecondaryContainer_41">#D1E4F4</color>
+
+    <color name="colorTertiary_41">#CCBFE8</color>
+    <color name="colorOnTertiary_41">#342B4B</color>
+    <color name="colorTertiaryContainer_41">#4B4163</color>
+    <color name="colorOnTertiaryContainer_41">#E8DCFE</color>
+
+    <color name="colorSurface_41">#191C1E</color>
+    <color name="colorOnSurface_41">#E1E1E4</color>
+    <color name="colorSurfaceVariant_41">#2B3136</color>
+    <color name="colorOnSurfaceVariant_41">#C0C6CD</color>
+    <color name="colorSurfaceContainer_41">#1c2024</color>
+
+    <color name="colorOutline_41">#8A9097</color>
+
+    <color name="colorOnSurfaceInverse_41">#2E3133</color>
+    <color name="colorSurfaceInverse_41">#C4C5C8</color>
+    <color name="colorPrimaryInverse_41">#004C6D</color>
+
+
+    <!--    Сolor 42 Hue 246-->
+    <color name="colorOriginal_42">#006498</color>
+
+
+    <color name="colorPrimary_42">#91CBFE</color>
+    <color name="colorOnPrimary_42">#003351</color>
+    <color name="colorPrimaryContainer_42">#006396</color>
+    <color name="colorOnPrimaryContainer_42">#CBE4FE</color>
+
+    <color name="colorSecondary_42">#B7C7D9</color>
+    <color name="colorOnSecondary_42">#23323F</color>
+    <color name="colorSecondaryContainer_42">#394857</color>
+    <color name="colorOnSecondaryContainer_42">#D3E3F5</color>
+
+    <color name="colorTertiary_42">#D0BEE6</color>
+    <color name="colorOnTertiary_42">#372A4A</color>
+    <color name="colorTertiaryContainer_42">#4E4162</color>
+    <color name="colorOnTertiaryContainer_42">#ECDBFE</color>
+
+    <color name="colorSurface_42">#1A1C1E</color>
+    <color name="colorOnSurface_42">#E1E1E4</color>
+    <color name="colorSurfaceVariant_42">#2B3137</color>
+    <color name="colorOnSurfaceVariant_42">#C1C6CD</color>
+    <color name="colorSurfaceContainer_42">#1c2024</color>
+
+    <color name="colorOutline_42">#8B9097</color>
+
+    <color name="colorOnSurfaceInverse_42">#2F3133</color>
+    <color name="colorSurfaceInverse_42">#C5C5C8</color>
+    <color name="colorPrimaryInverse_42">#004B73</color>
+
+
+    <!--    Сolor 43 Hue 252-->
+    <color name="colorOriginal_43">#0062a1</color>
+
+
+    <color name="colorPrimary_43">#9BC9FE</color>
+    <color name="colorOnPrimary_43">#003256</color>
+    <color name="colorPrimaryContainer_43">#0062A0</color>
+    <color name="colorOnPrimaryContainer_43">#CFE3FE</color>
+
+    <color name="colorSecondary_43">#B9C7DA</color>
+    <color name="colorOnSecondary_43">#243140</color>
+    <color name="colorSecondaryContainer_43">#3B4857</color>
+    <color name="colorOnSecondaryContainer_43">#D5E3F6</color>
+
+    <color name="colorTertiary_43">#D4BDE4</color>
+    <color name="colorOnTertiary_43">#3A2948</color>
+    <color name="colorTertiaryContainer_43">#514060</color>
+    <color name="colorOnTertiaryContainer_43">#F0D9FE</color>
+
+    <color name="colorSurface_43">#1A1C1E</color>
+    <color name="colorOnSurface_43">#E1E1E5</color>
+    <color name="colorSurfaceVariant_43">#2C3137</color>
+    <color name="colorOnSurfaceVariant_43">#C1C6CE</color>
+    <color name="colorSurfaceContainer_43">#1d2024</color>
+
+    <color name="colorOutline_43">#8B9098</color>
+
+    <color name="colorOnSurfaceInverse_43">#2F3033</color>
+    <color name="colorSurfaceInverse_43">#C5C5C9</color>
+    <color name="colorPrimaryInverse_43">#00497A</color>
+
+
+    <!--    Сolor 44 Hue 258-->
+    <color name="colorOriginal_44">#1b60a5</color>
+
+
+    <color name="colorPrimary_44">#A3C8FE</color>
+    <color name="colorOnPrimary_44">#00315D</color>
+    <color name="colorPrimaryContainer_44">#1960A4</color>
+    <color name="colorOnPrimaryContainer_44">#D3E2FE</color>
+
+    <color name="colorSecondary_44">#BBC6DA</color>
+    <color name="colorOnSecondary_44">#263141</color>
+    <color name="colorSecondaryContainer_44">#3D4758</color>
+    <color name="colorOnSecondaryContainer_44">#D7E2F7</color>
+
+    <color name="colorTertiary_44">#D8BCE2</color>
+    <color name="colorOnTertiary_44">#3D2946</color>
+    <color name="colorTertiaryContainer_44">#543F5E</color>
+    <color name="colorOnTertiaryContainer_44">#F5D8FE</color>
+
+    <color name="colorSurface_44">#1A1C1E</color>
+    <color name="colorOnSurface_44">#E2E1E5</color>
+    <color name="colorSurfaceVariant_44">#2D3137</color>
+    <color name="colorOnSurfaceVariant_44">#C2C5CE</color>
+    <color name="colorSurfaceContainer_44">#1d2024</color>
+
+    <color name="colorOutline_44">#8C9098</color>
+
+    <color name="colorOnSurfaceInverse_44">#2F3033</color>
+    <color name="colorSurfaceInverse_44">#C5C5C9</color>
+    <color name="colorPrimaryInverse_44">#004882</color>
+
+
+    <!--    Сolor 45 Hue 264-->
+    <color name="colorOriginal_45">#2d5ea7</color>
+
+
+    <color name="colorPrimary_45">#AAC6FE</color>
+    <color name="colorOnPrimary_45">#002F65</color>
+    <color name="colorPrimaryContainer_45">#2C5EA6</color>
+    <color name="colorOnPrimaryContainer_45">#D6E2FE</color>
+
+    <color name="colorSecondary_45">#BDC5DB</color>
+    <color name="colorOnSecondary_45">#283041</color>
+    <color name="colorSecondaryContainer_45">#3E4759</color>
+    <color name="colorOnSecondaryContainer_45">#D9E1F8</color>
+
+    <color name="colorTertiary_45">#DCBBDF</color>
+    <color name="colorOnTertiary_45">#3F2844</color>
+    <color name="colorTertiaryContainer_45">#573E5C</color>
+    <color name="colorOnTertiaryContainer_45">#F9D7FC</color>
+
+    <color name="colorSurface_45">#1A1B1F</color>
+    <color name="colorOnSurface_45">#E2E1E5</color>
+    <color name="colorSurfaceVariant_45">#2D3038</color>
+    <color name="colorOnSurfaceVariant_45">#C3C5CF</color>
+    <color name="colorSurfaceContainer_45">#1e2025</color>
+
+    <color name="colorOutline_45">#8D8F98</color>
+
+    <color name="colorOnSurfaceInverse_45">#2F3033</color>
+    <color name="colorSurfaceInverse_45">#C6C5C9</color>
+    <color name="colorPrimaryInverse_45">#02458D</color>
+
+
+    <!--    Сolor 46 Hue 270-->
+    <color name="colorOriginal_46">#3a5ba9</color>
+
+
+    <color name="colorPrimary_46">#B1C4FE</color>
+    <color name="colorOnPrimary_46">#002B73</color>
+    <color name="colorPrimaryContainer_46">#3A5BA8</color>
+    <color name="colorOnPrimaryContainer_46">#D9E1FE</color>
+
+    <color name="colorSecondary_46">#BFC5DC</color>
+    <color name="colorOnSecondary_46">#2A3042</color>
+    <color name="colorSecondaryContainer_46">#404659</color>
+    <color name="colorOnSecondaryContainer_46">#DBE1F8</color>
+
+    <color name="colorTertiary_46">#E0BADC</color>
+    <color name="colorOnTertiary_46">#412741</color>
+    <color name="colorTertiaryContainer_46">#5A3D59</color>
+    <color name="colorOnTertiaryContainer_46">#FDD6F8</color>
+
+    <color name="colorSurface_46">#1B1B1F</color>
+    <color name="colorOnSurface_46">#E3E1E5</color>
+    <color name="colorSurfaceVariant_46">#2E3038</color>
+    <color name="colorOnSurfaceVariant_46">#C4C5CF</color>
+    <color name="colorSurfaceContainer_46">#1e1f25</color>
+
+    <color name="colorOutline_46">#8E8F99</color>
+
+    <color name="colorOnSurfaceInverse_46">#303034</color>
+    <color name="colorSurfaceInverse_46">#C6C5C9</color>
+    <color name="colorPrimaryInverse_46">#1E438F</color>
+
+
+    <!--    Сolor 47 Hue 276-->
+    <color name="colorOriginal_47">#4559a9</color>
+
+
+    <color name="colorPrimary_47">#B7C3FE</color>
+    <color name="colorOnPrimary_47">#0F2878</color>
+    <color name="colorPrimaryContainer_47">#4559A8</color>
+    <color name="colorOnPrimaryContainer_47">#DCE0FE</color>
+
+    <color name="colorSecondary_47">#C1C4DC</color>
+    <color name="colorOnSecondary_47">#2C2F42</color>
+    <color name="colorSecondaryContainer_47">#424659</color>
+    <color name="colorOnSecondaryContainer_47">#DDE0F8</color>
+
+    <color name="colorTertiary_47">#E3B9D8</color>
+    <color name="colorOnTertiary_47">#43273F</color>
+    <color name="colorTertiaryContainer_47">#5C3D56</color>
+    <color name="colorOnTertiaryContainer_47">#FED6F3</color>
+
+    <color name="colorSurface_47">#1B1B1F</color>
+    <color name="colorOnSurface_47">#E3E0E5</color>
+    <color name="colorSurfaceVariant_47">#2F3038</color>
+    <color name="colorOnSurfaceVariant_47">#C5C4CF</color>
+    <color name="colorSurfaceContainer_47">#1f1f25</color>
+
+    <color name="colorOutline_47">#8F8F99</color>
+
+    <color name="colorOnSurfaceInverse_47">#303034</color>
+    <color name="colorSurfaceInverse_47">#C7C5C9</color>
+    <color name="colorPrimaryInverse_47">#2B408F</color>
+
+
+    <!--    Сolor 48 Hue 282-->
+    <color name="colorOriginal_48">#4f57a9</color>
+
+
+    <color name="colorPrimary_48">#BCC1FE</color>
+    <color name="colorOnPrimary_48">#1E2678</color>
+    <color name="colorPrimaryContainer_48">#4E57A8</color>
+    <color name="colorOnPrimaryContainer_48">#DFDFFE</color>
+
+    <color name="colorSecondary_48">#C4C3DC</color>
+    <color name="colorOnSecondary_48">#2D2F42</color>
+    <color name="colorSecondaryContainer_48">#444559</color>
+    <color name="colorOnSecondaryContainer_48">#E0DFF8</color>
+
+    <color name="colorTertiary_48">#E6B8D4</color>
+    <color name="colorOnTertiary_48">#45263C</color>
+    <color name="colorTertiaryContainer_48">#5E3C53</color>
+    <color name="colorOnTertiaryContainer_48">#FED6ED</color>
+
+    <color name="colorSurface_48">#1B1B1F</color>
+    <color name="colorOnSurface_48">#E3E0E5</color>
+    <color name="colorSurfaceVariant_48">#303038</color>
+    <color name="colorOnSurfaceVariant_48">#C6C4CF</color>
+    <color name="colorSurfaceContainer_48">#1f1f25</color>
+
+    <color name="colorOutline_48">#908F99</color>
+
+    <color name="colorOnSurfaceInverse_48">#303034</color>
+    <color name="colorSurfaceInverse_48">#C7C4C9</color>
+    <color name="colorPrimaryInverse_48">#363E8F</color>
+
+
+    <!--    Сolor 49 Hue 288-->
+    <color name="colorOriginal_49">#5854a8</color>
+
+
+    <color name="colorPrimary_49">#C3BFFE</color>
+    <color name="colorOnPrimary_49">#292377</color>
+    <color name="colorPrimaryContainer_49">#5854A7</color>
+    <color name="colorOnPrimaryContainer_49">#E2DEFE</color>
+
+    <color name="colorSecondary_49">#C6C3DB</color>
+    <color name="colorOnSecondary_49">#2F2E42</color>
+    <color name="colorSecondaryContainer_49">#464559</color>
+    <color name="colorOnSecondaryContainer_49">#E2DFF8</color>
+
+    <color name="colorTertiary_49">#E9B8D0</color>
+    <color name="colorOnTertiary_49">#472638</color>
+    <color name="colorTertiaryContainer_49">#603B4F</color>
+    <color name="colorOnTertiaryContainer_49">#FED7E9</color>
+
+    <color name="colorSurface_49">#1C1B1F</color>
+    <color name="colorOnSurface_49">#E4E0E5</color>
+    <color name="colorSurfaceVariant_49">#302F38</color>
+    <color name="colorOnSurfaceVariant_49">#C7C4CF</color>
+    <color name="colorSurfaceContainer_49">#201f25</color>
+
+    <color name="colorOutline_49">#918E98</color>
+
+    <color name="colorOnSurfaceInverse_49">#313034</color>
+    <color name="colorSurfaceInverse_49">#C8C4C9</color>
+    <color name="colorPrimaryInverse_49">#403B8D</color>
+
+
+    <!--    Сolor 50 Hue 294-->
+    <color name="colorOriginal_50">#6152a6</color>
+
+
+    <color name="colorPrimary_50">#C9BDFE</color>
+    <color name="colorOnPrimary_50">#322075</color>
+    <color name="colorPrimaryContainer_50">#6152A5</color>
+    <color name="colorOnPrimaryContainer_50">#E5DDFE</color>
+
+    <color name="colorSecondary_50">#C9C2DB</color>
+    <color name="colorOnSecondary_50">#312E41</color>
+    <color name="colorSecondaryContainer_50">#484459</color>
+    <color name="colorOnSecondaryContainer_50">#E5DEF8</color>
+
+    <color name="colorTertiary_50">#ECB7CB</color>
+    <color name="colorOnTertiary_50">#492535</color>
+    <color name="colorTertiaryContainer_50">#623B4B</color>
+    <color name="colorOnTertiaryContainer_50">#FED7E5</color>
+
+    <color name="colorSurface_50">#1C1B1E</color>
+    <color name="colorOnSurface_50">#E5E0E5</color>
+    <color name="colorSurfaceVariant_50">#312F38</color>
+    <color name="colorOnSurfaceVariant_50">#C8C3CF</color>
+    <color name="colorSurfaceContainer_50">#201f24</color>
+
+    <color name="colorOutline_50">#928E98</color>
+
+    <color name="colorOnSurfaceInverse_50">#313033</color>
+    <color name="colorSurfaceInverse_50">#C8C4C9</color>
+    <color name="colorPrimaryInverse_50">#49398B</color>
+
+
+    <!--    Сolor 51 Hue 300-->
+    <color name="colorOriginal_51">#6850a3</color>
+
+
+    <color name="colorPrimary_51">#CFBBFE</color>
+    <color name="colorOnPrimary_51">#381E72</color>
+    <color name="colorPrimaryContainer_51">#684FA3</color>
+    <color name="colorOnPrimaryContainer_51">#E8DCFE</color>
+
+    <color name="colorSecondary_51">#CBC1DA</color>
+    <color name="colorOnSecondary_51">#332D41</color>
+    <color name="colorSecondaryContainer_51">#4A4458</color>
+    <color name="colorOnSecondaryContainer_51">#E7DDF7</color>
+
+    <color name="colorTertiary_51">#EEB7C6</color>
+    <color name="colorOnTertiary_51">#4A2531</color>
+    <color name="colorTertiaryContainer_51">#633B48</color>
+    <color name="colorOnTertiaryContainer_51">#FED8E1</color>
+
+    <color name="colorSurface_51">#1C1B1E</color>
+    <color name="colorOnSurface_51">#E5E0E5</color>
+    <color name="colorSurfaceVariant_51">#322F37</color>
+    <color name="colorOnSurfaceVariant_51">#C9C3CE</color>
+    <color name="colorSurfaceContainer_51">#211f24</color>
+
+    <color name="colorOutline_51">#938E98</color>
+
+    <color name="colorOnSurfaceInverse_51">#323033</color>
+    <color name="colorSurfaceInverse_51">#C9C4C9</color>
+    <color name="colorPrimaryInverse_51">#503789</color>
+
+
+    <!--    Сolor 52 Hue 306-->
+    <color name="colorOriginal_52">#6f4da0</color>
+
+
+    <color name="colorPrimary_52">#D6B9FE</color>
+    <color name="colorOnPrimary_52">#3F1B6E</color>
+    <color name="colorPrimaryContainer_52">#6F4D9F</color>
+    <color name="colorOnPrimaryContainer_52">#ECDBFE</color>
+
+    <color name="colorSecondary_52">#CDC1D9</color>
+    <color name="colorOnSecondary_52">#352D40</color>
+    <color name="colorSecondaryContainer_52">#4C4357</color>
+    <color name="colorOnSecondaryContainer_52">#EADCF6</color>
+
+    <color name="colorTertiary_52">#F1B6C1</color>
+    <color name="colorOnTertiary_52">#4B252E</color>
+    <color name="colorTertiaryContainer_52">#653B44</color>
+    <color name="colorOnTertiaryContainer_52">#FED8DE</color>
+
+    <color name="colorSurface_52">#1D1B1E</color>
+    <color name="colorOnSurface_52">#E6E0E5</color>
+    <color name="colorSurfaceVariant_52">#332F37</color>
+    <color name="colorOnSurfaceVariant_52">#CBC3CE</color>
+    <color name="colorSurfaceContainer_52">#211e24</color>
+
+    <color name="colorOutline_52">#948D98</color>
+
+    <color name="colorOnSurfaceInverse_52">#322F33</color>
+    <color name="colorSurfaceInverse_52">#C9C4C9</color>
+    <color name="colorPrimaryInverse_52">#563585</color>
+
+
+    <!--    Сolor 53 Hue 312-->
+    <color name="colorOriginal_53">#764b9c</color>
+
+
+    <color name="colorPrimary_53">#DEB6FE</color>
+    <color name="colorOnPrimary_53">#45196A</color>
+    <color name="colorPrimaryContainer_53">#764B9B</color>
+    <color name="colorOnPrimaryContainer_53">#F0D9FE</color>
+
+    <color name="colorSecondary_53">#D0C0D8</color>
+    <color name="colorOnSecondary_53">#372C3F</color>
+    <color name="colorSecondaryContainer_53">#4E4256</color>
+    <color name="colorOnSecondaryContainer_53">#EDDCF5</color>
+
+    <color name="colorTertiary_53">#F2B6BB</color>
+    <color name="colorOnTertiary_53">#4C252A</color>
+    <color name="colorTertiaryContainer_53">#663A3F</color>
+    <color name="colorOnTertiaryContainer_53">#FED8DB</color>
+
+    <color name="colorSurface_53">#1D1B1E</color>
+    <color name="colorOnSurface_53">#E6E0E4</color>
+    <color name="colorSurfaceVariant_53">#342E37</color>
+    <color name="colorOnSurfaceVariant_53">#CCC3CD</color>
+    <color name="colorSurfaceContainer_53">#221e24</color>
+
+    <color name="colorOutline_53">#958D97</color>
+
+    <color name="colorOnSurfaceInverse_53">#322F33</color>
+    <color name="colorSurfaceInverse_53">#CAC4C8</color>
+    <color name="colorPrimaryInverse_53">#5D3281</color>
+
+
+    <!--    Сolor 54 Hue 318-->
+    <color name="colorOriginal_54">#7c4997</color>
+
+
+    <color name="colorPrimary_54">#E6B2FE</color>
+    <color name="colorOnPrimary_54">#4A1765</color>
+    <color name="colorPrimaryContainer_54">#7C4996</color>
+    <color name="colorOnPrimaryContainer_54">#F5D8FE</color>
+
+    <color name="colorSecondary_54">#D2BFD7</color>
+    <color name="colorOnSecondary_54">#382C3E</color>
+    <color name="colorSecondaryContainer_54">#504255</color>
+    <color name="colorOnSecondaryContainer_54">#EFDBF3</color>
+
+    <color name="colorTertiary_54">#F4B6B6</color>
+    <color name="colorOnTertiary_54">#4C2526</color>
+    <color name="colorTertiaryContainer_54">#663B3B</color>
+    <color name="colorOnTertiaryContainer_54">#FED9D8</color>
+
+    <color name="colorSurface_54">#1D1B1E</color>
+    <color name="colorOnSurface_54">#E7DFE4</color>
+    <color name="colorSurfaceVariant_54">#352E36</color>
+    <color name="colorOnSurfaceVariant_54">#CDC2CD</color>
+    <color name="colorSurfaceContainer_54">#221e24</color>
+
+    <color name="colorOutline_54">#968D97</color>
+
+    <color name="colorOnSurfaceInverse_54">#332F33</color>
+    <color name="colorSurfaceInverse_54">#CAC4C8</color>
+    <color name="colorPrimaryInverse_54">#62307D</color>
+
+
+    <!--    Сolor 55 Hue 324-->
+    <color name="colorOriginal_55">#824791</color>
+
+
+    <color name="colorPrimary_55">#F1AEFE</color>
+    <color name="colorOnPrimary_55">#4E155F</color>
+    <color name="colorPrimaryContainer_55">#814790</color>
+    <color name="colorOnPrimaryContainer_55">#FBD6FE</color>
+
+    <color name="colorSecondary_55">#D5BFD5</color>
+    <color name="colorOnSecondary_55">#3A2B3D</color>
+    <color name="colorSecondaryContainer_55">#524154</color>
+    <color name="colorOnSecondaryContainer_55">#F2DAF1</color>
+
+    <color name="colorTertiary_55">#F4B6B0</color>
+    <color name="colorOnTertiary_55">#4C2522</color>
+    <color name="colorTertiaryContainer_55">#673B37</color>
+    <color name="colorOnTertiaryContainer_55">#FED9D5</color>
+
+    <color name="colorSurface_55">#1E1B1E</color>
+    <color name="colorOnSurface_55">#E7DFE4</color>
+    <color name="colorSurfaceVariant_55">#352E36</color>
+    <color name="colorOnSurfaceVariant_55">#CEC2CC</color>
+    <color name="colorSurfaceContainer_55">#231e23</color>
+
+    <color name="colorOutline_55">#978D96</color>
+
+    <color name="colorOnSurfaceInverse_55">#332F33</color>
+    <color name="colorSurfaceInverse_55">#CBC3C8</color>
+    <color name="colorPrimaryInverse_55">#682E77</color>
+
+
+    <!--    Сolor 56 Hue 330-->
+    <color name="colorOriginal_56">#87468a</color>
+
+
+    <color name="colorPrimary_56">#F9ABF8</color>
+    <color name="colorOnPrimary_56">#521458</color>
+    <color name="colorPrimaryContainer_56">#864589</color>
+    <color name="colorOnPrimaryContainer_56">#FED5FA</color>
+
+    <color name="colorSecondary_56">#D7BED3</color>
+    <color name="colorOnSecondary_56">#3C2B3B</color>
+    <color name="colorSecondaryContainer_56">#534152</color>
+    <color name="colorOnSecondaryContainer_56">#F4DAEF</color>
+
+    <color name="colorTertiary_56">#F5B7AA</color>
+    <color name="colorOnTertiary_56">#4C261E</color>
+    <color name="colorTertiaryContainer_56">#673B32</color>
+    <color name="colorOnTertiaryContainer_56">#FED9D2</color>
+
+    <color name="colorSurface_56">#1E1A1D</color>
+    <color name="colorOnSurface_56">#E8DFE3</color>
+    <color name="colorSurfaceVariant_56">#362E35</color>
+    <color name="colorOnSurfaceVariant_56">#CFC2CB</color>
+    <color name="colorSurfaceContainer_56">#241e23</color>
+
+    <color name="colorOutline_56">#988C95</color>
+
+    <color name="colorOnSurfaceInverse_56">#342F32</color>
+    <color name="colorSurfaceInverse_56">#CBC3C7</color>
+    <color name="colorPrimaryInverse_56">#6C2D70</color>
+
+
+    <!--    Сolor 57 Hue 336-->
+    <color name="colorOriginal_57">#8b4483</color>
+
+
+    <color name="colorPrimary_57">#FEAAF0</color>
+    <color name="colorOnPrimary_57">#551351</color>
+    <color name="colorPrimaryContainer_57">#8A4482</color>
+    <color name="colorOnPrimaryContainer_57">#FED6F3</color>
+
+    <color name="colorSecondary_57">#D9BED1</color>
+    <color name="colorOnSecondary_57">#3D2B39</color>
+    <color name="colorSecondaryContainer_57">#554150</color>
+    <color name="colorOnSecondaryContainer_57">#F7D9ED</color>
+
+    <color name="colorTertiary_57">#F4B7A5</color>
+    <color name="colorOnTertiary_57">#4C261A</color>
+    <color name="colorTertiaryContainer_57">#663C2E</color>
+    <color name="colorOnTertiaryContainer_57">#FEDACF</color>
+
+    <color name="colorSurface_57">#1F1A1D</color>
+    <color name="colorOnSurface_57">#E8DFE3</color>
+    <color name="colorSurfaceVariant_57">#372E34</color>
+    <color name="colorOnSurfaceVariant_57">#D0C1CA</color>
+    <color name="colorSurfaceContainer_57">#241e22</color>
+
+    <color name="colorOutline_57">#998C94</color>
+
+    <color name="colorOnSurfaceInverse_57">#342F32</color>
+    <color name="colorSurfaceInverse_57">#CCC3C7</color>
+    <color name="colorPrimaryInverse_57">#702C6A</color>
+
+
+    <!--    Сolor 58 Hue 342-->
+    <color name="colorOriginal_58">#90437b</color>
+
+
+    <color name="colorPrimary_58">#FEACE2</color>
+    <color name="colorOnPrimary_58">#581149</color>
+    <color name="colorPrimaryContainer_58">#8F427B</color>
+    <color name="colorOnPrimaryContainer_58">#FED7ED</color>
+
+    <color name="colorSecondary_58">#DCBDCE</color>
+    <color name="colorOnSecondary_58">#3F2A37</color>
+    <color name="colorSecondaryContainer_58">#57404E</color>
+    <color name="colorOnSecondaryContainer_58">#F9D9EA</color>
+
+    <color name="colorTertiary_58">#F3B89F</color>
+    <color name="colorOnTertiary_58">#4B2716</color>
+    <color name="colorTertiaryContainer_58">#653C2A</color>
+    <color name="colorOnTertiaryContainer_58">#FEDACC</color>
+
+    <color name="colorSurface_58">#1F1A1D</color>
+    <color name="colorOnSurface_58">#E9DFE2</color>
+    <color name="colorSurfaceVariant_58">#382D33</color>
+    <color name="colorOnSurfaceVariant_58">#D2C1C9</color>
+    <color name="colorSurfaceContainer_58">#251e22</color>
+
+    <color name="colorOutline_58">#9A8C93</color>
+
+    <color name="colorOnSurfaceInverse_58">#342F31</color>
+    <color name="colorSurfaceInverse_58">#CDC3C6</color>
+    <color name="colorPrimaryInverse_58">#742A61</color>
+
+
+    <!--    Сolor 59 Hue 348-->
+    <color name="colorOriginal_59">#934273</color>
+
+
+    <color name="colorPrimary_59">#FEADD8</color>
+    <color name="colorOnPrimary_59">#5A1142</color>
+    <color name="colorPrimaryContainer_59">#924173</color>
+    <color name="colorOnPrimaryContainer_59">#FED7E9</color>
+
+    <color name="colorSecondary_59">#DEBDCC</color>
+    <color name="colorOnSecondary_59">#402A35</color>
+    <color name="colorSecondaryContainer_59">#58404C</color>
+    <color name="colorOnSecondaryContainer_59">#FBD8E8</color>
+
+    <color name="colorTertiary_59">#F2B99B</color>
+    <color name="colorOnTertiary_59">#4A2712</color>
+    <color name="colorTertiaryContainer_59">#653D26</color>
+    <color name="colorOnTertiaryContainer_59">#FEDAC9</color>
+
+    <color name="colorSurface_59">#1F1A1C</color>
+    <color name="colorOnSurface_59">#EADFE1</color>
+    <color name="colorSurfaceVariant_59">#382D32</color>
+    <color name="colorOnSurfaceVariant_59">#D2C1C8</color>
+    <color name="colorSurfaceContainer_59">#251e21</color>
+
+    <color name="colorOutline_59">#9B8C92</color>
+
+    <color name="colorOnSurfaceInverse_59">#352F31</color>
+    <color name="colorSurfaceInverse_59">#CDC3C6</color>
+    <color name="colorPrimaryInverse_59">#762A5A</color>
+
+
+    <!--    Сolor 60 Hue 354-->
+    <color name="colorOriginal_60">#96416a</color>
+
+
+    <color name="colorPrimary_60">#FEAFCF</color>
+    <color name="colorOnPrimary_60">#5C113A</color>
+    <color name="colorPrimaryContainer_60">#95416A</color>
+    <color name="colorOnPrimaryContainer_60">#FED7E5</color>
+
+    <color name="colorSecondary_60">#E0BCC8</color>
+    <color name="colorOnSecondary_60">#412A33</color>
+    <color name="colorSecondaryContainer_60">#593F4A</color>
+    <color name="colorOnSecondaryContainer_60">#FDD8E4</color>
+
+    <color name="colorTertiary_60">#F0BA96</color>
+    <color name="colorOnTertiary_60">#49280F</color>
+    <color name="colorTertiaryContainer_60">#633E23</color>
+    <color name="colorOnTertiaryContainer_60">#FEDBC5</color>
+
+    <color name="colorSurface_60">#1F1A1C</color>
+    <color name="colorOnSurface_60">#EADFE1</color>
+    <color name="colorSurfaceVariant_60">#392D31</color>
+    <color name="colorOnSurfaceVariant_60">#D3C1C6</color>
+    <color name="colorSurfaceContainer_60">#261d20</color>
+
+    <color name="colorOutline_60">#9C8B90</color>
+
+    <color name="colorOnSurfaceInverse_60">#352F31</color>
+    <color name="colorSurfaceInverse_60">#CDC3C5</color>
+    <color name="colorPrimaryInverse_60">#792952</color>
+</resources>
