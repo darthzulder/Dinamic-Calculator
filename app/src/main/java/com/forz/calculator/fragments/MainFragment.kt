@@ -121,7 +121,6 @@ class MainFragment : Fragment(),
         }
 
         canvasViewModel.nodes.onEach { nodes ->
-            val b = _binding ?: return@onEach
             renderNodes(nodes)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -140,13 +139,10 @@ class MainFragment : Fragment(),
                     canvasViewModel.updateNodePosition(nodeId, newX, newY)
                     true
                 }
-
                 else -> true
             }
         }
     }
-
-
 
     private fun renderNodes(nodes: List<CalculationNode>) {
         val b = _binding ?: return
@@ -164,26 +160,23 @@ class MainFragment : Fragment(),
 
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     private fun createNodeView(node: CalculationNode): View {
-        val card = CardView(requireContext()).apply {
-            layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            x = node.positionX
-            y = node.positionY
-            radius = 24f
-            elevation = 8f
-            setContentPadding(32, 16, 32, 16)
-            setCardBackgroundColor(ContextCompat.getColor(context, R.color.md_theme_light_secondaryContainer))
+        val inflater = LayoutInflater.from(requireContext())
+
+        val b = _binding ?: return View(requireContext())
+        val nodeView = inflater.inflate(R.layout.node_view, binding.canvasContainer, false)
+
+        nodeView.x = node.positionX
+        nodeView.y = node.positionY
+
+        val textView = nodeView.findViewById<TextView>(R.id.node_text)
+        if (textView != null) {
+            textView.text = "${node.expression} = ${node.result}"
+        } else {
+            // Log para debugging
+            android.util.Log.e("MainFragment", "TextView with id 'node_text' not found in node_view.xml")
         }
 
-        val textView = TextView(requireContext()).apply {
-            text = "${node.expression}\n= ${node.result}"
-            textSize = 20f
-            textAlignment = View.TEXT_ALIGNMENT_CENTER
-        }
-
-        card.addView(textView)
-
-        card.setOnLongClickListener { view ->
-            val b = _binding ?: return@setOnLongClickListener false
+        nodeView.setOnLongClickListener { view ->
             val item = ClipData.Item(node.id)
             val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
             val clipData = ClipData(node.id, mimeTypes, item)
@@ -199,9 +192,9 @@ class MainFragment : Fragment(),
             true
         }
 
-        card.setOnDragListener(nodeDragListener)
+        nodeView.setOnDragListener(nodeDragListener)
 
-        return card
+        return nodeView
     }
 
     private val nodeDragListener = View.OnDragListener { view, event ->
@@ -252,8 +245,9 @@ class MainFragment : Fragment(),
 
     override fun onStart() {
         super.onStart()
-        binding.expressionEditText.setText(expression)
-        binding.expressionEditText.setSelection(cursorPositionStart)
+        val b = _binding ?: return
+        b.expressionEditText.setText(expression)
+        b.expressionEditText.setSelection(cursorPositionStart)
     }
 
     override fun onStop() {
