@@ -1,148 +1,88 @@
 package com.forz.calculator.fragments
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipDescription
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import android.widget.PopupMenu
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.forz.calculator.AboutActivity
 import com.forz.calculator.App
-import com.forz.calculator.utils.HapticAndSound
-import com.forz.calculator.utils.InsertInExpression
 import com.forz.calculator.MainActivity
 import com.forz.calculator.OnMainActivityListener
 import com.forz.calculator.R
-import com.forz.calculator.databinding.FragmentMainBinding
-import com.forz.calculator.fragments.Fragments.CALCULATOR_FRAGMENT
-import com.forz.calculator.fragments.Fragments.HISTORY_FRAGMENT
-import com.forz.calculator.fragments.Fragments.UNIT_CONVERTER_FRAGMENT
-import com.forz.calculator.fragments.Fragments.currentItemMainPager
-import com.forz.calculator.fragments.adapters.ViewPageAdapter
-import com.forz.calculator.history.HistoryService
-import com.forz.calculator.settings.SettingsActivity
-import com.forz.calculator.settings.Config
 import com.forz.calculator.calculator.CalculatorViewModel
+import com.forz.calculator.calculator.Evaluator
+import com.forz.calculator.canvas.CalculationNode
+import com.forz.calculator.canvas.CanvasViewModel
+import com.forz.calculator.databinding.FragmentMainBinding
 import com.forz.calculator.expression.ExpressionViewModel
 import com.forz.calculator.expression.ExpressionViewModel.cursorPositionStart
 import com.forz.calculator.expression.ExpressionViewModel.expression
 import com.forz.calculator.expression.ExpressionViewModel.oldExpression
-import com.google.android.material.tabs.TabLayoutMediator
-import com.forz.calculator.calculator.Evaluator
-import com.forz.calculator.calculator.TrigonometricFunction
-import com.forz.calculator.settings.Config.autoSavingResults
-import kotlin.properties.Delegates.notNull
+import com.forz.calculator.history.HistoryService
+import com.forz.calculator.settings.Config
+import com.forz.calculator.settings.SettingsActivity
+import com.forz.calculator.utils.HapticAndSound
+import com.forz.calculator.utils.InsertInExpression
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import java.math.BigDecimal
 
 @Suppress("DEPRECATION")
 class MainFragment : Fragment(),
     OnMainActivityListener,
-    CalculatorFragment.OnButtonClickListener,
-    HistoryFragment.OnButtonClickListener,
-    UnitConverterFragment.OnButtonClickListener
-{
+    CalculatorFragment.OnButtonClickListener {
 
-    private var binding: FragmentMainBinding by notNull()
-    private var hapticAndSound: HapticAndSound by notNull()
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
+
+    private val hapticAndSound: HapticAndSound by lazy { HapticAndSound(requireContext(), emptyArray()) }
+    private val canvasViewModel: CanvasViewModel by viewModels()
 
     private val historyService: HistoryService
         get() = (requireContext().applicationContext as App).historyService
 
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val views: Array<View> = arrayOf(
-            binding.degreeTitleText
-        )
-        hapticAndSound = HapticAndSound(requireContext(), views)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.expressionEditText.showSoftInputOnFocus = false
         binding.expressionEditText.requestFocus()
 
+        setupToolbar()
+        setupExpressionInput()
+        observeViewModels()
+        setupCanvasDragListener()
+    }
 
-        val adapter = ViewPageAdapter(childFragmentManager, lifecycle)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
-        adapter.addFragment(UnitConverterFragment())
-        adapter.addFragment(CalculatorFragment())
-        adapter.addFragment(HistoryFragment())
-
-        binding.pager.adapter = adapter
-        binding.pager.setCurrentItem(currentItemMainPager, false)
-        binding.pager.offscreenPageLimit = 3
-
-        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
-            tab.setIcon(
-                when (position) {
-                    UNIT_CONVERTER_FRAGMENT -> R.drawable.baseline_autorenew
-                    CALCULATOR_FRAGMENT -> R.drawable.baseline_calculate
-                    HISTORY_FRAGMENT -> R.drawable.baseline_history
-                    else -> throw IllegalArgumentException("Invalid position")
-                }
-            )
-        }.attach()
-
-        binding.pager.apply {
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        }
-
-        binding.toolbar.let { toolbar ->
-            if (currentItemMainPager == HISTORY_FRAGMENT) {
-                toolbar.menu.clear()
-                toolbar.inflateMenu(R.menu.history_options_menu)
-            } else {
-                toolbar.menu.clear()
-                toolbar.inflateMenu(R.menu.options_menu)
-            }
-        }
-
-
-        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                currentItemMainPager = position
-
-                if (currentItemMainPager == HISTORY_FRAGMENT){
-                    if (Evaluator.isCalculated && autoSavingResults){
-                        val result = binding.resultText.text.toString()
-
-                        val expression: String = if (ExpressionViewModel.isSelected.value == true){
-                            binding.expressionEditText.text
-                                .toString()
-                                .substring(
-                                    binding.expressionEditText.selectionStart, binding.expressionEditText.selectionEnd
-                                )
-                        } else {
-                            binding.expressionEditText.text.toString()
-                        }
-
-                        historyService.addHistoryData(expression, result)
-                    }
-                }
-
-                binding.toolbar.let { toolbar ->
-                    if (currentItemMainPager == HISTORY_FRAGMENT) {
-                        toolbar.menu.clear()
-                        toolbar.inflateMenu(R.menu.history_options_menu)
-                    } else {
-                        toolbar.menu.clear()
-                        toolbar.inflateMenu(R.menu.options_menu)
-                    }
-                }
-            }
-        })
-
+    private fun setupToolbar() {
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            when(menuItem.itemId) {
+            when (menuItem.itemId) {
                 R.id.settings -> {
                     val intent = Intent(requireActivity(), SettingsActivity::class.java)
                     startActivityForResult(intent, MainActivity.REQUEST_CODE_CHILD)
@@ -153,193 +93,256 @@ class MainFragment : Fragment(),
                     startActivity(intent)
                     true
                 }
-                R.id.clearHistory -> {
-                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                    builder
-                        .setMessage(getString(R.string.clear_history_title))
-                        .setPositiveButton(getString(R.string.clear_history_clear)) { _, _ ->
-                            historyService.clearHistoryData()
-                            binding.pager.setCurrentItem(CALCULATOR_FRAGMENT, true)
-                        }.setNegativeButton(getString(R.string.clear_history_dismiss)) { _, _ ->
-                        }
-
-                    val dialog: AlertDialog = builder.create()
-                    dialog.show()
-                    true
-                }
                 else -> false
             }
         }
+    }
 
-        binding.expressionEditText.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-            if (!hasFocus) {
-                view.requestFocus()
-            }
-        }
-
+    private fun setupExpressionInput() {
         binding.expressionEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val b = _binding ?: return
+                Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
             }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-            override fun afterTextChanged(p0: Editable?) {
-                Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
-                binding.expressionEditText.autoSizeTextExpressionEditText(binding.expressionTextView)
+        })
+    }
 
-                if (TrigonometricFunction.entries.any { binding.expressionEditText.text!!.contains(it.text) }){
-                    binding.degreeTitleText.visibility = ImageView.VISIBLE
-                } else{
-                    binding.degreeTitleText.visibility = ImageView.GONE
+    private fun observeViewModels() {
+        ExpressionViewModel.isSelected.observe(viewLifecycleOwner) { isSelected ->
+            val b = _binding ?: return@observe
+            Evaluator.setResultTextView(b.expressionEditText, b.resultText, isSelected, requireContext())
+        }
+
+        CalculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { isDegreeModActivated ->
+            val b = _binding ?: return@observe
+            Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+        }
+
+        canvasViewModel.nodes.onEach { nodes ->
+            val b = _binding ?: return@onEach
+            renderNodes(nodes)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun setupCanvasDragListener() {
+        binding.canvasContainer?.setOnDragListener { _, event ->
+            val b = _binding ?: return@setOnDragListener false
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                DragEvent.ACTION_DROP -> {
+                    val item = event.clipData.getItemAt(0)
+                    val nodeId = item.text.toString()
+                    val view = b.canvasContainer?.findViewWithTag<View>(nodeId)
+                    val newX = event.x - (view?.width ?: 0) / 2
+                    val newY = event.y - (view?.height ?: 0) / 2
+                    canvasViewModel.updateNodePosition(nodeId, newX, newY)
+                    true
                 }
-            }
-        })
 
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                binding.expressionEditText.autoSizeTextExpressionEditText(binding.expressionTextView)
-                binding.root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                else -> true
             }
-        })
+        }
+    }
 
-        ExpressionViewModel.isSelected.observe(requireActivity()){ isSelected ->
-            Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, isSelected, requireContext())
+
+
+    private fun renderNodes(nodes: List<CalculationNode>) {
+        val b = _binding ?: return
+        val draggedNodeId = (b.canvasContainer?.tag as? ClipData)?.getItemAt(0)?.text?.toString()
+        b.canvasContainer?.removeAllViews()
+        nodes.forEach { node ->
+            val nodeView = createNodeView(node)
+            nodeView.tag = node.id
+            if (node.id == draggedNodeId) {
+                nodeView.visibility = View.INVISIBLE
+            }
+            b.canvasContainer?.addView(nodeView)
+        }
+    }
+
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
+    private fun createNodeView(node: CalculationNode): View {
+        val card = CardView(requireContext()).apply {
+            layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            x = node.positionX
+            y = node.positionY
+            radius = 24f
+            elevation = 8f
+            setContentPadding(32, 16, 32, 16)
+            setCardBackgroundColor(ContextCompat.getColor(context, R.color.md_theme_light_secondaryContainer))
         }
 
-        binding.degreeTitleText.setOnClickListener {
-            CalculatorViewModel.updateDegreeModActivated()
-            hapticAndSound.vibrateEffectClick()
+        val textView = TextView(requireContext()).apply {
+            text = "${node.expression}\n= ${node.result}"
+            textSize = 20f
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
         }
 
-        CalculatorViewModel.isDegreeModActivated.observe(requireActivity()) { isDegreeModActivated ->
-            if (isDegreeModActivated) {
-                binding.degreeTitleText.text = getString(R.string.deg)
+        card.addView(textView)
+
+        card.setOnLongClickListener { view ->
+            val b = _binding ?: return@setOnLongClickListener false
+            val item = ClipData.Item(node.id)
+            val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
+            val clipData = ClipData(node.id, mimeTypes, item)
+            b.canvasContainer?.tag = clipData
+
+            val dragShadow = View.DragShadowBuilder(view)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                view.startDragAndDrop(clipData, dragShadow, view, 0)
             } else {
-                binding.degreeTitleText.text = getString(R.string.rad)
+                view.startDrag(clipData, dragShadow, view, 0)
             }
-
-            Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+            view.visibility = View.INVISIBLE
+            true
         }
 
-        return binding.root
+        card.setOnDragListener(nodeDragListener)
+
+        return card
+    }
+
+    private val nodeDragListener = View.OnDragListener { view, event ->
+        val b = _binding ?: return@OnDragListener false
+        val targetCard = view as CardView
+        when (event.action) {
+            DragEvent.ACTION_DRAG_STARTED -> true
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_tertiaryContainer))
+                true
+            }
+            DragEvent.ACTION_DRAG_EXITED -> {
+                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
+                true
+            }
+            DragEvent.ACTION_DROP -> {
+                val sourceNodeId = event.clipData.getItemAt(0).text.toString()
+                val targetNodeId = targetCard.tag.toString()
+
+                if (sourceNodeId != targetNodeId) {
+                    canvasViewModel.setPendingCombination(sourceNodeId, targetNodeId)
+                    showOperationsMenu(targetCard)
+                }
+                true
+            }
+            DragEvent.ACTION_DRAG_ENDED -> {
+                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
+                b.canvasContainer?.tag = null
+                (event.localState as? View)?.visibility = View.VISIBLE
+                true
+            }
+            else -> true
+        }
+    }
+
+    private fun showOperationsMenu(anchorView: View) {
+        val popup = PopupMenu(requireContext(), anchorView)
+        popup.menu.add("+")
+        popup.menu.add("-")
+        popup.menu.add("*")
+        popup.menu.add("/")
+        popup.setOnMenuItemClickListener { item ->
+            canvasViewModel.combineNodes(item.title.toString())
+            true
+        }
+        popup.show()
     }
 
     override fun onStart() {
         super.onStart()
-
-        hapticAndSound.setHapticFeedback()
-        hapticAndSound.setSoundEffects()
-        binding.pager.isUserInputEnabled = Config.swipeMain
         binding.expressionEditText.setText(expression)
         binding.expressionEditText.setSelection(cursorPositionStart)
     }
 
     override fun onStop() {
         super.onStop()
-
-        expression = binding.expressionEditText.text.toString()
-        cursorPositionStart = binding.expressionEditText.selectionStart
-
-        if (Evaluator.isCalculated && autoSavingResults){
-            val result = binding.resultText.text.toString()
-
-            val expression: String = if (ExpressionViewModel.isSelected.value == true){
-                binding.expressionEditText.text
-                    .toString()
-                    .substring(
-                        binding.expressionEditText.selectionStart, binding.expressionEditText.selectionEnd
-                    )
-            } else {
-                binding.expressionEditText.text.toString()
-            }
-
-            historyService.addHistoryData(expression, result)
-        }
+        val b = _binding ?: return
+        expression = b.expressionEditText.text.toString()
+        cursorPositionStart = b.expressionEditText.selectionStart
     }
 
     override fun onBackPressed(): Boolean {
-        return if (currentItemMainPager != CALCULATOR_FRAGMENT) {
-            binding.pager.setCurrentItem(CALCULATOR_FRAGMENT, true)
-            true
-        } else {
-            false
-        }
+        return false
     }
 
     override fun onDigitButtonClick(digit: String) {
-        InsertInExpression.enterDigit(digit, binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterDigit(digit, b.expressionEditText)
     }
 
     override fun onDotButtonClick() {
-        InsertInExpression.enterDot(binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterDot(b.expressionEditText)
     }
 
     override fun onBackspaceButtonClick() {
-        InsertInExpression.enterBackspace(binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterBackspace(b.expressionEditText)
     }
 
     override fun onClearExpressionButtonClick() {
-        InsertInExpression.clearExpression(binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.clearExpression(b.expressionEditText)
     }
 
     override fun onOperatorButtonClick(operator: String) {
-        InsertInExpression.enterOperator(operator, binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterOperator(operator, b.expressionEditText)
     }
 
     override fun onScienceFunctionButtonClick(scienceFunction: String) {
-        InsertInExpression.enterScienceFunction(scienceFunction, binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterScienceFunction(scienceFunction, b.expressionEditText)
     }
 
     override fun onAdditionalOperatorButtonClick(operator: String) {
-        InsertInExpression.enterAdditionalOperator(operator, binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterAdditionalOperator(operator, b.expressionEditText)
     }
 
     override fun onConstantButtonClick(constant: String) {
-        InsertInExpression.enterConstant(constant, binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterConstant(constant, b.expressionEditText)
     }
 
     override fun onBracketButtonClick() {
-        InsertInExpression.enterBracket(binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterBracket(b.expressionEditText)
     }
 
     override fun onDoubleBracketsButtonClick() {
-        InsertInExpression.enterDoubleBrackets(binding.expressionEditText)
+        val b = _binding ?: return
+        InsertInExpression.enterDoubleBrackets(b.expressionEditText)
     }
 
     override fun onEqualsButtonClick() {
-        if (Evaluator.isCalculated){
-            val result = binding.resultText.text.toString()
+        val b = _binding ?: return
+        if (Evaluator.isCalculated) {
+            val rawResultText = b.resultText.text.toString()
+            val expressionText = b.expressionEditText.text.toString()
+            val parsableResult = rawResultText.replace(Config.groupingSeparatorSymbol, "").replace(Config.decimalSeparatorSymbol, ".")
 
-            val expression: String = if (ExpressionViewModel.isSelected.value == true){
-                binding.expressionEditText.text
-                    .toString()
-                    .substring(
-                        binding.expressionEditText.selectionStart, binding.expressionEditText.selectionEnd
-                    )
-            } else {
-                binding.expressionEditText.text.toString()
+            try {
+                val resultValue = BigDecimal(parsableResult)
+                canvasViewModel.addNode(expressionText, resultValue)
+            } catch (e: NumberFormatException) {
+                // Node not created if result is not a valid number
             }
 
-            oldExpression = expression
-            InsertInExpression.setExpression(result, binding.expressionEditText)
-            historyService.addHistoryData(expression, result)
+            oldExpression = expressionText
+            InsertInExpression.setExpression(rawResultText, b.expressionEditText)
+            if (Config.autoSavingResults && !rawResultText.contains("Error")) {
+                historyService.addHistoryData(expressionText, rawResultText)
+            }
         }
     }
 
     override fun onEqualsButtonLongClick() {
-        if (oldExpression.isNotEmpty()){
-            InsertInExpression.setExpression(oldExpression, binding.expressionEditText)
+        val b = _binding ?: return
+        if (oldExpression.isNotEmpty()) {
+            InsertInExpression.setExpression(oldExpression, b.expressionEditText)
         }
-    }
-
-    override fun onExpressionTextClick(expression: String) {
-        InsertInExpression.insertHistoryExpression(expression, binding.expressionEditText)
-    }
-
-    override fun onResultTextClick(result: String) {
-        InsertInExpression.insertHistoryResult(result, binding.expressionEditText)
-    }
-
-    override fun onUnitResultTextClick(result: String) {
-        InsertInExpression.setExpression(result, binding.expressionEditText)
     }
 }

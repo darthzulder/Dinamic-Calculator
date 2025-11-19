@@ -338,4 +338,19 @@
     <string name="unit_gallon_us">Gallon (US)</string>
     <string name="unit_gallon_uk">Gallon (UK)</string>
     <string name="unit_barrel">Barrel</string>
+        <!-- Other existing strings... -->
+
+    <string name="description_donate">Default text for donate</string>
+
+    <string name="description_rate">Default text for rate</string>
+    <string name="description_translate">Default text for translate</string>
+    <string name="help_selection_text">Default help selection text</string>
+    <string name="love_text">Default love text</string>
+    <string name="support_selection_text">Default support selection text</string>
+    <string name="tap_me">Default tap me text</string>
+    <string name="title_rate">Rate app</string>
+    <string name="title_translate">Translate</string>
+    <string name="title_donate">Donate</string>
+    <string name="title_email">Email</string>
+    <string name="description_email">Send me an email</string>
 </resources>

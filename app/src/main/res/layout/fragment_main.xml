@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    android:importantForAccessibility="noHideDescendants"
-    tools:context=".fragments.MainFragment"
-    tools:ignore="RtlHardcoded">
+    tools:context=".fragments.MainFragment">
 
+    <!-- Top Display Area (remains the same) -->
     <View
         android:id="@+id/background_expression"
         android:background="@drawable/background_expression"
@@ -17,87 +16,72 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/pagerGuideline"/>
+        app:layout_constraintBottom_toTopOf="@id/guideline_display_bottom"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/appBarConstraintLayout"
-        style="@style/AppBarConstraintLayoutCalculator"
-        app:layout_constraintTop_toTopOf="@id/background_expression"
-        app:layout_constraintLeft_toLeftOf="@id/background_expression"
-        app:layout_constraintRight_toRightOf="@id/background_expression">
-
-        <TextView
-            android:id="@+id/degreeTitleText"
-            style="@style/DegreeTitleText"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            style="@style/NavigationTabs"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Toolbar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/options_menu"/>
 
     <TextView
         android:id="@+id/resultText"
         style="@style/Expression.Result"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/background_expression"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topResultGuideline" />
+        app:layout_constraintTop_toBottomOf="@id/guideline_display_top" />
 
     <com.forz.calculator.expression.ExpressionEditText
         android:id="@+id/expressionEditText"
         style="@style/Expression"
-        app:layout_constraintBottom_toTopOf="@+id/resultText"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarConstraintLayout" />
-
-    <TextView
-        android:id="@+id/expressionTextView"
-        style="@style/Expression"
-        android:visibility="invisible"
-        android:maxLines="1"
-        app:layout_constraintBottom_toTopOf="@+id/resultText"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarConstraintLayout" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/topResultGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.245"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/pagerGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.33" />
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:overScrollMode="never"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@id/resultText"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pagerGuideline"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_display_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_display_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <!-- NEW: Interactive Canvas -->
+    <FrameLayout
+        android:id="@+id/canvas_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline_display_bottom"
+        app:layout_constraintBottom_toTopOf="@id/keyboard_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- NEW: Keyboard Container -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/keyboard_container"
+        android:name="com.forz.calculator.fragments.CalculatorFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout="@layout/fragment_calculator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

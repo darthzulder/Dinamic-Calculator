@@ -15,7 +15,6 @@ import com.forz.calculator.settings.Config.numberPrecision
 import org.javia.arity.Symbols
 import java.math.BigDecimal
 
-
 object Evaluator: ViewModel() {
     var isCalculated = false
 
@@ -23,6 +22,24 @@ object Evaluator: ViewModel() {
     val converterResult: LiveData<Double?> get() = _converterResult
 
     private val symbols: Symbols = Symbols()
+
+    // NEW Public method for calculation without Context
+    fun evaluate(expression: String): BigDecimal {
+        val cleanExpression = NumberFormatter.clearExpression(expression, groupingSeparatorSymbol, decimalSeparatorSymbol)
+        if (cleanExpression.isEmpty()) {
+            throw IllegalArgumentException("Expression is empty")
+        }
+
+        try {
+            val result: Double = symbols.eval(cleanExpression)
+            if (java.lang.Double.isNaN(result) || result.isInfinite()) {
+                throw ArithmeticException("Invalid result: NaN or Infinity")
+            }
+            return BigDecimal.valueOf(result)
+        } catch (e: org.javia.arity.SyntaxException) {
+            throw IllegalArgumentException("Invalid expression syntax", e)
+        }
+    }
 
     private fun evaluate(expr: String, context: Context): String {
         var exp = expr
@@ -57,7 +74,7 @@ object Evaluator: ViewModel() {
             }else{
                 _converterResult.value = result
                 isCalculated = true
-                return NumberFormatter.formatResult(BigDecimal(result), numberPrecision, maxScientificNotationDigits, groupingSeparatorSymbol, decimalSeparatorSymbol)
+                return NumberFormatter.formatResult(BigDecimal.valueOf(result), numberPrecision, maxScientificNotationDigits, groupingSeparatorSymbol, decimalSeparatorSymbol)
             }
         } catch (e: Exception) {
             _converterResult.value = null
@@ -67,32 +84,19 @@ object Evaluator: ViewModel() {
     }
 
     fun getResult(expressionEditText: ExpressionEditText, isSelected: Boolean, context: Context): String{
-        if (isSelected){
-            val result = evaluate(
+        return if (isSelected){
+            evaluate(
                 expressionEditText.text
                     .toString()
                     .substring(
                         expressionEditText.selectionStart, expressionEditText.selectionEnd),
                 context)
-            return result
         }else{
-            val result = evaluate(expressionEditText.text.toString(), context)
-            return result
+            evaluate(expressionEditText.text.toString(), context)
         }
     }
 
     fun setResultTextView(expressionEditText: ExpressionEditText, resultTextView: TextView, isSelected: Boolean, context: Context){
-        if (isSelected){
-            val result = evaluate(
-                expressionEditText.text
-                    .toString()
-                    .substring(
-                        expressionEditText.selectionStart, expressionEditText.selectionEnd),
-                context)
-            resultTextView.text = result
-        }else{
-            val result = evaluate(expressionEditText.text.toString(), context)
-            resultTextView.text = result
-        }
+        resultTextView.text = getResult(expressionEditText, isSelected, context)
     }
 }
