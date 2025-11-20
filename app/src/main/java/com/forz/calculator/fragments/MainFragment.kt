@@ -129,14 +129,28 @@ class MainFragment : Fragment(),
         binding.canvasContainer?.setOnDragListener { _, event ->
             val b = _binding ?: return@setOnDragListener false
             when (event.action) {
-                DragEvent.ACTION_DRAG_STARTED -> event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    event.clipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ?: false
+                }
                 DragEvent.ACTION_DROP -> {
-                    val item = event.clipData.getItemAt(0)
-                    val nodeId = item.text.toString()
-                    val view = b.canvasContainer?.findViewWithTag<View>(nodeId)
-                    val newX = event.x - (view?.width ?: 0) / 2
-                    val newY = event.y - (view?.height ?: 0) / 2
-                    canvasViewModel.updateNodePosition(nodeId, newX, newY)
+                    val clipData = event.clipData ?: return@setOnDragListener false
+                    if (clipData.itemCount > 0) {
+                        val item = clipData.getItemAt(0)
+                        val nodeId = item.text?.toString() ?: return@setOnDragListener false
+                        val view = b.canvasContainer?.findViewWithTag<View>(nodeId)
+                        val newX = event.x - (view?.width ?: 0) / 2
+                        val newY = event.y - (view?.height ?: 0) / 2
+                        canvasViewModel.updateNodePosition(nodeId, newX, newY)
+                        // Limpiar el tag del contenedor después de soltar
+                        b.canvasContainer?.tag = null
+                    }
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    // Limpiar el tag del contenedor cuando termine el drag
+                    b.canvasContainer?.tag = null
+                    // Forzar re-renderizado para restaurar visibilidad
+                    canvasViewModel.nodes.value.let { renderNodes(it) }
                     true
                 }
                 else -> true
@@ -146,13 +160,17 @@ class MainFragment : Fragment(),
 
     private fun renderNodes(nodes: List<CalculationNode>) {
         val b = _binding ?: return
+        // Solo ocultar el nodo si realmente está siendo arrastrado (tag existe)
         val draggedNodeId = (b.canvasContainer?.tag as? ClipData)?.getItemAt(0)?.text?.toString()
         b.canvasContainer?.removeAllViews()
         nodes.forEach { node ->
             val nodeView = createNodeView(node)
             nodeView.tag = node.id
-            if (node.id == draggedNodeId) {
+            // Solo ocultar si el tag del contenedor indica que este nodo está siendo arrastrado
+            if (draggedNodeId != null && node.id == draggedNodeId) {
                 nodeView.visibility = View.INVISIBLE
+            } else {
+                nodeView.visibility = View.VISIBLE
             }
             b.canvasContainer?.addView(nodeView)
         }
@@ -199,7 +217,7 @@ class MainFragment : Fragment(),
 
     private val nodeDragListener = View.OnDragListener { view, event ->
         val b = _binding ?: return@OnDragListener false
-        val targetCard = view as CardView
+        val targetCard = view as? CardView ?: return@OnDragListener false
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> true
             DragEvent.ACTION_DRAG_ENTERED -> {
@@ -211,19 +229,26 @@ class MainFragment : Fragment(),
                 true
             }
             DragEvent.ACTION_DROP -> {
-                val sourceNodeId = event.clipData.getItemAt(0).text.toString()
-                val targetNodeId = targetCard.tag.toString()
-
-                if (sourceNodeId != targetNodeId) {
-                    canvasViewModel.setPendingCombination(sourceNodeId, targetNodeId)
-                    showOperationsMenu(targetCard)
+                val clipData = event.clipData
+                if (clipData != null && clipData.itemCount > 0) {
+                    val sourceNodeId = clipData.getItemAt(0).text?.toString()
+                    val targetNodeId = targetCard.tag?.toString()
+                    
+                    if (sourceNodeId != null && targetNodeId != null && sourceNodeId != targetNodeId) {
+                        canvasViewModel.setPendingCombination(sourceNodeId, targetNodeId)
+                        showOperationsMenu(targetCard)
+                    }
                 }
+                // Limpiar el tag del contenedor después de soltar
+                b.canvasContainer?.tag = null
                 true
             }
             DragEvent.ACTION_DRAG_ENDED -> {
                 targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
+                // Limpiar el tag del contenedor cuando termine el drag
                 b.canvasContainer?.tag = null
-                (event.localState as? View)?.visibility = View.VISIBLE
+                // Forzar re-renderizado para restaurar visibilidad de todos los nodos
+                canvasViewModel.nodes.value.let { renderNodes(it) }
                 true
             }
             else -> true
