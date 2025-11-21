@@ -56,6 +56,11 @@ class MainFragment : Fragment(),
     private val historyService: HistoryService
         get() = (requireContext().applicationContext as App).historyService
 
+    // Flag para rastrear si hay un drag en progreso
+    private var isDragInProgress = false
+    // Flag para indicar que se necesita un re-renderizado después del drag
+    private var needsRenderAfterDrag = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -121,7 +126,13 @@ class MainFragment : Fragment(),
         }
 
         canvasViewModel.nodes.onEach { nodes ->
-            renderNodes(nodes)
+            // No renderizar durante un drag activo para evitar ConcurrentModificationException
+            if (!isDragInProgress) {
+                renderNodes(nodes)
+            } else {
+                // Marcar que se necesita renderizar después del drag
+                needsRenderAfterDrag = true
+            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
@@ -130,6 +141,7 @@ class MainFragment : Fragment(),
             val b = _binding ?: return@setOnDragListener false
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
+                    isDragInProgress = true
                     event.clipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ?: false
                 }
                 DragEvent.ACTION_DROP -> {
@@ -149,8 +161,14 @@ class MainFragment : Fragment(),
                 DragEvent.ACTION_DRAG_ENDED -> {
                     // Limpiar el tag del contenedor cuando termine el drag
                     b.canvasContainer?.tag = null
-                    // Forzar re-renderizado para restaurar visibilidad
-                    canvasViewModel.nodes.value.let { renderNodes(it) }
+                    isDragInProgress = false
+                    // Diferir el re-renderizado hasta después de que termine el evento de drag
+                    b.canvasContainer?.post {
+                        if (needsRenderAfterDrag || _binding != null) {
+                            needsRenderAfterDrag = false
+                            canvasViewModel.nodes.value.let { renderNodes(it) }
+                        }
+                    }
                     true
                 }
                 else -> true
@@ -160,19 +178,72 @@ class MainFragment : Fragment(),
 
     private fun renderNodes(nodes: List<CalculationNode>) {
         val b = _binding ?: return
+        val container = b.canvasContainer ?: return
+        
+        // No modificar vistas durante un drag activo
+        if (isDragInProgress) {
+            needsRenderAfterDrag = true
+            return
+        }
+        
         // Solo ocultar el nodo si realmente está siendo arrastrado (tag existe)
-        val draggedNodeId = (b.canvasContainer?.tag as? ClipData)?.getItemAt(0)?.text?.toString()
-        b.canvasContainer?.removeAllViews()
-        nodes.forEach { node ->
-            val nodeView = createNodeView(node)
-            nodeView.tag = node.id
-            // Solo ocultar si el tag del contenedor indica que este nodo está siendo arrastrado
-            if (draggedNodeId != null && node.id == draggedNodeId) {
-                nodeView.visibility = View.INVISIBLE
-            } else {
-                nodeView.visibility = View.VISIBLE
+        val draggedNodeId = (container.tag as? ClipData)?.getItemAt(0)?.text?.toString()
+        
+        // Usar post() para asegurar que las modificaciones ocurran después de cualquier evento de drag
+        container.post {
+            if (isDragInProgress || _binding == null) {
+                needsRenderAfterDrag = true
+                return@post
             }
-            b.canvasContainer?.addView(nodeView)
+            
+            val currentBinding = _binding ?: return@post
+            val currentContainer = currentBinding.canvasContainer ?: return@post
+            
+            // Obtener vistas existentes para reutilizar cuando sea posible
+            val existingViews = mutableMapOf<String, View>()
+            for (i in 0 until currentContainer.childCount) {
+                val child = currentContainer.getChildAt(i)
+                val nodeId = child.tag?.toString()
+                if (nodeId != null) {
+                    existingViews[nodeId] = child
+                }
+            }
+            
+            // Remover vistas que ya no existen en la lista de nodos
+            val nodeIds = nodes.map { it.id }.toSet()
+            existingViews.forEach { (nodeId, view) ->
+                if (!nodeIds.contains(nodeId)) {
+                    currentContainer.removeView(view)
+                }
+            }
+            
+            // Agregar o actualizar vistas para cada nodo
+            nodes.forEach { node ->
+                val existingView = existingViews[node.id]
+                if (existingView != null) {
+                    // Actualizar vista existente
+                    existingView.x = node.positionX
+                    existingView.y = node.positionY
+                    val textView = existingView.findViewById<TextView>(R.id.node_text)
+                    textView?.text = "${node.expression} = ${node.result}"
+                    // Actualizar visibilidad
+                    if (draggedNodeId != null && node.id == draggedNodeId) {
+                        existingView.visibility = View.INVISIBLE
+                    } else {
+                        existingView.visibility = View.VISIBLE
+                    }
+                } else {
+                    // Crear nueva vista
+                    val nodeView = createNodeView(node)
+                    nodeView.tag = node.id
+                    if (draggedNodeId != null && node.id == draggedNodeId) {
+                        nodeView.visibility = View.INVISIBLE
+                    } else {
+                        nodeView.visibility = View.VISIBLE
+                    }
+                    currentContainer.addView(nodeView)
+                }
+            }
         }
     }
 
@@ -199,6 +270,9 @@ class MainFragment : Fragment(),
             val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
             val clipData = ClipData(node.id, mimeTypes, item)
             b.canvasContainer?.tag = clipData
+
+            // Marcar que un drag está a punto de comenzar
+            isDragInProgress = true
 
             val dragShadow = View.DragShadowBuilder(view)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -247,8 +321,14 @@ class MainFragment : Fragment(),
                 targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
                 // Limpiar el tag del contenedor cuando termine el drag
                 b.canvasContainer?.tag = null
-                // Forzar re-renderizado para restaurar visibilidad de todos los nodos
-                canvasViewModel.nodes.value.let { renderNodes(it) }
+                isDragInProgress = false
+                // Diferir el re-renderizado hasta después de que termine el evento de drag
+                targetCard.post {
+                    if (needsRenderAfterDrag || _binding != null) {
+                        needsRenderAfterDrag = false
+                        canvasViewModel.nodes.value.let { renderNodes(it) }
+                    }
+                }
                 true
             }
             else -> true
