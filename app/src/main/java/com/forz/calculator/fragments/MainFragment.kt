@@ -78,6 +78,7 @@ class MainFragment : Fragment(),
         setupExpressionInput()
         observeViewModels()
         setupCanvasDragListener()
+        setupKeyboardDragListener()
     }
 
     override fun onDestroyView() {
@@ -162,6 +163,8 @@ class MainFragment : Fragment(),
                     // Limpiar el tag del contenedor cuando termine el drag
                     b.canvasContainer?.tag = null
                     isDragInProgress = false
+                    // Ocultar el icono de basura
+                    b.trashIconOverlay?.visibility = View.GONE
                     // Diferir el re-renderizado hasta después de que termine el evento de drag
                     b.canvasContainer?.post {
                         if (needsRenderAfterDrag || _binding != null) {
@@ -169,6 +172,50 @@ class MainFragment : Fragment(),
                             canvasViewModel.nodes.value.let { renderNodes(it) }
                         }
                     }
+                    true
+                }
+                else -> true
+            }
+        }
+    }
+
+    private fun setupKeyboardDragListener() {
+        binding.keyboardContainer?.setOnDragListener { _, event ->
+            val b = _binding ?: return@setOnDragListener false
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    // Verificar si es un nodo el que se está arrastrando
+                    val isNodeDrag = event.clipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ?: false
+                    if (isNodeDrag) {
+                        // Mostrar el icono de basura
+                        b.trashIconOverlay?.visibility = View.VISIBLE
+                    }
+                    isNodeDrag
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    // El nodo entró al área del teclado
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    // El nodo salió del área del teclado (pero el drag sigue activo)
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    // Eliminar el nodo si se suelta sobre el teclado
+                    val clipData = event.clipData
+                    if (clipData != null && clipData.itemCount > 0) {
+                        val nodeId = clipData.getItemAt(0).text?.toString()
+                        if (nodeId != null) {
+                            canvasViewModel.deleteNode(nodeId)
+                        }
+                    }
+                    // Ocultar el icono de basura
+                    b.trashIconOverlay?.visibility = View.GONE
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    // Ocultar el icono de basura cuando termine el drag
+                    b.trashIconOverlay?.visibility = View.GONE
                     true
                 }
                 else -> true

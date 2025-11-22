@@ -83,4 +83,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:layout="@layout/fragment_calculator" />
 
+    <!-- Trash Icon Overlay - Visible during drag -->
+    <ImageView
+        android:id="@+id/trash_icon_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_delete"
+        android:scaleType="centerInside"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:contentDescription="@string/history_data_menu_delete"
+        app:layout_constraintTop_toTopOf="@id/keyboard_container"
+        app:layout_constraintBottom_toBottomOf="@id/keyboard_container"
+        app:layout_constraintStart_toStartOf="@id/keyboard_container"
+        app:layout_constraintEnd_toEndOf="@id/keyboard_container" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
