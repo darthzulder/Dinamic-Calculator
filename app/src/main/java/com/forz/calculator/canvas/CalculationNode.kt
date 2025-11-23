@@ -8,5 +8,7 @@ data class CalculationNode(
     val expression: String,
     val result: BigDecimal,
     var positionX: Float,
-    var positionY: Float
+    var positionY: Float,
+    val parentNodeIds: List<String> = emptyList(), // IDs de los nodos que dieron origen a este nodo
+    val connectionColor: Int = 0 // Color único para las líneas de conexión
 )

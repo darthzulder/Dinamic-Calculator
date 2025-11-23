@@ -138,8 +138,17 @@ class MainFragment : Fragment(),
     }
 
     private fun setupCanvasDragListener() {
-        binding.canvasContainer?.setOnDragListener { _, event ->
-            val b = _binding ?: return@setOnDragListener false
+        val b = _binding ?: return
+    
+        // ERROR 1 CORREGIDO: Usamos ?. (safe call) para asignar el listener
+        b.zoomableCanvasContainer?.setOnDragListener { view, event ->
+            
+            // TRUCO PRO: Castemos la 'view' que llega al listener. 
+            // Como el listener está puesto en el ZoomableCanvasContainer, 'view' ES el contenedor.
+            // Esto evita tener que llamar a b.zoomableCanvasContainer? a cada rato dentro del código.
+            val container = view as? com.forz.calculator.canvas.ZoomableCanvasContainer 
+                ?: return@setOnDragListener false
+    
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     isDragInProgress = true
@@ -150,26 +159,38 @@ class MainFragment : Fragment(),
                     if (clipData.itemCount > 0) {
                         val item = clipData.getItemAt(0)
                         val nodeId = item.text?.toString() ?: return@setOnDragListener false
-                        val view = b.canvasContainer?.findViewWithTag<View>(nodeId)
-                        val newX = event.x - (view?.width ?: 0) / 2
-                        val newY = event.y - (view?.height ?: 0) / 2
+                        
+                        // Buscamos la vista original en el contenedor INTERNO (canvas_container)
+                        // Nota: b.canvasContainer también puede ser nullable en el binding, usamos ?.
+                        val innerContainer = b.canvasContainer
+                        val draggedView = innerContainer?.findViewWithTag<View>(nodeId)
+                        
+                        val widthOffset = (draggedView?.width ?: 0) / 2f
+                        val heightOffset = (draggedView?.height ?: 0) / 2f
+    
+                        val touchX = event.x
+                        val touchY = event.y
+                        
+                        // ERROR 2 CORREGIDO: Usamos la variable local 'container' que ya sabemos que no es nula
+                        // para llamar a screenToCanvas.
+                        val canvasPoint = container.screenToCanvas(touchX, touchY)
+                        
+                        val newX = canvasPoint.x - widthOffset
+                        val newY = canvasPoint.y - heightOffset
+    
                         canvasViewModel.updateNodePosition(nodeId, newX, newY)
-                        // Limpiar el tag del contenedor después de soltar
-                        b.canvasContainer?.tag = null
                     }
                     true
                 }
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    // Limpiar el tag del contenedor cuando termine el drag
-                    b.canvasContainer?.tag = null
                     isDragInProgress = false
-                    // Ocultar el icono de basura
                     b.trashIconOverlay?.visibility = View.GONE
-                    // Diferir el re-renderizado hasta después de que termine el evento de drag
-                    b.canvasContainer?.post {
-                        if (needsRenderAfterDrag || _binding != null) {
-                            needsRenderAfterDrag = false
-                            canvasViewModel.nodes.value.let { renderNodes(it) }
+                    
+                    // ERROR 3 CORREGIDO: Usamos la variable local 'container' o b.zoomableCanvasContainer?.post
+                    container.post {
+                        // Verificamos binding nuevamente dentro del post por seguridad
+                        if (_binding != null) {
+                             canvasViewModel.nodes.value.let { renderNodes(it) }
                         }
                     }
                     true
@@ -264,7 +285,15 @@ class MainFragment : Fragment(),
                 }
             }
             
+            // Asegurar que la vista de líneas esté por debajo de los nodos
+            val connectionLinesView = currentBinding.connectionLinesView
+            if (connectionLinesView != null && connectionLinesView.parent == null) {
+                // Si la vista de líneas no está en el contenedor, agregarla primero (para que esté debajo)
+                currentContainer.addView(connectionLinesView, 0)
+            }
+            
             // Agregar o actualizar vistas para cada nodo
+            val finalNodeViews = mutableMapOf<String, View>()
             nodes.forEach { node ->
                 val existingView = existingViews[node.id]
                 if (existingView != null) {
@@ -279,6 +308,7 @@ class MainFragment : Fragment(),
                     } else {
                         existingView.visibility = View.VISIBLE
                     }
+                    finalNodeViews[node.id] = existingView
                 } else {
                     // Crear nueva vista
                     val nodeView = createNodeView(node)
@@ -289,6 +319,23 @@ class MainFragment : Fragment(),
                         nodeView.visibility = View.VISIBLE
                     }
                     currentContainer.addView(nodeView)
+                    finalNodeViews[node.id] = nodeView
+                }
+            }
+            
+            // Actualizar la vista de líneas de conexión después de actualizar los nodos
+            if (connectionLinesView != null) {
+                val connections = canvasViewModel.getConnections()
+                connectionLinesView.updateData(nodes, connections, finalNodeViews)
+            }
+            
+            // Expandir el canvas para que pueda contener todos los nodos
+            // Esto permite que el drag and drop funcione en todo el espacio del canvas
+            val zoomableContainer = currentBinding.zoomableCanvasContainer
+            if (zoomableContainer != null) {
+                zoomableContainer.post {
+                    zoomableContainer.expandCanvasForNodes(nodes)
+                    zoomableContainer.requestLayout()
                 }
             }
         }

@@ -62,15 +62,34 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.10" />
 
-    <!-- NEW: Interactive Canvas -->
-    <FrameLayout
-        android:id="@+id/canvas_container"
+    <!-- NEW: Interactive Canvas with Zoom and Pan -->
+    <com.forz.calculator.canvas.ZoomableCanvasContainer
+        android:id="@+id/zoomable_canvas_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/guideline_display_bottom"
         app:layout_constraintBottom_toTopOf="@id/keyboard_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <!-- Inner Canvas Container -->
+        <FrameLayout
+            android:id="@+id/canvas_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false">
+            
+            <!-- Connection Lines View - Dibuja las líneas de conexión entre nodos (debe estar debajo de los nodos) -->
+            <com.forz.calculator.canvas.ConnectionLinesView
+                android:id="@+id/connection_lines_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:elevation="0dp" />
+        </FrameLayout>
+    </com.forz.calculator.canvas.ZoomableCanvasContainer>
 
     <!-- NEW: Keyboard Container -->
     <androidx.fragment.app.FragmentContainerView
