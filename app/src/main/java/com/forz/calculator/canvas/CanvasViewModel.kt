@@ -188,6 +188,10 @@ class CanvasViewModel : ViewModel() {
         _nodes.value = _nodes.value.filter { !nodesToDelete.contains(it.id) }
     }
 
+    fun clearNodes() {
+        _nodes.value = emptyList()
+    }
+
     fun updateNodeName(nodeId: String, name: String) {
         _nodes.value = _nodes.value.map {
             if (it.id == nodeId) {

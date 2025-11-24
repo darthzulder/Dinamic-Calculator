@@ -39,6 +39,8 @@ object NumberFormatter {
     }
 
     private fun bigDecimalToString(number: BigDecimal, decimalPlaces: Int, maxIntegerDigits: Int): String {
+        if (number.signum() == 0) return "0"
+
         val scientificFormatter = DecimalFormat("0.${"0".repeat(decimalPlaces)}E0", DecimalFormatSymbols(Locale.US))
         val standardFormatter = DecimalFormat("0.${"0".repeat(decimalPlaces)}", DecimalFormatSymbols(Locale.US))
 

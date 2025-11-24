@@ -604,6 +604,7 @@ class MainFragment : Fragment(),
     override fun onClearExpressionButtonClick() {
         val b = _binding ?: return
         InsertInExpression.clearExpression(b.expressionEditText)
+        canvasViewModel.clearNodes()
     }
 
     override fun onOperatorButtonClick(operator: String) {
