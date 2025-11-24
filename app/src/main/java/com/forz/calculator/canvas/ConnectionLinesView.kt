@@ -12,6 +12,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import androidx.core.view.isVisible
 
 /**
  * Vista personalizada para dibujar las líneas de conexión entre nodos con flechas direccionales
@@ -60,7 +61,7 @@ class ConnectionLinesView @JvmOverloads constructor(
             val fromView = nodeViews[connection.fromNodeId]
             val toView = nodeViews[connection.toNodeId]
             
-            if (fromView != null && toView != null && fromView.visibility == View.VISIBLE && toView.visibility == View.VISIBLE) {
+            if (fromView != null && toView != null && fromView.isVisible && toView.isVisible) {
                 // Calcular las coordenadas de los puntos de conexión desde el centro de cada nodo
                 val fromX = fromView.x + fromView.width / 2f
                 val fromY = fromView.y + fromView.height / 2f

@@ -70,7 +70,7 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/guideline_display_bottom"
-        app:layout_constraintBottom_toTopOf="@id/keyboard_container"
+        app:layout_constraintBottom_toTopOf="@id/node_properties_panel_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         
@@ -90,6 +90,23 @@
                 android:elevation="0dp" />
         </FrameLayout>
     </com.forz.calculator.canvas.ZoomableCanvasContainer>
+
+    <!-- Node Properties Panel -->
+    <FrameLayout
+        android:id="@+id/node_properties_panel_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="?attr/colorSurface"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toTopOf="@id/keyboard_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <include
+            android:id="@+id/node_properties_panel"
+            layout="@layout/node_properties_panel" />
+    </FrameLayout>
 
     <!-- NEW: Keyboard Container -->
     <androidx.fragment.app.FragmentContainerView

@@ -27,6 +27,16 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
     private var lastTouchX = 0f
     private var lastTouchY = 0f
     private var activePointerId = MotionEvent.INVALID_POINTER_ID
+    
+    // Callback para clicks simples en el canvas (fuera de nodos)
+    var onCanvasClick: ((x: Float, y: Float) -> Unit)? = null
+    
+    // Variables para detectar clicks simples (sin pan)
+    private var touchStartX = 0f
+    private var touchStartY = 0f
+    private var touchStartTime = 0L
+    private val CLICK_THRESHOLD = 10f // píxeles
+    private val CLICK_TIME_THRESHOLD = 200L // milisegundos
 
     companion object {
         private const val MIN_ZOOM = 0.5f
@@ -76,6 +86,22 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
             applyTransform()
             return true
         }
+        
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            // Detectar click simple solo si no se hizo pan
+            val timeDiff = System.currentTimeMillis() - touchStartTime
+            val distanceX = kotlin.math.abs(e.x - touchStartX)
+            val distanceY = kotlin.math.abs(e.y - touchStartY)
+            
+            if (timeDiff < CLICK_TIME_THRESHOLD && 
+                distanceX < CLICK_THRESHOLD && 
+                distanceY < CLICK_THRESHOLD &&
+                !isTouchingNode(e.x, e.y)) {
+                // Click simple en el canvas (fuera de nodos)
+                onCanvasClick?.invoke(e.x, e.y)
+            }
+            return false
+        }
     })
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
@@ -88,6 +114,11 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
                 lastTouchX = ev.x
                 lastTouchY = ev.y
                 activePointerId = ev.getPointerId(0)
+                
+                // Guardar posición inicial para detectar clicks simples
+                touchStartX = ev.x
+                touchStartY = ev.y
+                touchStartTime = System.currentTimeMillis()
 
                 // IMPORTANTE: Hit Test.
                 // Si tocamos un nodo (View que no sea el background), NO interceptamos.

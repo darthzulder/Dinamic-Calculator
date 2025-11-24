@@ -185,4 +185,41 @@ class CanvasViewModel : ViewModel() {
         // Eliminar todos los nodos encontrados
         _nodes.value = _nodes.value.filter { !nodesToDelete.contains(it.id) }
     }
+
+    fun updateNodeName(nodeId: String, name: String) {
+        _nodes.value = _nodes.value.map {
+            if (it.id == nodeId) {
+                it.copy(name = name)
+            } else {
+                it
+            }
+        }
+    }
+
+    fun updateNodeDescription(nodeId: String, description: String) {
+        _nodes.value = _nodes.value.map {
+            if (it.id == nodeId) {
+                it.copy(description = description)
+            } else {
+                it
+            }
+        }
+    }
+
+    fun updateNodeExpression(nodeId: String, expression: String) {
+        _nodes.value = _nodes.value.map {
+            if (it.id == nodeId) {
+                try {
+                    val newResult = Evaluator.evaluate(expression)
+                    it.copy(expression = expression, result = newResult)
+                } catch (e: Exception) {
+                    // Si la expresión no es válida, mantener el nodo sin cambios
+                    e.printStackTrace()
+                    it
+                }
+            } else {
+                it
+            }
+        }
+    }
 }

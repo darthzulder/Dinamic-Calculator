@@ -3,6 +3,7 @@ package com.forz.calculator.fragments
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipDescription
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,11 +11,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.DragEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.util.TypedValue
+import android.widget.EditText
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import com.google.android.material.card.MaterialCardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -60,6 +66,10 @@ class MainFragment : Fragment(),
     private var isDragInProgress = false
     // Flag para indicar que se necesita un re-renderizado después del drag
     private var needsRenderAfterDrag = false
+    // Nodo actualmente seleccionado para edición
+    private var selectedNode: CalculationNode? = null
+    // Listener para sincronizar el teclado de calculadora con el panel de expresión
+    private var calculatorKeyboardSyncListener: TextWatcher? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,12 +83,20 @@ class MainFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         binding.expressionEditText.showSoftInputOnFocus = false
         binding.expressionEditText.requestFocus()
+        
+        // Ocultar teclado del teléfono cuando ExpressionEditText tiene foco
+        binding.expressionEditText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                hideSystemKeyboard(view)
+            }
+        }
 
         setupToolbar()
         setupExpressionInput()
         observeViewModels()
         setupCanvasDragListener()
         setupKeyboardDragListener()
+        setupNodePropertiesPanel()
     }
 
     override fun onDestroyView() {
@@ -151,6 +169,21 @@ class MainFragment : Fragment(),
     
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
+                    // Deseleccionar el nodo actualmente seleccionado si hay uno
+                    if (selectedNode != null) {
+                        // Remover el borde de selección inmediatamente de todas las vistas de nodos
+                        val innerContainer = b.canvasContainer
+                        innerContainer?.let { container ->
+                            for (i in 0 until container.childCount) {
+                                val child = container.getChildAt(i)
+                                val cardView = child as? MaterialCardView
+                                if (cardView != null) {
+                                    cardView.strokeWidth = 0
+                                }
+                            }
+                        }
+                        hideNodePropertiesPanel()
+                    }
                     isDragInProgress = true
                     event.clipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ?: false
                 }
@@ -301,12 +334,32 @@ class MainFragment : Fragment(),
                     existingView.x = node.positionX
                     existingView.y = node.positionY
                     val textView = existingView.findViewById<TextView>(R.id.node_text)
-                    textView?.text = "${node.expression} = ${node.result}"
+                    val displayText = if (node.name.isNotEmpty()) {
+                        "${node.name}: ${node.expression} = ${node.result}"
+                    } else {
+                        "${node.expression} = ${node.result}"
+                    }
+                    textView?.text = displayText
                     // Actualizar visibilidad
                     if (draggedNodeId != null && node.id == draggedNodeId) {
                         existingView.visibility = View.INVISIBLE
                     } else {
                         existingView.visibility = View.VISIBLE
+                    }
+                    // Actualizar borde de selección
+                    val cardView = existingView as? MaterialCardView
+                    if (cardView != null) {
+                        if (selectedNode != null && node.id == selectedNode!!.id) {
+                            // Aplicar borde de color al nodo seleccionado
+                            val strokeWidth = (4 * requireContext().resources.displayMetrics.density).toInt()
+                            cardView.strokeWidth = strokeWidth
+                            val typedValue = TypedValue()
+                            requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+                            cardView.strokeColor = ContextCompat.getColor(requireContext(), typedValue.resourceId)
+                        } else {
+                            // Remover borde si no está seleccionado
+                            cardView.strokeWidth = 0
+                        }
                     }
                     finalNodeViews[node.id] = existingView
                 } else {
@@ -317,6 +370,15 @@ class MainFragment : Fragment(),
                         nodeView.visibility = View.INVISIBLE
                     } else {
                         nodeView.visibility = View.VISIBLE
+                    }
+                    // Aplicar borde de selección si es el nodo seleccionado
+                    val cardView = nodeView as? MaterialCardView
+                    if (cardView != null && selectedNode != null && node.id == selectedNode!!.id) {
+                        val strokeWidth = (4 * requireContext().resources.displayMetrics.density).toInt()
+                        cardView.strokeWidth = strokeWidth
+                        val typedValue = TypedValue()
+                        requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+                        cardView.strokeColor = ContextCompat.getColor(requireContext(), typedValue.resourceId)
                     }
                     currentContainer.addView(nodeView)
                     finalNodeViews[node.id] = nodeView
@@ -353,13 +415,36 @@ class MainFragment : Fragment(),
 
         val textView = nodeView.findViewById<TextView>(R.id.node_text)
         if (textView != null) {
-            textView.text = "${node.expression} = ${node.result}"
+            val displayText = if (node.name.isNotEmpty()) {
+                "${node.name}: ${node.expression} = ${node.result}"
+            } else {
+                "${node.expression} = ${node.result}"
+            }
+            textView.text = displayText
         } else {
             // Log para debugging
             android.util.Log.e("MainFragment", "TextView with id 'node_text' not found in node_view.xml")
         }
 
+        nodeView.setOnClickListener {
+            showNodePropertiesPanel(node)
+        }
+
         nodeView.setOnLongClickListener { view ->
+            // Deseleccionar el nodo actualmente seleccionado si hay uno
+            if (selectedNode != null) {
+                // Remover el borde de selección inmediatamente de todas las vistas de nodos
+                val container = b.canvasContainer ?: return@setOnLongClickListener false
+                for (i in 0 until container.childCount) {
+                    val child = container.getChildAt(i)
+                    val cardView = child as? MaterialCardView
+                    if (cardView != null) {
+                        cardView.strokeWidth = 0
+                    }
+                }
+                hideNodePropertiesPanel()
+            }
+            
             val item = ClipData.Item(node.id)
             val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
             val clipData = ClipData(node.id, mimeTypes, item)
@@ -385,7 +470,7 @@ class MainFragment : Fragment(),
 
     private val nodeDragListener = View.OnDragListener { view, event ->
         val b = _binding ?: return@OnDragListener false
-        val targetCard = view as? CardView ?: return@OnDragListener false
+        val targetCard = view as? MaterialCardView ?: return@OnDragListener false
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> true
             DragEvent.ACTION_DRAG_ENTERED -> {
@@ -512,6 +597,13 @@ class MainFragment : Fragment(),
 
     override fun onEqualsButtonClick() {
         val b = _binding ?: return
+        
+        // Si hay un nodo seleccionado, salir de la selección (como cuando se hace tab fuera del frame)
+        if (selectedNode != null) {
+            hideNodePropertiesPanel()
+            return
+        }
+        
         if (Evaluator.isCalculated) {
             val rawResultText = b.resultText.text.toString()
             val expressionText = b.expressionEditText.text.toString()
@@ -536,6 +628,195 @@ class MainFragment : Fragment(),
         val b = _binding ?: return
         if (oldExpression.isNotEmpty()) {
             InsertInExpression.setExpression(oldExpression, b.expressionEditText)
+        }
+    }
+
+    private fun setupNodePropertiesPanel() {
+        val b = _binding ?: return
+        
+        // Configurar callback para clicks en el canvas
+        b.zoomableCanvasContainer?.onCanvasClick = { x, y ->
+            val panelContainer = b.nodePropertiesPanelContainer
+            if (selectedNode != null && panelContainer != null && panelContainer.visibility == View.VISIBLE) {
+                // Convertir coordenadas del canvas a coordenadas de pantalla
+                val location = IntArray(2)
+                panelContainer.getLocationOnScreen(location)
+                val canvasLocation = IntArray(2)
+                b.zoomableCanvasContainer?.getLocationOnScreen(canvasLocation)
+                
+                // Verificar si el click fue fuera del panel
+                // El click en el canvas siempre es fuera del panel (el panel está debajo)
+                hideNodePropertiesPanel()
+            }
+        }
+        
+        // Prevenir que los clicks dentro del panel cierren el panel
+        b.nodePropertiesPanelContainer?.setOnTouchListener { view, event ->
+            // Consumir el evento para que no se propague
+            true
+        }
+    }
+
+    private fun showNodePropertiesPanel(node: CalculationNode) {
+        val b = _binding ?: return
+        val panelContainer = b.nodePropertiesPanelContainer ?: return
+        
+        // Obtener el nodo actualizado desde el ViewModel para asegurar que tenemos los datos más recientes
+        val currentNode = canvasViewModel.nodes.value.find { it.id == node.id } ?: node
+        selectedNode = currentNode
+        
+        // Mostrar el panel
+        panelContainer.visibility = View.VISIBLE
+        
+        // Mostrar el teclado de la calculadora debajo del panel
+        b.keyboardContainer?.visibility = View.VISIBLE
+        
+        // Cargar la expresión del nodo actualizado en el ExpressionEditText principal
+        b.expressionEditText.setText(currentNode.expression)
+        b.expressionEditText.setSelection(currentNode.expression.length)
+        
+        // Conectar el teclado al ExpressionEditText principal para actualizar el nodo
+        connectCalculatorKeyboardToMainExpression()
+        
+        // Cargar valores actuales del nodo actualizado en el panel
+        val nameEdit = panelContainer.findViewById<EditText>(R.id.node_name_edit)
+        val descriptionEdit = panelContainer.findViewById<EditText>(R.id.node_description_edit)
+        
+        nameEdit?.setText(currentNode.name)
+        descriptionEdit?.setText(currentNode.description)
+        
+        // Configurar listeners para actualizar el ViewModel cuando cambien los valores
+        nameEdit?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                selectedNode?.let { node ->
+                    canvasViewModel.updateNodeName(node.id, s?.toString() ?: "")
+                }
+            }
+        })
+        
+        descriptionEdit?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                selectedNode?.let { node ->
+                    canvasViewModel.updateNodeDescription(node.id, s?.toString() ?: "")
+                }
+            }
+        })
+        
+        // Configurar showSoftInputOnFocus programáticamente para nombre y descripción
+        nameEdit?.showSoftInputOnFocus = true
+        descriptionEdit?.showSoftInputOnFocus = true
+        
+        // Configurar focus listeners para manejar los teclados
+        nameEdit?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
+            if (hasFocus) {
+                // Mostrar teclado del sistema para nombre
+                showSystemKeyboard(view)
+                // Ocultar teclado de calculadora temporalmente
+                b.keyboardContainer?.visibility = View.GONE
+            } else {
+                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente
+                val descriptionEditCheck = panelContainer.findViewById<EditText>(R.id.node_description_edit)
+                if (descriptionEditCheck?.hasFocus() != true) {
+                    b.keyboardContainer?.visibility = View.VISIBLE
+                }
+            }
+        }
+        
+        descriptionEdit?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
+            if (hasFocus) {
+                // Mostrar teclado del sistema para descripción
+                showSystemKeyboard(view)
+                // Ocultar teclado de calculadora temporalmente
+                b.keyboardContainer?.visibility = View.GONE
+            } else {
+                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente
+                val nameEditCheck = panelContainer.findViewById<EditText>(R.id.node_name_edit)
+                if (nameEditCheck?.hasFocus() != true) {
+                    b.keyboardContainer?.visibility = View.VISIBLE
+                }
+            }
+        }
+        
+        // Enfocar el ExpressionEditText principal para que el teclado de calculadora esté activo
+        b.expressionEditText.requestFocus()
+        
+        // Re-renderizar nodos para mostrar el borde de selección
+        canvasViewModel.nodes.value.let { renderNodes(it) }
+    }
+
+    private fun hideNodePropertiesPanel() {
+        val b = _binding ?: return
+        val panelContainer = b.nodePropertiesPanelContainer ?: return
+        
+        // Ocultar el panel
+        panelContainer.visibility = View.GONE
+        
+        // Mostrar el teclado de calculadora nuevamente
+        b.keyboardContainer?.visibility = View.VISIBLE
+        
+        // Ocultar teclado del sistema si está visible
+        val currentFocus = requireActivity().currentFocus
+        if (currentFocus != null) {
+            hideSystemKeyboard(currentFocus)
+        }
+        
+        // Desconectar el teclado de calculadora del panel
+        disconnectCalculatorKeyboardFromPanelExpression()
+        
+        selectedNode = null
+        
+        // Re-renderizar nodos para actualizar el borde de selección
+        canvasViewModel.nodes.value.let { renderNodes(it) }
+    }
+
+    private fun showSystemKeyboard(view: View) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        view.requestFocus()
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideSystemKeyboard(view: View) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun connectCalculatorKeyboardToMainExpression() {
+        val b = _binding ?: return
+        val mainExpressionEdit = b.expressionEditText
+        
+        // Remover listener anterior si existe
+        calculatorKeyboardSyncListener?.let {
+            mainExpressionEdit.removeTextChangedListener(it)
+        }
+        
+        // Agregar listener para actualizar el nodo cuando cambia la expresión principal
+        calculatorKeyboardSyncListener = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (selectedNode != null) {
+                    val text = s?.toString() ?: ""
+                    if (text.isNotEmpty()) {
+                        canvasViewModel.updateNodeExpression(selectedNode!!.id, text)
+                    }
+                }
+            }
+        }
+        mainExpressionEdit.addTextChangedListener(calculatorKeyboardSyncListener)
+    }
+
+    private fun disconnectCalculatorKeyboardFromPanelExpression() {
+        val b = _binding ?: return
+        val mainExpressionEdit = b.expressionEditText
+        
+        // Remover el listener de sincronización
+        calculatorKeyboardSyncListener?.let {
+            mainExpressionEdit.removeTextChangedListener(it)
+            calculatorKeyboardSyncListener = null
         }
     }
 }
