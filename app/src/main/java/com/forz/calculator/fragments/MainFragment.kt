@@ -31,6 +31,7 @@ import com.forz.calculator.MainActivity
 import com.forz.calculator.OnMainActivityListener
 import com.forz.calculator.R
 import com.forz.calculator.calculator.CalculatorViewModel
+import com.forz.calculator.calculator.DefaultOperator
 import com.forz.calculator.calculator.Evaluator
 import com.forz.calculator.canvas.CalculationNode
 import com.forz.calculator.canvas.CanvasViewModel
@@ -44,6 +45,7 @@ import com.forz.calculator.settings.Config
 import com.forz.calculator.settings.SettingsActivity
 import com.forz.calculator.utils.HapticAndSound
 import com.forz.calculator.utils.InsertInExpression
+import com.forz.calculator.utils.NumberFormatter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.math.BigDecimal
@@ -90,6 +92,9 @@ class MainFragment : Fragment(),
                 hideSystemKeyboard(view)
             }
         }
+
+        // Restaurar nodos guardados antes de configurar los observadores
+        canvasViewModel.restoreNodes(requireContext())
 
         setupToolbar()
         setupExpressionInput()
@@ -338,10 +343,17 @@ class MainFragment : Fragment(),
                     existingView.x = node.positionX
                     existingView.y = node.positionY
                     val textView = existingView.findViewById<TextView>(R.id.node_text)
+                    val formattedResult = NumberFormatter.formatResult(
+                        node.result,
+                        Config.numberPrecision,
+                        Config.maxScientificNotationDigits,
+                        Config.groupingSeparatorSymbol,
+                        Config.decimalSeparatorSymbol
+                    )
                     val displayText = if (node.name.isNotEmpty()) {
-                        "${node.name}: ${node.expression} = ${node.result}"
+                        "${node.name}: ${node.expression} = $formattedResult"
                     } else {
-                        "${node.expression} = ${node.result}"
+                        "${node.expression} = $formattedResult"
                     }
                     textView?.text = displayText
                     // Actualizar visibilidad
@@ -419,10 +431,17 @@ class MainFragment : Fragment(),
 
         val textView = nodeView.findViewById<TextView>(R.id.node_text)
         if (textView != null) {
+            val formattedResult = NumberFormatter.formatResult(
+                node.result,
+                Config.numberPrecision,
+                Config.maxScientificNotationDigits,
+                Config.groupingSeparatorSymbol,
+                Config.decimalSeparatorSymbol
+            )
             val displayText = if (node.name.isNotEmpty()) {
-                "${node.name}: ${node.expression} = ${node.result}"
+                "${node.name}: ${node.expression} = $formattedResult"
             } else {
-                "${node.expression} = ${node.result}"
+                "${node.expression} = $formattedResult"
             }
             textView.text = displayText
         } else {
@@ -538,6 +557,24 @@ class MainFragment : Fragment(),
         b.expressionEditText.setSelection(cursorPositionStart)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Re-renderizar nodos cuando se vuelve de settings para aplicar el nuevo formato
+        val b = _binding ?: return
+        canvasViewModel.nodes.value.let { nodes ->
+            if (nodes.isNotEmpty()) {
+                renderNodes(nodes)
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Guardar el estado de los nodos antes de que se destruya el fragment
+        // onPause se llama antes de onStop, así que es más seguro para guardar antes de recrear
+        canvasViewModel.saveNodes(requireContext())
+    }
+
     override fun onStop() {
         super.onStop()
         val b = _binding ?: return
@@ -611,7 +648,10 @@ class MainFragment : Fragment(),
         if (Evaluator.isCalculated) {
             val rawResultText = b.resultText.text.toString()
             val expressionText = b.expressionEditText.text.toString()
-            val parsableResult = rawResultText.replace(Config.groupingSeparatorSymbol, "").replace(Config.decimalSeparatorSymbol, ".")
+            val parsableResult = rawResultText
+                .replace(Config.groupingSeparatorSymbol, "")
+                .replace(Config.decimalSeparatorSymbol, ".")
+                .replace(DefaultOperator.Minus.text, DefaultOperator.Minus.value)
 
             try {
                 val resultValue = BigDecimal(parsableResult)

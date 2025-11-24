@@ -1,5 +1,7 @@
 package com.forz.calculator.canvas
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.forz.calculator.calculator.Evaluator
@@ -378,5 +380,212 @@ class CanvasViewModel : ViewModel() {
             e.printStackTrace()
             return null
         }
+    }
+    
+    /**
+     * Guarda el estado de los nodos en SharedPreferences
+     */
+    fun saveNodes(context: Context) {
+        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        
+        val nodesJson = serializeNodes(_nodes.value)
+        editor.putString("nodes", nodesJson)
+        editor.apply()
+    }
+    
+    /**
+     * Restaura el estado de los nodos desde SharedPreferences
+     */
+    fun restoreNodes(context: Context) {
+        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
+        val nodesJson = preferences.getString("nodes", null)
+        
+        if (nodesJson != null && nodesJson.isNotEmpty()) {
+            val nodes = deserializeNodes(nodesJson)
+            _nodes.value = nodes
+        }
+    }
+    
+    /**
+     * Limpia el estado guardado de los nodos
+     */
+    fun clearSavedNodes(context: Context) {
+        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
+        preferences.edit().remove("nodes").apply()
+    }
+    
+    /**
+     * Serializa una lista de nodos a JSON
+     */
+    private fun serializeNodes(nodes: List<CalculationNode>): String {
+        if (nodes.isEmpty()) return ""
+        
+        val jsonBuilder = StringBuilder()
+        jsonBuilder.append("[")
+        
+        nodes.forEachIndexed { index, node ->
+            if (index > 0) jsonBuilder.append(",")
+            jsonBuilder.append("{")
+            jsonBuilder.append("\"id\":\"").append(escapeJson(node.id)).append("\",")
+            jsonBuilder.append("\"expression\":\"").append(escapeJson(node.expression)).append("\",")
+            jsonBuilder.append("\"result\":\"").append(node.result.toString()).append("\",")
+            jsonBuilder.append("\"positionX\":").append(node.positionX).append(",")
+            jsonBuilder.append("\"positionY\":").append(node.positionY).append(",")
+            jsonBuilder.append("\"parentNodeIds\":[")
+            node.parentNodeIds.forEachIndexed { i, parentId ->
+                if (i > 0) jsonBuilder.append(",")
+                jsonBuilder.append("\"").append(escapeJson(parentId)).append("\"")
+            }
+            jsonBuilder.append("],")
+            jsonBuilder.append("\"connectionColor\":").append(node.connectionColor).append(",")
+            jsonBuilder.append("\"name\":\"").append(escapeJson(node.name)).append("\",")
+            jsonBuilder.append("\"description\":\"").append(escapeJson(node.description)).append("\"")
+            jsonBuilder.append("}")
+        }
+        
+        jsonBuilder.append("]")
+        return jsonBuilder.toString()
+    }
+    
+    /**
+     * Deserializa una cadena JSON a una lista de nodos
+     */
+    private fun deserializeNodes(json: String): List<CalculationNode> {
+        if (json.isEmpty() || json == "[]") return emptyList()
+        
+        val nodes = mutableListOf<CalculationNode>()
+        
+        try {
+            // Parseo simple de JSON (sin usar librerías externas)
+            var i = 1 // Saltar el '['
+            while (i < json.length - 1) {
+                if (json[i] == '{') {
+                    val nodeJson = extractObject(json, i)
+                    val node = parseNode(nodeJson)
+                    if (node != null) {
+                        nodes.add(node)
+                    }
+                    i += nodeJson.length
+                } else if (json[i] == ',') {
+                    i++
+                } else {
+                    i++
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        
+        return nodes
+    }
+    
+    /**
+     * Extrae un objeto JSON completo desde una posición
+     */
+    private fun extractObject(json: String, start: Int): String {
+        var depth = 0
+        var i = start
+        while (i < json.length) {
+            when (json[i]) {
+                '{' -> depth++
+                '}' -> {
+                    depth--
+                    if (depth == 0) {
+                        return json.substring(start, i + 1)
+                    }
+                }
+            }
+            i++
+        }
+        return json.substring(start)
+    }
+    
+    /**
+     * Parsea un objeto JSON de nodo
+     */
+    private fun parseNode(nodeJson: String): CalculationNode? {
+        try {
+            val id = extractStringValue(nodeJson, "id") ?: return null
+            val expression = extractStringValue(nodeJson, "expression") ?: ""
+            val resultStr = extractStringValue(nodeJson, "result") ?: return null
+            val result = try {
+                BigDecimal(resultStr)
+            } catch (e: Exception) {
+                return null
+            }
+            val positionX = extractFloatValue(nodeJson, "positionX") ?: 0f
+            val positionY = extractFloatValue(nodeJson, "positionY") ?: 0f
+            val parentNodeIds = extractStringArrayValue(nodeJson, "parentNodeIds")
+            val connectionColor = extractIntValue(nodeJson, "connectionColor") ?: 0
+            val name = extractStringValue(nodeJson, "name") ?: ""
+            val description = extractStringValue(nodeJson, "description") ?: ""
+            
+            return CalculationNode(
+                id = id,
+                expression = expression,
+                result = result,
+                positionX = positionX,
+                positionY = positionY,
+                parentNodeIds = parentNodeIds,
+                connectionColor = connectionColor,
+                name = name,
+                description = description
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+    
+    private fun extractStringValue(json: String, key: String): String? {
+        val pattern = "\"$key\":\"([^\"]*)\""
+        val regex = Regex(pattern)
+        return regex.find(json)?.groupValues?.get(1)?.let { unescapeJson(it) }
+    }
+    
+    private fun extractFloatValue(json: String, key: String): Float? {
+        val pattern = "\"$key\":([0-9.-]+)"
+        val regex = Regex(pattern)
+        return regex.find(json)?.groupValues?.get(1)?.toFloatOrNull()
+    }
+    
+    private fun extractIntValue(json: String, key: String): Int? {
+        val pattern = "\"$key\":([0-9-]+)"
+        val regex = Regex(pattern)
+        return regex.find(json)?.groupValues?.get(1)?.toIntOrNull()
+    }
+    
+    private fun extractStringArrayValue(json: String, key: String): List<String> {
+        val pattern = "\"$key\":\\[([^\\]]*)\\]"
+        val regex = Regex(pattern)
+        val match = regex.find(json) ?: return emptyList()
+        val arrayContent = match.groupValues[1]
+        
+        if (arrayContent.isEmpty()) return emptyList()
+        
+        val items = mutableListOf<String>()
+        val itemPattern = "\"([^\"]*)\""
+        val itemRegex = Regex(itemPattern)
+        itemRegex.findAll(arrayContent).forEach {
+            items.add(unescapeJson(it.groupValues[1]))
+        }
+        return items
+    }
+    
+    private fun escapeJson(str: String): String {
+        return str.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+    }
+    
+    private fun unescapeJson(str: String): String {
+        return str.replace("\\\"", "\"")
+            .replace("\\\\", "\\")
+            .replace("\\n", "\n")
+            .replace("\\r", "\r")
+            .replace("\\t", "\t")
     }
 }
