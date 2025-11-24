@@ -665,18 +665,39 @@ class MainFragment : Fragment(),
         val currentNode = canvasViewModel.nodes.value.find { it.id == node.id } ?: node
         selectedNode = currentNode
         
+        // Determinar si el nodo es hijo (tiene padres)
+        val isChildNode = currentNode.parentNodeIds.isNotEmpty()
+        
         // Mostrar el panel
         panelContainer.visibility = View.VISIBLE
-        
-        // Mostrar el teclado de la calculadora debajo del panel
-        b.keyboardContainer?.visibility = View.VISIBLE
         
         // Cargar la expresión del nodo actualizado en el ExpressionEditText principal
         b.expressionEditText.setText(currentNode.expression)
         b.expressionEditText.setSelection(currentNode.expression.length)
         
-        // Conectar el teclado al ExpressionEditText principal para actualizar el nodo
-        connectCalculatorKeyboardToMainExpression()
+        // Si es un nodo hijo, deshabilitar la edición de expresión
+        if (isChildNode) {
+            // Deshabilitar el ExpressionEditText para que no se pueda editar la expresión
+            b.expressionEditText.isEnabled = false
+            b.expressionEditText.isFocusable = false
+            b.expressionEditText.isClickable = false
+            // Cambiar la opacidad para indicar que es de solo lectura
+            b.expressionEditText.alpha = 0.6f
+            // Ocultar el teclado de calculadora ya que no se puede editar la expresión
+            b.keyboardContainer?.visibility = View.GONE
+            // No conectar el teclado ya que no se puede editar
+        } else {
+            // Habilitar el ExpressionEditText para nodos que no son hijos
+            b.expressionEditText.isEnabled = true
+            b.expressionEditText.isFocusable = true
+            b.expressionEditText.isClickable = true
+            // Restaurar la opacidad normal
+            b.expressionEditText.alpha = 1.0f
+            // Mostrar el teclado de la calculadora debajo del panel
+            b.keyboardContainer?.visibility = View.VISIBLE
+            // Conectar el teclado al ExpressionEditText principal para actualizar el nodo
+            connectCalculatorKeyboardToMainExpression()
+        }
         
         // Cargar valores actuales del nodo actualizado en el panel
         val nameEdit = panelContainer.findViewById<EditText>(R.id.node_name_edit)
@@ -715,12 +736,14 @@ class MainFragment : Fragment(),
             if (hasFocus) {
                 // Mostrar teclado del sistema para nombre
                 showSystemKeyboard(view)
-                // Ocultar teclado de calculadora temporalmente
-                b.keyboardContainer?.visibility = View.GONE
+                // Ocultar teclado de calculadora temporalmente solo si no es un nodo hijo
+                if (!isChildNode) {
+                    b.keyboardContainer?.visibility = View.GONE
+                }
             } else {
-                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente
+                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente solo si no es un nodo hijo
                 val descriptionEditCheck = panelContainer.findViewById<EditText>(R.id.node_description_edit)
-                if (descriptionEditCheck?.hasFocus() != true) {
+                if (descriptionEditCheck?.hasFocus() != true && !isChildNode) {
                     b.keyboardContainer?.visibility = View.VISIBLE
                 }
             }
@@ -730,19 +753,23 @@ class MainFragment : Fragment(),
             if (hasFocus) {
                 // Mostrar teclado del sistema para descripción
                 showSystemKeyboard(view)
-                // Ocultar teclado de calculadora temporalmente
-                b.keyboardContainer?.visibility = View.GONE
+                // Ocultar teclado de calculadora temporalmente solo si no es un nodo hijo
+                if (!isChildNode) {
+                    b.keyboardContainer?.visibility = View.GONE
+                }
             } else {
-                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente
+                // Cuando pierde el foco, mostrar el teclado de calculadora nuevamente solo si no es un nodo hijo
                 val nameEditCheck = panelContainer.findViewById<EditText>(R.id.node_name_edit)
-                if (nameEditCheck?.hasFocus() != true) {
+                if (nameEditCheck?.hasFocus() != true && !isChildNode) {
                     b.keyboardContainer?.visibility = View.VISIBLE
                 }
             }
         }
         
-        // Enfocar el ExpressionEditText principal para que el teclado de calculadora esté activo
-        b.expressionEditText.requestFocus()
+        // Enfocar el ExpressionEditText principal solo si no es un nodo hijo
+        if (!isChildNode) {
+            b.expressionEditText.requestFocus()
+        }
         
         // Re-renderizar nodos para mostrar el borde de selección
         canvasViewModel.nodes.value.let { renderNodes(it) }
@@ -754,6 +781,13 @@ class MainFragment : Fragment(),
         
         // Ocultar el panel
         panelContainer.visibility = View.GONE
+        
+        // Restaurar el estado del ExpressionEditText
+        b.expressionEditText.isEnabled = true
+        b.expressionEditText.isFocusable = true
+        b.expressionEditText.isClickable = true
+        // Restaurar la opacidad normal
+        b.expressionEditText.alpha = 1.0f
         
         // Mostrar el teclado de calculadora nuevamente
         b.keyboardContainer?.visibility = View.VISIBLE

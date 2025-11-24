@@ -207,11 +207,15 @@ class CanvasViewModel : ViewModel() {
     }
 
     fun updateNodeExpression(nodeId: String, expression: String) {
+        // Primero actualizar el nodo padre
+        var updatedNode: CalculationNode? = null
         _nodes.value = _nodes.value.map {
             if (it.id == nodeId) {
                 try {
                     val newResult = Evaluator.evaluate(expression)
-                    it.copy(expression = expression, result = newResult)
+                    val updated = it.copy(expression = expression, result = newResult)
+                    updatedNode = updated
+                    updated
                 } catch (e: Exception) {
                     // Si la expresión no es válida, mantener el nodo sin cambios
                     e.printStackTrace()
@@ -220,6 +224,159 @@ class CanvasViewModel : ViewModel() {
             } else {
                 it
             }
+        }
+        
+        // Si el nodo se actualizó correctamente, actualizar recursivamente todos los nodos hijos
+        updatedNode?.let { parentNode ->
+            updateChildNodesRecursively(parentNode.id, parentNode.result)
+        }
+    }
+    
+    /**
+     * Actualiza recursivamente todos los nodos hijos cuando cambia el resultado de un nodo padre.
+     * Los nodos hijos tienen expresiones que referencian los resultados de sus padres.
+     */
+    private fun updateChildNodesRecursively(parentNodeId: String, newParentResult: BigDecimal) {
+        // Obtener los nodos actuales (pueden haber sido actualizados en llamadas recursivas anteriores)
+        val currentNodes = _nodes.value
+        val nodesToUpdate = mutableListOf<Pair<String, CalculationNode>>()
+        
+        // Encontrar todos los nodos hijos directos que tienen este nodo como padre
+        currentNodes.forEach { node ->
+            if (node.parentNodeIds.contains(parentNodeId)) {
+                // Este nodo es hijo del nodo padre que cambió
+                // Reconstruir su expresión usando los resultados actuales de sus padres
+                val updatedNode = rebuildChildNodeExpression(node, currentNodes)
+                if (updatedNode != null) {
+                    nodesToUpdate.add(Pair(node.id, updatedNode))
+                }
+            }
+        }
+        
+        // Actualizar los nodos hijos encontrados
+        if (nodesToUpdate.isNotEmpty()) {
+            _nodes.value = _nodes.value.map { node ->
+                val update = nodesToUpdate.find { it.first == node.id }
+                if (update != null) {
+                    update.second
+                } else {
+                    node
+                }
+            }
+            
+            // Recursivamente actualizar los hijos de los nodos actualizados
+            // Usar los nodos actualizados de _nodes.value para la siguiente iteración
+            nodesToUpdate.forEach { (_, updatedChildNode) ->
+                updateChildNodesRecursively(updatedChildNode.id, updatedChildNode.result)
+            }
+        }
+    }
+    
+    /**
+     * Reconstruye la expresión de un nodo hijo usando los resultados actuales de sus nodos padre.
+     * La expresión se reconstruye en el formato: "${parent1.result}${operator}${parent2.result}"
+     */
+    private fun rebuildChildNodeExpression(childNode: CalculationNode, allNodes: List<CalculationNode>): CalculationNode? {
+        if (childNode.parentNodeIds.isEmpty()) {
+            return null // No es un nodo hijo, no necesita reconstrucción
+        }
+        
+        // Obtener los nodos padre actuales
+        val parentNodes = childNode.parentNodeIds.mapNotNull { parentId ->
+            allNodes.find { it.id == parentId }
+        }
+        
+        if (parentNodes.size != childNode.parentNodeIds.size) {
+            // Algunos padres no se encontraron, mantener el nodo sin cambios
+            return null
+        }
+        
+        // Reconstruir la expresión basándose en la expresión original del hijo
+        // La expresión original es del formato: "${parent1.result}${operator}${parent2.result}"
+        // Necesitamos extraer el operador y reconstruir con los nuevos resultados
+        val originalExpression = childNode.expression
+        
+        // Intentar extraer el operador de la expresión original
+        // Buscar operadores comunes: +, -, *, /
+        val operators = listOf("+", "-", "*", "/")
+        var foundOperator: String? = null
+        var operatorIndex = -1
+        
+        for (operator in operators) {
+            val index = originalExpression.indexOf(operator)
+            if (index > 0 && index < originalExpression.length - 1) {
+                // Verificar que no sea parte de un número negativo al inicio
+                if (operator == "-" && index == 0) continue
+                foundOperator = operator
+                operatorIndex = index
+                break
+            }
+        }
+        
+        if (foundOperator == null) {
+            // No se pudo determinar el operador, intentar detectarlo probando cada uno
+            return tryDetectOperatorAndRebuild(childNode, parentNodes)
+        }
+        
+        if (parentNodes.size == 2) {
+            // Reconstruir la expresión con los nuevos resultados de los padres
+            val newExpression = "${parentNodes[0].result}${foundOperator}${parentNodes[1].result}"
+            
+            try {
+                val newResult = Evaluator.evaluate(newExpression)
+                return childNode.copy(expression = newExpression, result = newResult)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return null
+            }
+        } else if (parentNodes.size == 1) {
+            // Un solo padre: la expresión del hijo debería ser igual al resultado del padre
+            return childNode.copy(
+                expression = parentNodes[0].result.toString(),
+                result = parentNodes[0].result
+            )
+        }
+        
+        return null
+    }
+    
+    /**
+     * Intenta detectar el operador probando cada uno y reconstruye la expresión.
+     * Se usa cuando no se puede extraer el operador directamente de la expresión.
+     */
+    private fun tryDetectOperatorAndRebuild(
+        childNode: CalculationNode,
+        parentNodes: List<CalculationNode>
+    ): CalculationNode? {
+        if (parentNodes.size != 2) {
+            return null
+        }
+        
+        val operators = listOf("+", "-", "*", "/")
+        
+        // Probar cada operador y ver cuál produce un resultado que coincide con el resultado original
+        for (operator in operators) {
+            try {
+                val testExpression = "${parentNodes[0].result}${operator}${parentNodes[1].result}"
+                val testResult = Evaluator.evaluate(testExpression)
+                // Si el resultado coincide aproximadamente, usar este operador
+                // (Tolerancia para errores de punto flotante)
+                if ((testResult - childNode.result).abs() < BigDecimal("0.0001")) {
+                    return childNode.copy(expression = testExpression, result = testResult)
+                }
+            } catch (e: Exception) {
+                continue
+            }
+        }
+        
+        // Si no encontramos coincidencia, usar el operador más común (+) y recalcular
+        try {
+            val newExpression = "${parentNodes[0].result}+${parentNodes[1].result}"
+            val newResult = Evaluator.evaluate(newExpression)
+            return childNode.copy(expression = newExpression, result = newResult)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
     }
 }
