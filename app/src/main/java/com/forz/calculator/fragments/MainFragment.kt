@@ -213,11 +213,15 @@ class MainFragment : Fragment(),
     
                         canvasViewModel.updateNodePosition(nodeId, newX, newY)
                     }
+                    // Limpiar el tag del contenedor después de soltar en el canvas
+                    b.canvasContainer?.tag = null
                     true
                 }
                 DragEvent.ACTION_DRAG_ENDED -> {
                     isDragInProgress = false
                     b.trashIconOverlay?.visibility = View.GONE
+                    // Limpiar el tag del contenedor cuando termine el drag
+                    b.canvasContainer?.tag = null
                     
                     // ERROR 3 CORREGIDO: Usamos la variable local 'container' o b.zoomableCanvasContainer?.post
                     container.post {
