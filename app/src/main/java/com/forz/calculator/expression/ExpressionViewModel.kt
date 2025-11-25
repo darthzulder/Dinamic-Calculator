@@ -8,6 +8,7 @@ object ExpressionViewModel: ViewModel() {
     var expression: String = ""
     var cursorPositionStart: Int = 0
     var oldExpression: String = ""
+    var isResultDisplayed: Boolean = false
 
     private val _isSelected = MutableLiveData<Boolean>()
     val isSelected: LiveData<Boolean> get() = _isSelected

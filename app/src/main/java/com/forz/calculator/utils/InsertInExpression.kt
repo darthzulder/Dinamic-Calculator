@@ -1,6 +1,7 @@
 package com.forz.calculator.utils
 
 import com.forz.calculator.expression.ExpressionEditText
+import com.forz.calculator.expression.ExpressionViewModel
 import com.forz.calculator.settings.Config.groupingSeparatorSymbol
 import com.forz.calculator.settings.Config.decimalSeparatorSymbol
 import com.forz.calculator.calculator.AdditionalOperator
@@ -33,6 +34,7 @@ object InsertInExpression {
 
     fun clearExpression(inputEditText: ExpressionEditText){
         inputEditText.text?.clear()
+        ExpressionViewModel.isResultDisplayed = false
     }
 
     fun setExpression(result: String, inputEditText: ExpressionEditText){
@@ -41,6 +43,7 @@ object InsertInExpression {
     }
 
     fun enterBackspace(inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
         val cursorPositionStart = inputEditText.selectionStart
         val cursorPositionEnd = inputEditText.selectionEnd
@@ -63,6 +66,10 @@ object InsertInExpression {
     }
 
     fun enterDigit(digit: String, inputEditText: ExpressionEditText) {
+        if (ExpressionViewModel.isResultDisplayed) {
+            inputEditText.text?.clear()
+            ExpressionViewModel.isResultDisplayed = false
+        }
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -82,6 +89,7 @@ object InsertInExpression {
     }
 
     fun enterOperator(inputOperator: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -132,6 +140,7 @@ object InsertInExpression {
     }
 
     fun enterScienceFunction(inputScienceFunction: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -153,6 +162,7 @@ object InsertInExpression {
     }
 
     fun enterAdditionalOperator(inputOperator: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -182,6 +192,7 @@ object InsertInExpression {
     }
 
     fun enterConstant(inputOperator: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -214,6 +225,7 @@ object InsertInExpression {
     }
 
     fun enterBracket(inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -242,6 +254,10 @@ object InsertInExpression {
     }
 
     fun enterDot(inputEditText: ExpressionEditText) {
+        if (ExpressionViewModel.isResultDisplayed) {
+            inputEditText.text?.clear()
+            ExpressionViewModel.isResultDisplayed = false
+        }
         val string = inputEditText.text.toString()
 
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
@@ -271,6 +287,7 @@ object InsertInExpression {
     }
 
     fun enterDoubleBrackets(inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         val string = inputEditText.text.toString()
 
         val cursorPositionEnd = inputEditText.selectionEnd
@@ -297,10 +314,12 @@ object InsertInExpression {
     }
 
     fun insertHistoryExpression(inputExpression: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         insertHistoryResult(inputExpression, inputEditText)
     }
 
     fun insertHistoryResult(inputResult: String, inputEditText: ExpressionEditText) {
+        ExpressionViewModel.isResultDisplayed = false
         deleteSelection(inputEditText, inputEditText.selectionStart, inputEditText.selectionEnd)
 
         val cursorPositionStart = inputEditText.selectionStart

@@ -493,6 +493,7 @@ class MainFragment : Fragment(),
 
             oldExpression = expressionText
             InsertInExpression.setExpression(rawResultText, b.expressionEditText)
+            ExpressionViewModel.isResultDisplayed = true
             if (Config.autoSavingResults && !rawResultText.contains("Error")) {
                 historyService.addHistoryData(expressionText, rawResultText)
             }
