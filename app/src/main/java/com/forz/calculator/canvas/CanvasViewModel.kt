@@ -4,7 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.forz.calculator.calculator.DefaultOperator
 import com.forz.calculator.calculator.Evaluator
+import com.forz.calculator.settings.Config
+import com.forz.calculator.utils.NumberFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.math.BigDecimal
@@ -114,6 +117,21 @@ class CanvasViewModel : ViewModel() {
             it.copy(positionX = it.positionX + dx, positionY = it.positionY + dy)
         }
     }
+    
+    /**
+     * Formatea un número BigDecimal para usarlo en una expresión,
+     * respetando las configuraciones de Settings
+     */
+    private fun formatNumberForExpression(number: BigDecimal): String {
+        return NumberFormatter.formatResult(
+            number,
+            Config.numberPrecision,
+            Config.maxScientificNotationDigits,
+            Config.groupingSeparatorSymbol,
+            Config.decimalSeparatorSymbol
+        )
+    }
+
 
     fun setPendingCombination(sourceNodeId: String, targetNodeId: String) {
         pendingCombination = Pair(sourceNodeId, targetNodeId)
@@ -125,11 +143,17 @@ class CanvasViewModel : ViewModel() {
             val targetNode = _nodes.value.find { it.id == targetId }
 
             if (sourceNode != null && targetNode != null) {
-                val newExpression = "${sourceNode.result}${operator}${targetNode.result}"
+                // Crear expresión sin formato para evaluar (usa toString() de BigDecimal)
+                val evaluationExpression = "${sourceNode.result}${operator}${targetNode.result}"
+                
+                // Crear expresión formateada para mostrar (respeta configuraciones de Settings)
+                val formattedSourceNumber = formatNumberForExpression(sourceNode.result)
+                val formattedTargetNumber = formatNumberForExpression(targetNode.result)
+                val displayExpression = "${formattedSourceNumber}${operator}${formattedTargetNumber}"
                 
                 try {
-                    // CORRECTED: Call the new public method and handle potential errors
-                    val newResult = Evaluator.evaluate(newExpression)
+                    // Evaluar usando la expresión sin formato
+                    val newResult = Evaluator.evaluate(evaluationExpression)
                     // Asignar un color único para esta conexión
                     val connectionColor = getNextConnectionColor()
                     
@@ -150,9 +174,9 @@ class CanvasViewModel : ViewModel() {
                     val resultX = rightmostNode.positionX + offsetX
                     val resultY = midY
                     
-                    // Crear el nuevo nodo con los nodos padre, el color de conexión y la posición calculada
+                    // Crear el nuevo nodo con la expresión formateada para mostrar
                     addNode(
-                        newExpression, 
+                        displayExpression, 
                         newResult, 
                         listOf(sourceId, targetId), 
                         connectionColor,
@@ -317,8 +341,13 @@ class CanvasViewModel : ViewModel() {
         val originalExpression = childNode.expression
         
         // Intentar extraer el operador de la expresión original
-        // Buscar operadores comunes: +, -, *, /
-        val operators = listOf("+", "-", "*", "/")
+        // Buscar operadores usando los símbolos de la calculadora
+        val operators = listOf(
+            DefaultOperator.Plus.text,
+            DefaultOperator.Minus.text,
+            DefaultOperator.Multiply.text,
+            DefaultOperator.Divide.text
+        )
         var foundOperator: String? = null
         var operatorIndex = -1
         
@@ -326,7 +355,7 @@ class CanvasViewModel : ViewModel() {
             val index = originalExpression.indexOf(operator)
             if (index > 0 && index < originalExpression.length - 1) {
                 // Verificar que no sea parte de un número negativo al inicio
-                if (operator == "-" && index == 0) continue
+                if (operator == DefaultOperator.Minus.text && index == 0) continue
                 foundOperator = operator
                 operatorIndex = index
                 break
@@ -340,19 +369,26 @@ class CanvasViewModel : ViewModel() {
         
         if (parentNodes.size == 2) {
             // Reconstruir la expresión con los nuevos resultados de los padres
-            val newExpression = "${parentNodes[0].result}${foundOperator}${parentNodes[1].result}"
+            // Crear expresión sin formato para evaluar
+            val evaluationExpression = "${parentNodes[0].result}${foundOperator}${parentNodes[1].result}"
+            
+            // Crear expresión formateada para mostrar
+            val formattedNum1 = formatNumberForExpression(parentNodes[0].result)
+            val formattedNum2 = formatNumberForExpression(parentNodes[1].result)
+            val displayExpression = "${formattedNum1}${foundOperator}${formattedNum2}"
             
             try {
-                val newResult = Evaluator.evaluate(newExpression)
-                return childNode.copy(expression = newExpression, result = newResult)
+                val newResult = Evaluator.evaluate(evaluationExpression)
+                return childNode.copy(expression = displayExpression, result = newResult)
             } catch (e: Exception) {
                 e.printStackTrace()
                 return null
             }
         } else if (parentNodes.size == 1) {
-            // Un solo padre: la expresión del hijo debería ser igual al resultado del padre
+            // Un solo padre: la expresión del hijo debería ser igual al resultado del padre formateado
+            val formattedResult = formatNumberForExpression(parentNodes[0].result)
             return childNode.copy(
-                expression = parentNodes[0].result.toString(),
+                expression = formattedResult,
                 result = parentNodes[0].result
             )
         }
@@ -372,7 +408,12 @@ class CanvasViewModel : ViewModel() {
             return null
         }
         
-        val operators = listOf("+", "-", "*", "/")
+        val operators = listOf(
+            DefaultOperator.Plus.text,
+            DefaultOperator.Minus.text,
+            DefaultOperator.Multiply.text,
+            DefaultOperator.Divide.text
+        )
         
         // Probar cada operador y ver cuál produce un resultado que coincide con el resultado original
         for (operator in operators) {
@@ -382,7 +423,11 @@ class CanvasViewModel : ViewModel() {
                 // Si el resultado coincide aproximadamente, usar este operador
                 // (Tolerancia para errores de punto flotante)
                 if ((testResult - childNode.result).abs() < BigDecimal("0.0001")) {
-                    return childNode.copy(expression = testExpression, result = testResult)
+                    // Crear expresión formateada para mostrar
+                    val formattedNum1 = formatNumberForExpression(parentNodes[0].result)
+                    val formattedNum2 = formatNumberForExpression(parentNodes[1].result)
+                    val displayExpression = "${formattedNum1}${operator}${formattedNum2}"
+                    return childNode.copy(expression = displayExpression, result = testResult)
                 }
             } catch (e: Exception) {
                 continue
@@ -391,9 +436,15 @@ class CanvasViewModel : ViewModel() {
         
         // Si no encontramos coincidencia, usar el operador más común (+) y recalcular
         try {
-            val newExpression = "${parentNodes[0].result}+${parentNodes[1].result}"
-            val newResult = Evaluator.evaluate(newExpression)
-            return childNode.copy(expression = newExpression, result = newResult)
+            val evaluationExpression = "${parentNodes[0].result}${DefaultOperator.Plus.text}${parentNodes[1].result}"
+            val newResult = Evaluator.evaluate(evaluationExpression)
+            
+            // Crear expresión formateada para mostrar
+            val formattedNum1 = formatNumberForExpression(parentNodes[0].result)
+            val formattedNum2 = formatNumberForExpression(parentNodes[1].result)
+            val displayExpression = "${formattedNum1}${DefaultOperator.Plus.text}${formattedNum2}"
+            
+            return childNode.copy(expression = displayExpression, result = newResult)
         } catch (e: Exception) {
             e.printStackTrace()
             return null

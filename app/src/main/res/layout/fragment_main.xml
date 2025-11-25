@@ -43,6 +43,8 @@
         android:layout_height="0dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:inputType="textNoSuggestions"
+        android:importantForAutofill="no"
         app:layout_constraintBottom_toTopOf="@id/resultText"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/toolbar"

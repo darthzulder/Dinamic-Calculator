@@ -336,16 +336,43 @@ class MainFragment : Fragment(),
     }
 
     private fun showOperationsMenu(anchorView: View) {
-        val popup = PopupMenu(requireContext(), anchorView)
-        popup.menu.add("+")
-        popup.menu.add("-")
-        popup.menu.add("*")
-        popup.menu.add("/")
-        popup.setOnMenuItemClickListener { item ->
-            canvasViewModel.combineNodes(item.title.toString())
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.operation_popup_layout, null)
+        
+        val popupWindow = android.widget.PopupWindow(
+            popupView,
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
             true
+        )
+        
+        // Configurar animación y estilo
+        popupWindow.elevation = 12f
+        popupWindow.animationStyle = android.R.style.Animation_Dialog
+        
+        // Configurar listeners para cada botón
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_plus).setOnClickListener {
+            canvasViewModel.combineNodes(DefaultOperator.Plus.text)
+            popupWindow.dismiss()
         }
-        popup.show()
+        
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_minus).setOnClickListener {
+            canvasViewModel.combineNodes(DefaultOperator.Minus.text)
+            popupWindow.dismiss()
+        }
+        
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_multiply).setOnClickListener {
+            canvasViewModel.combineNodes(DefaultOperator.Multiply.text)
+            popupWindow.dismiss()
+        }
+        
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_divide).setOnClickListener {
+            canvasViewModel.combineNodes(DefaultOperator.Divide.text)
+            popupWindow.dismiss()
+        }
+        
+        // Mostrar el popup centrado sobre el anchorView
+        popupWindow.showAsDropDown(anchorView, 0, -anchorView.height / 2, android.view.Gravity.CENTER)
     }
 
     override fun onStart() {
@@ -397,6 +424,11 @@ class MainFragment : Fragment(),
     override fun onBackspaceButtonClick() {
         val b = _binding ?: return
         InsertInExpression.enterBackspace(b.expressionEditText)
+    }
+
+    override fun onBackspaceButtonLongClick() {
+        val b = _binding ?: return
+        InsertInExpression.clearExpression(b.expressionEditText)
     }
 
     override fun onClearExpressionButtonClick() {

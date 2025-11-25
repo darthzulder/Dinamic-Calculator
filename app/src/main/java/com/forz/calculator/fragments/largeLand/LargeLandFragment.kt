@@ -243,6 +243,10 @@ class LargeLandFragment : Fragment(),
         InsertInExpression.enterBackspace(binding.expressionEditText)
     }
 
+    override fun onBackspaceButtonLongClick() {
+        TODO("Not yet implemented")
+    }
+
     override fun onClearExpressionButtonClick() {
         InsertInExpression.clearExpression(binding.expressionEditText)
     }

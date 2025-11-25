@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/operation_popup_background"
+    android:elevation="8dp">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_plus"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="60dp"
+            android:layout_height="56dp"
+            android:layout_margin="4dp"
+            android:text="+"
+            android:textSize="24sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_minus"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="60dp"
+            android:layout_height="56dp"
+            android:layout_margin="4dp"
+            android:text="–"
+            android:textSize="24sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_multiply"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="60dp"
+            android:layout_height="56dp"
+            android:layout_margin="4dp"
+            android:text="×"
+            android:textSize="24sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_divide"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="60dp"
+            android:layout_height="56dp"
+            android:layout_margin="4dp"
+            android:text="÷"
+            android:textSize="24sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
+
+</LinearLayout>

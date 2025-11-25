@@ -35,6 +35,7 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
         fun onDigitButtonClick(digit: String)
         fun onDotButtonClick()
         fun onBackspaceButtonClick()
+        fun onBackspaceButtonLongClick()
         fun onClearExpressionButtonClick()
         fun onOperatorButtonClick(operator: String)
         fun onScienceFunctionButtonClick(scienceFunction: String)
@@ -147,7 +148,7 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
             Anim.buttonAnim(binding.backspaceButton, requireContext())
         }
         binding.backspaceButton.setOnLongClickListener {
-            callback?.onClearExpressionButtonClick()
+            callback?.onBackspaceButtonLongClick()
             hapticAndSound.vibrateEffectHeavyClick()
             Anim.buttonAnim(binding.backspaceButton, requireContext())
             true
