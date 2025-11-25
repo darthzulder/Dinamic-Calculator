@@ -433,8 +433,17 @@ class MainFragment : Fragment(),
 
     override fun onClearExpressionButtonClick() {
         val b = _binding ?: return
-        InsertInExpression.clearExpression(b.expressionEditText)
-        canvasViewModel.clearNodes()
+        
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Borrar todo")
+            .setMessage("¿Estás seguro de que quieres borrar todos los cálculos y restablecer la vista?")
+            .setPositiveButton("Borrar") { _, _ ->
+                InsertInExpression.clearExpression(b.expressionEditText)
+                canvasViewModel.clearNodes()
+                b.zoomableCanvasContainer?.resetZoom()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     override fun onOperatorButtonClick(operator: String) {

@@ -95,7 +95,12 @@ class NodePropertiesManager(
         binding.keyboardContainer?.visibility = View.VISIBLE
         
         // Ocultar teclado del sistema
-        fragment.requireActivity().currentFocus?.let { hideSystemKeyboard(it) }
+        val view = fragment.requireActivity().currentFocus ?: binding.root
+        hideSystemKeyboard(view)
+        
+        // Limpiar foco de los campos de edición
+        panelContainer.findViewById<EditText>(R.id.node_name_edit)?.clearFocus()
+        panelContainer.findViewById<EditText>(R.id.node_description_edit)?.clearFocus()
         
         // Desconectar el teclado de calculadora
         disconnectCalculatorKeyboard()

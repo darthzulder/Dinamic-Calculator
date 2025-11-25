@@ -15,7 +15,8 @@
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline_display_bottom"/>
+        app:layout_constraintBottom_toTopOf="@id/guideline_display_bottom"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -83,12 +84,11 @@
             android:layout_height="match_parent"
             android:clipChildren="false">
             
-            <!-- Connection Lines View - Dibuja las líneas de conexión entre nodos (debe estar debajo de los nodos) -->
             <com.forz.calculator.canvas.ConnectionLinesView
                 android:id="@+id/connection_lines_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
+                android:background="@android:color/transparent"
                 android:elevation="0dp" />
         </FrameLayout>
     </com.forz.calculator.canvas.ZoomableCanvasContainer>
@@ -115,7 +115,7 @@
         android:id="@+id/keyboard_container"
         android:name="com.forz.calculator.fragments.CalculatorFragment"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_150sdp"
+        android:layout_height="@dimen/_200sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

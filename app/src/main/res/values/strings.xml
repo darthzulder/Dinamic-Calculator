@@ -338,7 +338,15 @@
     <string name="unit_gallon_us">Gallon (US)</string>
     <string name="unit_gallon_uk">Gallon (UK)</string>
     <string name="unit_barrel">Barrel</string>
-        <!-- Other existing strings... -->
+
+    <!-- Propertie nodes... -->
+
+    <string name="node_name_label">Name:</string>
+    <string name="node_description_label">Description:</string>
+    <string name="node_name_set">Set node name</string>
+    <string name="node_description_set">Set description</string>
+
+    <!-- Other existing strings... -->
 
     <string name="description_donate">Default text for donate</string>
 

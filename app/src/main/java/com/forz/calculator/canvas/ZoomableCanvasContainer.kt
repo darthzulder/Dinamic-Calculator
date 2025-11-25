@@ -336,4 +336,17 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         posY -= dy * scaleFactor
         applyTransform()
     }
+
+    fun resetZoom() {
+        scaleFactor = 1.0f
+        if (width > 0 && height > 0) {
+            // Restaurar a la posición inicial calculada en onLayout
+            posX = -width / 2.0f
+            posY = -height / 2.0f
+        } else {
+            posX = 0f
+            posY = 0f
+        }
+        applyTransform()
+    }
 }
