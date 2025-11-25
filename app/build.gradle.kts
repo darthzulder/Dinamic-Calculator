@@ -8,11 +8,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.marktka.calculatorYou"
+        applicationId = "com.marktka.dinamicCalculator"
         minSdk = 27
         targetSdk = 34
-        versionCode = 33
-        versionName = "3.1.2"
+        versionCode = 1
+        versionName = "0.1.0-alpha.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
