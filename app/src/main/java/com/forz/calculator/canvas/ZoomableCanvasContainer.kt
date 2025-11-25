@@ -223,6 +223,7 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
     /**
      * Expande el canvas_container para que pueda contener todos los nodos,
      * incluso cuando están fuera del área visible original.
+     * El canvas inicia con el tamaño de la pantalla y crece dinámicamente.
      * Esto permite que el drag and drop funcione en todo el espacio del canvas.
      */
     fun expandCanvasForNodes(nodes: List<com.forz.calculator.canvas.CalculationNode>) {
@@ -232,42 +233,45 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         val nodeWidth = 300f
         val nodeHeight = 100f
         
-        // Tamaño mínimo del canvas para permitir movimiento libre
-        val minCanvasWidth = 5000f
-        val minCanvasHeight = 5000f
+        // Tamaño mínimo del canvas: el tamaño de la pantalla (ZoomableCanvasContainer)
+        val minCanvasWidth = this.width.toFloat()
+        val minCanvasHeight = this.height.toFloat()
         
-        // Calcular el tamaño necesario basado en los nodos
-        var requiredWidth = minCanvasWidth
-        var requiredHeight = minCanvasHeight
-        
-        if (nodes.isNotEmpty()) {
-            // Encontrar los límites de todos los nodos
-            var minX = Float.MAX_VALUE
-            var minY = Float.MAX_VALUE
-            var maxX = Float.MIN_VALUE
-            var maxY = Float.MIN_VALUE
-            
-            nodes.forEach { node ->
-                val nodeLeft = node.positionX
-                val nodeTop = node.positionY
-                val nodeRight = nodeLeft + nodeWidth
-                val nodeBottom = nodeTop + nodeHeight
-                
-                minX = minOf(minX, nodeLeft)
-                minY = minOf(minY, nodeTop)
-                maxX = maxOf(maxX, nodeRight)
-                maxY = maxOf(maxY, nodeBottom)
-            }
-            
-            // Agregar padding generoso para permitir movimiento fuera de los límites
-            val padding = 2000f
-            val nodeRangeWidth = maxX - minX + padding * 2
-            val nodeRangeHeight = maxY - minY + padding * 2
-            
-            // El canvas debe ser al menos tan grande como el rango de nodos
-            requiredWidth = maxOf(requiredWidth, nodeRangeWidth)
-            requiredHeight = maxOf(requiredHeight, nodeRangeHeight)
+        // Si no hay nodos, usar solo el tamaño de la pantalla
+        if (nodes.isEmpty()) {
+            val layoutParams = container.layoutParams
+            layoutParams.width = minCanvasWidth.toInt().coerceAtLeast(100)
+            layoutParams.height = minCanvasHeight.toInt().coerceAtLeast(100)
+            container.layoutParams = layoutParams
+            container.requestLayout()
+            return
         }
+        
+        // Encontrar los límites de todos los nodos
+        var minX = Float.MAX_VALUE
+        var minY = Float.MAX_VALUE
+        var maxX = Float.MIN_VALUE
+        var maxY = Float.MIN_VALUE
+        
+        nodes.forEach { node ->
+            val nodeLeft = node.positionX
+            val nodeTop = node.positionY
+            val nodeRight = nodeLeft + nodeWidth
+            val nodeBottom = nodeTop + nodeHeight
+            
+            minX = minOf(minX, nodeLeft)
+            minY = minOf(minY, nodeTop)
+            maxX = maxOf(maxX, nodeRight)
+            maxY = maxOf(maxY, nodeBottom)
+        }
+        
+        // Agregar padding para permitir movimiento fuera de los límites actuales
+        val padding = 500f
+        
+        // Calcular el tamaño necesario considerando que los nodos pueden estar en cualquier posición
+        // Asegurar que el canvas se expanda si los nodos están fuera del área visible
+        val requiredWidth = maxOf(minCanvasWidth, maxX + padding, -minX + minCanvasWidth + padding)
+        val requiredHeight = maxOf(minCanvasHeight, maxY + padding, -minY + minCanvasHeight + padding)
         
         // Actualizar el tamaño del contenedor
         val layoutParams = container.layoutParams
@@ -275,8 +279,8 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         val newHeight = requiredHeight.toInt()
         
         // Solo actualizar si el tamaño cambió significativamente (evitar actualizaciones innecesarias)
-        if (kotlin.math.abs(layoutParams.width - newWidth) > 100 || 
-            kotlin.math.abs(layoutParams.height - newHeight) > 100) {
+        if (kotlin.math.abs(layoutParams.width - newWidth) > 50 || 
+            kotlin.math.abs(layoutParams.height - newHeight) > 50) {
             layoutParams.width = newWidth
             layoutParams.height = newHeight
             container.layoutParams = layoutParams

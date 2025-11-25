@@ -33,8 +33,8 @@ class CanvasViewModel : ViewModel() {
 
     // Constantes para posicionamiento de nodos
     companion object {
-        private const val INITIAL_X = 150f
-        private const val INITIAL_Y = 150f
+        private const val INITIAL_X = 50f // Posición inicial X (cerca del borde izquierdo)
+        private const val INITIAL_Y = 50f // Posición inicial Y (cerca del borde superior)  
         private const val NODE_HEIGHT_WITH_MARGIN = 150f // Altura aproximada del nodo + margen de separación
         private const val X_TOLERANCE = 20f // Tolerancia en píxeles para considerar que dos nodos están en la misma columna X
     }

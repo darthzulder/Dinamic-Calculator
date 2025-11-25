@@ -86,7 +86,7 @@
                 android:id="@+id/connection_lines_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
+                android:background="@android:color/white"
                 android:elevation="0dp" />
         </FrameLayout>
     </com.forz.calculator.canvas.ZoomableCanvasContainer>
