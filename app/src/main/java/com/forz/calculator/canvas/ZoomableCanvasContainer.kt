@@ -220,10 +220,32 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         // es mejor mover la vista visualmente que cambiar sus LayoutParams (performance).
     }
     
+    private var isInitialized = false
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        if (!isInitialized && width > 0 && height > 0) {
+            // Configurar tamaño inicial del canvas a 3x la pantalla
+            val container = getChildAt(0)
+            val params = container.layoutParams
+            params.width = width * 3
+            params.height = height * 3
+            container.layoutParams = params
+            
+            // Centrar el canvas inicialmente
+            // posX = (ScreenW - CanvasW) / 2 = (W - 2W) / 2 = -W/2
+            posX = -width / 2.0f
+            posY = -height / 2.0f
+            
+            applyTransform()
+            isInitialized = true
+        }
+    }
+
     /**
      * Expande el canvas_container para que pueda contener todos los nodos,
      * incluso cuando están fuera del área visible original.
-     * El canvas inicia con el tamaño de la pantalla y crece dinámicamente.
+     * El canvas inicia con el tamaño de 2x la pantalla y crece dinámicamente.
      * Esto permite que el drag and drop funcione en todo el espacio del canvas.
      */
     fun expandCanvasForNodes(nodes: List<com.forz.calculator.canvas.CalculationNode>) {
@@ -233,17 +255,20 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         val nodeWidth = 300f
         val nodeHeight = 100f
         
-        // Tamaño mínimo del canvas: el tamaño de la pantalla (ZoomableCanvasContainer)
-        val minCanvasWidth = this.width.toFloat()
-        val minCanvasHeight = this.height.toFloat()
+        // Tamaño mínimo del canvas: 3x el tamaño de la pantalla
+        val minCanvasWidth = this.width.toFloat() * 3
+        val minCanvasHeight = this.height.toFloat() * 3
         
-        // Si no hay nodos, usar solo el tamaño de la pantalla
+        // Si no hay nodos, asegurar el tamaño mínimo 3x
         if (nodes.isEmpty()) {
             val layoutParams = container.layoutParams
-            layoutParams.width = minCanvasWidth.toInt().coerceAtLeast(100)
-            layoutParams.height = minCanvasHeight.toInt().coerceAtLeast(100)
-            container.layoutParams = layoutParams
-            container.requestLayout()
+            // Solo aplicar si aún no tiene el tamaño correcto (para no invalidar layout innecesariamente)
+            if (layoutParams.width < minCanvasWidth.toInt() || layoutParams.height < minCanvasHeight.toInt()) {
+                layoutParams.width = minCanvasWidth.toInt()
+                layoutParams.height = minCanvasHeight.toInt()
+                container.layoutParams = layoutParams
+                container.requestLayout()
+            }
             return
         }
         
@@ -269,7 +294,6 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
         val padding = 500f
         
         // Calcular el tamaño necesario considerando que los nodos pueden estar en cualquier posición
-        // Asegurar que el canvas se expanda si los nodos están fuera del área visible
         val requiredWidth = maxOf(minCanvasWidth, maxX + padding, -minX + minCanvasWidth + padding)
         val requiredHeight = maxOf(minCanvasHeight, maxY + padding, -minY + minCanvasHeight + padding)
         
@@ -299,5 +323,17 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
             (screenX - posX) / scaleFactor,
             (screenY - posY) / scaleFactor
         )
+    }
+
+    /**
+     * Ajusta la posición de paneo (posX, posY) para compensar un desplazamiento de los nodos.
+     * Se usa cuando los nodos se desplazan (shift) para mantener coordenadas positivas.
+     * @param dx Desplazamiento en X aplicado a los nodos
+     * @param dy Desplazamiento en Y aplicado a los nodos
+     */
+    fun adjustPan(dx: Float, dy: Float) {
+        posX -= dx * scaleFactor
+        posY -= dy * scaleFactor
+        applyTransform()
     }
 }

@@ -33,8 +33,16 @@ class CanvasViewModel : ViewModel() {
 
     // Constantes para posicionamiento de nodos
     companion object {
-        private const val INITIAL_X = 50f // Posición inicial X (cerca del borde izquierdo)
-        private const val INITIAL_Y = 50f // Posición inicial Y (cerca del borde superior)  
+        // Obtenemos las dimensiones reales de la pantalla
+        val displayMetrics = android.content.res.Resources.getSystem().displayMetrics
+        val screenWidth = displayMetrics.widthPixels.toFloat()
+        val screenHeight = displayMetrics.heightPixels.toFloat()
+
+        // Para un canvas de 3x centrado, el centro visible está en 1.5x la dimensión de la pantalla
+        // (Una pantalla completa de margen izquierdo + media pantalla para llegar al centro)
+        private val INITIAL_X = screenWidth /2f
+        private val INITIAL_Y = screenHeight /3f
+        
         private const val NODE_HEIGHT_WITH_MARGIN = 150f // Altura aproximada del nodo + margen de separación
         private const val X_TOLERANCE = 20f // Tolerancia en píxeles para considerar que dos nodos están en la misma columna X
     }
@@ -98,6 +106,12 @@ class CanvasViewModel : ViewModel() {
             } else {
                 it
             }
+        }
+    }
+
+    fun shiftAllNodes(dx: Float, dy: Float) {
+        _nodes.value = _nodes.value.map {
+            it.copy(positionX = it.positionX + dx, positionY = it.positionY + dy)
         }
     }
 

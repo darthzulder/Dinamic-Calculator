@@ -72,6 +72,8 @@ class MainFragment : Fragment(),
     private var selectedNode: CalculationNode? = null
     // Listener para sincronizar el teclado de calculadora con el panel de expresión
     private var calculatorKeyboardSyncListener: TextWatcher? = null
+    // Variable para almacenar el ajuste de pan pendiente después de un shift de nodos
+private var pendingPanAdjustment: Pair<Float, Float>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -295,6 +297,13 @@ class MainFragment : Fragment(),
             needsRenderAfterDrag = true
             return
         }
+
+        // 1. APLICAR AJUSTE DE PAN PENDIENTE (Nuevo)
+        // Esto compensa visualmente el desplazamiento de coordenadas
+        pendingPanAdjustment?.let { (dx, dy) ->
+            b.zoomableCanvasContainer?.adjustPan(dx, dy)
+            pendingPanAdjustment = null
+        }
         
         // Solo ocultar el nodo si realmente está siendo arrastrado (tag existe)
         val draggedNodeId = (container.tag as? ClipData)?.getItemAt(0)?.text?.toString()
@@ -308,6 +317,37 @@ class MainFragment : Fragment(),
             
             val currentBinding = _binding ?: return@post
             val currentContainer = currentBinding.canvasContainer ?: return@post
+            
+            // 2. LÓGICA DE DESPLAZAMIENTO (SHIFT) (Nuevo)
+            // Verificar si necesitamos desplazar los nodos para evitar coordenadas negativas
+            val padding = 100f
+            var minX = Float.MAX_VALUE
+            var minY = Float.MAX_VALUE
+            
+            if (nodes.isNotEmpty()) {
+                nodes.forEach { 
+                    minX = minOf(minX, it.positionX)
+                    minY = minOf(minY, it.positionY)
+                }
+                
+                var shiftX = 0f
+                var shiftY = 0f
+                
+                // Si algún nodo está muy cerca del borde izquierdo o superior (o en negativo)
+                if (minX < padding) shiftX = padding - minX
+                if (minY < padding) shiftY = padding - minY
+                
+                if (shiftX > 0 || shiftY > 0) {
+                    // Guardar el ajuste visual para el próximo ciclo
+                    pendingPanAdjustment = Pair(shiftX, shiftY)
+                    // Desplazar las coordenadas de todos los nodos
+                    canvasViewModel.shiftAllNodes(shiftX, shiftY)
+                    // Salimos y esperamos al próximo render con las nuevas coordenadas
+                    return@post
+                }
+            }
+
+            // --- A PARTIR DE AQUÍ ES EL CÓDIGO ORIGINAL DE RENDERIZADO ---
             
             // Obtener vistas existentes para reutilizar cuando sea posible
             val existingViews = mutableMapOf<String, View>()
@@ -330,7 +370,6 @@ class MainFragment : Fragment(),
             // Asegurar que la vista de líneas esté por debajo de los nodos
             val connectionLinesView = currentBinding.connectionLinesView
             if (connectionLinesView != null && connectionLinesView.parent == null) {
-                // Si la vista de líneas no está en el contenedor, agregarla primero (para que esté debajo)
                 currentContainer.addView(connectionLinesView, 0)
             }
             
@@ -356,24 +395,22 @@ class MainFragment : Fragment(),
                         "${node.expression} = $formattedResult"
                     }
                     textView?.text = displayText
-                    // Actualizar visibilidad
+                    
                     if (draggedNodeId != null && node.id == draggedNodeId) {
                         existingView.visibility = View.INVISIBLE
                     } else {
                         existingView.visibility = View.VISIBLE
                     }
-                    // Actualizar borde de selección
+                    
                     val cardView = existingView as? MaterialCardView
                     if (cardView != null) {
                         if (selectedNode != null && node.id == selectedNode!!.id) {
-                            // Aplicar borde de color al nodo seleccionado
                             val strokeWidth = (4 * requireContext().resources.displayMetrics.density).toInt()
                             cardView.strokeWidth = strokeWidth
                             val typedValue = TypedValue()
                             requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
                             cardView.strokeColor = ContextCompat.getColor(requireContext(), typedValue.resourceId)
                         } else {
-                            // Remover borde si no está seleccionado
                             cardView.strokeWidth = 0
                         }
                     }
@@ -387,7 +424,7 @@ class MainFragment : Fragment(),
                     } else {
                         nodeView.visibility = View.VISIBLE
                     }
-                    // Aplicar borde de selección si es el nodo seleccionado
+                    
                     val cardView = nodeView as? MaterialCardView
                     if (cardView != null && selectedNode != null && node.id == selectedNode!!.id) {
                         val strokeWidth = (4 * requireContext().resources.displayMetrics.density).toInt()
@@ -401,14 +438,13 @@ class MainFragment : Fragment(),
                 }
             }
             
-            // Actualizar la vista de líneas de conexión después de actualizar los nodos
+            // Actualizar la vista de líneas de conexión
             if (connectionLinesView != null) {
                 val connections = canvasViewModel.getConnections()
                 connectionLinesView.updateData(nodes, connections, finalNodeViews)
             }
             
             // Expandir el canvas para que pueda contener todos los nodos
-            // Esto permite que el drag and drop funcione en todo el espacio del canvas
             val zoomableContainer = currentBinding.zoomableCanvasContainer
             if (zoomableContainer != null) {
                 zoomableContainer.post {
