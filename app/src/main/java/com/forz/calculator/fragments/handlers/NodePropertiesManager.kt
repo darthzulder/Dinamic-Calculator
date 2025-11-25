@@ -241,7 +241,7 @@ class NodePropertiesManager(
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
     
-    private fun hideSystemKeyboard(view: View) {
+    internal fun hideSystemKeyboard(view: View) {
         val imm = fragment.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }

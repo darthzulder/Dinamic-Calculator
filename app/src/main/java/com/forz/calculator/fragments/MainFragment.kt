@@ -95,9 +95,10 @@ class MainFragment : Fragment(),
         // Ocultar teclado del teléfono cuando ExpressionEditText tiene foco
         binding.expressionEditText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
-                hideSystemKeyboard(view)
+                nodePropertiesManager.hideSystemKeyboard(view)
             }
         }
+
 
         // Restaurar nodos guardados antes de configurar los observadores
         canvasViewModel.restoreNodes(requireContext())
@@ -110,7 +111,7 @@ class MainFragment : Fragment(),
         setupKeyboardDragListener()
         setupNodePropertiesPanel()
     }
-
+    
     private fun initializeHandlers() {
         canvasDragHandler = CanvasDragHandler(
             getBinding = { _binding },
