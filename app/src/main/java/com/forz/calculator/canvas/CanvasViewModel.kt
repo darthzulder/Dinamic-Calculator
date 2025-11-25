@@ -12,10 +12,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.math.BigDecimal
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 class CanvasViewModel : ViewModel() {
 
     private val _nodes = MutableStateFlow<List<CalculationNode>>(emptyList())
     val nodes: StateFlow<List<CalculationNode>> = _nodes
+    
+    private var updateJob: Job? = null
 
     private var pendingCombination: Pair<String, String>? = null
     
@@ -251,67 +260,72 @@ class CanvasViewModel : ViewModel() {
     }
 
     fun updateNodeExpression(nodeId: String, expression: String) {
-        // Primero actualizar el nodo padre
-        var updatedNode: CalculationNode? = null
-        _nodes.value = _nodes.value.map {
-            if (it.id == nodeId) {
-                try {
-                    val newResult = Evaluator.evaluate(expression)
-                    val updated = it.copy(expression = expression, result = newResult)
-                    updatedNode = updated
-                    updated
-                } catch (e: Exception) {
-                    // Si la expresión no es válida, mantener el nodo sin cambios
-                    e.printStackTrace()
-                    it
-                }
-            } else {
-                it
-            }
-        }
+        // Cancelar trabajo anterior si el usuario sigue escribiendo
+        updateJob?.cancel()
         
-        // Si el nodo se actualizó correctamente, actualizar recursivamente todos los nodos hijos
-        updatedNode?.let { parentNode ->
-            updateChildNodesRecursively(parentNode.id, parentNode.result)
+        updateJob = viewModelScope.launch(Dispatchers.Default) {
+            // Pequeño debounce para evitar cálculos excesivos mientras se escribe rápido
+            delay(50) 
+            
+            // 1. Actualizar el nodo inicial
+            val currentNodes = _nodes.value
+            val initialNodeIndex = currentNodes.indexOfFirst { it.id == nodeId }
+            
+            if (initialNodeIndex == -1) return@launch
+
+            val initialNode = currentNodes[initialNodeIndex]
+            val updatedInitialNode = try {
+                val newResult = Evaluator.evaluate(expression)
+                initialNode.copy(expression = expression, result = newResult)
+            } catch (e: Exception) {
+                // Si hay error (ej. expresión incompleta), mantenemos la expresión pero no actualizamos el resultado
+                // O podríamos marcar el nodo con error. Por ahora, mantenemos comportamiento anterior.
+                // Pero es importante que la UI refleje lo que el usuario escribe, así que actualizamos la expresión.
+                initialNode.copy(expression = expression)
+            }
+
+            // Si el nodo no cambió realmente (y no hubo error que forzara update de expresión), salir
+            if (updatedInitialNode == initialNode) return@launch
+
+            // 2. Crear un mapa mutable para rastrear todos los nodos actualizados
+            val updatedNodesMap = currentNodes.associateBy { it.id }.toMutableMap()
+            updatedNodesMap[nodeId] = updatedInitialNode
+
+            // 3. Propagar cambios recursivamente en memoria
+            // Solo si el resultado cambió y es válido
+            if (updatedInitialNode.result != initialNode.result) {
+                propagateUpdates(nodeId, updatedNodesMap)
+            }
+
+            // 4. Emitir un solo cambio a la UI
+            val finalNodes = currentNodes.map { node ->
+                updatedNodesMap[node.id] ?: node
+            }
+            
+            _nodes.value = finalNodes
         }
     }
     
     /**
-     * Actualiza recursivamente todos los nodos hijos cuando cambia el resultado de un nodo padre.
-     * Los nodos hijos tienen expresiones que referencian los resultados de sus padres.
+     * Propaga las actualizaciones a los nodos hijos recursivamente.
+     * Trabaja directamente sobre el mapa mutable para evitar múltiples emisiones.
      */
-    private fun updateChildNodesRecursively(parentNodeId: String, newParentResult: BigDecimal) {
-        // Obtener los nodos actuales (pueden haber sido actualizados en llamadas recursivas anteriores)
-        val currentNodes = _nodes.value
-        val nodesToUpdate = mutableListOf<Pair<String, CalculationNode>>()
+    private fun propagateUpdates(parentNodeId: String, nodesMap: MutableMap<String, CalculationNode>) {
+        // Encontrar hijos directos que dependen de este padre
+        // Usamos nodesMap.values para buscar sobre el estado más actual de los nodos
+        val childNodes = nodesMap.values.filter { it.parentNodeIds.contains(parentNodeId) }
         
-        // Encontrar todos los nodos hijos directos que tienen este nodo como padre
-        currentNodes.forEach { node ->
-            if (node.parentNodeIds.contains(parentNodeId)) {
-                // Este nodo es hijo del nodo padre que cambió
-                // Reconstruir su expresión usando los resultados actuales de sus padres
-                val updatedNode = rebuildChildNodeExpression(node, currentNodes)
-                if (updatedNode != null) {
-                    nodesToUpdate.add(Pair(node.id, updatedNode))
-                }
-            }
-        }
-        
-        // Actualizar los nodos hijos encontrados
-        if (nodesToUpdate.isNotEmpty()) {
-            _nodes.value = _nodes.value.map { node ->
-                val update = nodesToUpdate.find { it.first == node.id }
-                if (update != null) {
-                    update.second
-                } else {
-                    node
-                }
-            }
+        for (childNode in childNodes) {
+            // Reconstruir el nodo hijo usando los nodos actualizados del mapa
+            // Pasamos nodesMap.values.toList() para que pueda buscar sus padres actualizados
+            val updatedChild = rebuildChildNodeExpression(childNode, nodesMap.values.toList())
             
-            // Recursivamente actualizar los hijos de los nodos actualizados
-            // Usar los nodos actualizados de _nodes.value para la siguiente iteración
-            nodesToUpdate.forEach { (_, updatedChildNode) ->
-                updateChildNodesRecursively(updatedChildNode.id, updatedChildNode.result)
+            if (updatedChild != null && updatedChild != childNode) {
+                // Guardar la actualización
+                nodesMap[childNode.id] = updatedChild
+                
+                // Recursión: propagar desde este hijo a sus propios hijos
+                propagateUpdates(childNode.id, nodesMap)
             }
         }
     }

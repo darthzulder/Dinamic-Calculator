@@ -176,7 +176,10 @@ class NodeRenderingManager(
         } else {
             "${node.expression} = $formattedResult"
         }
-        textView?.text = displayText
+        
+        if (textView?.text.toString() != displayText) {
+            textView?.text = displayText
+        }
         
         // Actualizar visibilidad
         view.visibility = if (draggedNodeId != null && node.id == draggedNodeId) {

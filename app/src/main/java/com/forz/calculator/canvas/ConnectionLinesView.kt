@@ -120,8 +120,11 @@ class ConnectionLinesView @JvmOverloads constructor(
         drawArrow(canvas, finalArrowX, finalArrowY, angle)
     }
 
+    // Objeto Path reutilizable para evitar asignaciones en onDraw
+    private val arrowPath = Path()
+
     private fun drawArrow(canvas: Canvas, x: Float, y: Float, angle: Float) {
-        val path = Path()
+        arrowPath.reset()
         
         // Calcular los puntos de la flecha (triángulo)
         val arrowLength = arrowSize
@@ -138,12 +141,12 @@ class ConnectionLinesView @JvmOverloads constructor(
         val baseY2 = y - sin(angle) * arrowLength * 0.3f + cos(angle) * arrowWidth
         
         // Crear el triángulo de la flecha
-        path.moveTo(tipX, tipY)
-        path.lineTo(baseX1, baseY1)
-        path.lineTo(baseX2, baseY2)
-        path.close()
+        arrowPath.moveTo(tipX, tipY)
+        arrowPath.lineTo(baseX1, baseY1)
+        arrowPath.lineTo(baseX2, baseY2)
+        arrowPath.close()
         
-        canvas.drawPath(path, arrowPaint)
+        canvas.drawPath(arrowPath, arrowPaint)
     }
 }
 
