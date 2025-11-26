@@ -33,6 +33,7 @@ import com.dz.calculator.R
 import com.dz.calculator.calculator.CalculatorViewModel
 import com.dz.calculator.calculator.DefaultOperator
 import com.dz.calculator.calculator.Evaluator
+import com.dz.calculator.calculator.TrigonometricFunction
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
 import com.dz.calculator.databinding.FragmentMainBinding
@@ -175,8 +176,13 @@ class MainFragment : Fragment(),
             override fun afterTextChanged(s: Editable?) {
                 val b = _binding ?: return
                 Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+                updateDegreeTitleText()
             }
         })
+
+        binding.degreeTitleText?.setOnClickListener {
+            CalculatorViewModel.updateDegreeModActivated()
+        }
     }
 
     private fun observeViewModels() {
@@ -188,6 +194,7 @@ class MainFragment : Fragment(),
         CalculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { isDegreeModActivated ->
             val b = _binding ?: return@observe
             Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+            updateDegreeTitleText()
         }
 
         canvasViewModel.nodes.onEach { nodes ->
@@ -526,5 +533,18 @@ class MainFragment : Fragment(),
 
     private fun hideNodePropertiesPanel() {
         nodePropertiesManager.hideNodePropertiesPanel()
+    }
+
+    private fun updateDegreeTitleText() {
+        val b = _binding ?: return
+        val expression = b.expressionEditText.text.toString()
+        val containsTrigFunction = TrigonometricFunction.entries.any { expression.contains(it.text) }
+
+        if (containsTrigFunction) {
+            b.degreeTitleText?.visibility = View.VISIBLE
+            b.degreeTitleText?.text = if (CalculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
+        } else {
+            b.degreeTitleText?.visibility = View.GONE
+        }
     }
 }
