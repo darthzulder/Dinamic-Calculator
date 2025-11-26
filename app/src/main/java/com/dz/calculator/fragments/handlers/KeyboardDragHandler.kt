@@ -3,6 +3,8 @@ package com.dz.calculator.fragments.handlers
 import android.content.ClipDescription
 import android.view.DragEvent
 import android.view.View
+import androidx.viewpager2.widget.ViewPager2
+import com.dz.calculator.R
 import com.dz.calculator.canvas.CanvasViewModel
 import com.dz.calculator.databinding.FragmentMainBinding
 
@@ -19,8 +21,9 @@ class KeyboardDragHandler(
     
     fun setupKeyboardDragListener() {
         val binding = getBinding() ?: return
+        val keyboardContainer = binding.root.findViewById<ViewPager2>(R.id.keyboard_container)
         
-        binding.keyboardContainer?.setOnDragListener { _, event ->
+        keyboardContainer?.setOnDragListener { _, event ->
             val b = getBinding() ?: return@setOnDragListener false
             
             when (event.action) {

@@ -3,7 +3,6 @@ package com.dz.calculator.fragments
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipDescription
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,20 +10,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.DragEvent
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.util.TypedValue
-import android.widget.EditText
-import android.widget.PopupMenu
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import com.google.android.material.card.MaterialCardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.dz.calculator.AboutActivity
 import com.dz.calculator.App
 import com.dz.calculator.MainActivity
@@ -36,6 +31,8 @@ import com.dz.calculator.calculator.Evaluator
 import com.dz.calculator.calculator.TrigonometricFunction
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
+import com.dz.calculator.fragments.HistoryFragment
+import com.dz.calculator.fragments.adapters.ViewPageAdapter
 import com.dz.calculator.databinding.FragmentMainBinding
 import com.dz.calculator.expression.ExpressionViewModel
 import com.dz.calculator.expression.ExpressionViewModel.cursorPositionStart
@@ -58,7 +55,8 @@ import java.math.BigDecimal
 @Suppress("DEPRECATION")
 class MainFragment : Fragment(),
     OnMainActivityListener,
-    CalculatorFragment.OnButtonClickListener {
+    CalculatorFragment.OnButtonClickListener,
+    HistoryFragment.OnButtonClickListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -111,6 +109,7 @@ class MainFragment : Fragment(),
         setupCanvasDragListener()
         setupKeyboardDragListener()
         setupNodePropertiesPanel()
+        setupViewPager()
     }
     
     private fun initializeHandlers() {
@@ -387,6 +386,10 @@ class MainFragment : Fragment(),
         val b = _binding ?: return
         b.expressionEditText.setText(expression)
         b.expressionEditText.setSelection(cursorPositionStart)
+        
+        // Update ViewPager2 swipe setting
+        val viewPager = b.root.findViewById<ViewPager2>(R.id.keyboard_container)
+        viewPager?.isUserInputEnabled = Config.swipeMain
     }
 
     override fun onResume() {
@@ -533,6 +536,34 @@ class MainFragment : Fragment(),
 
     private fun hideNodePropertiesPanel() {
         nodePropertiesManager.hideNodePropertiesPanel()
+    }
+
+    private fun setupViewPager() {
+        val viewPager = binding.root.findViewById<ViewPager2>(R.id.keyboard_container)
+        
+        val adapter = ViewPageAdapter(childFragmentManager, lifecycle)
+        adapter.addFragment(HistoryFragment())
+        adapter.addFragment(CalculatorFragment())
+        
+        viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = 2
+        viewPager.setCurrentItem(1, false)
+        viewPager.isUserInputEnabled = Config.swipeMain
+        
+        // Disable over-scroll effect
+        viewPager.apply {
+            (getChildAt(0) as? RecyclerView)?.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        }
+    }
+
+    override fun onExpressionTextClick(expression: String) {
+        val b = _binding ?: return
+        InsertInExpression.insertHistoryExpression(expression, b.expressionEditText)
+    }
+
+    override fun onResultTextClick(result: String) {
+        val b = _binding ?: return
+        InsertInExpression.insertHistoryResult(result, b.expressionEditText)
     }
 
     private fun updateDegreeTitleText() {

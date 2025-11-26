@@ -47,10 +47,15 @@ class HistoryFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        // El callback se configurará en onViewCreated cuando el parentFragment esté disponible
+    }
+    
+    private fun setupCallback() {
         try {
-            callback = parentFragment as OnButtonClickListener
+            // En ViewPager2, el parentFragment es el fragment que contiene el ViewPager2
+            callback = parentFragment as? OnButtonClickListener
         } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement OnButtonClickListener")
+            android.util.Log.e("HistoryFragment", "Parent fragment must implement OnButtonClickListener", e)
         }
     }
 
@@ -97,6 +102,12 @@ class HistoryFragment : Fragment() {
         historyService.addListener(historyDataListListener)
 
         return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Configurar el callback después de que la vista esté creada
+        setupCallback()
     }
 
     override fun onDestroy() {

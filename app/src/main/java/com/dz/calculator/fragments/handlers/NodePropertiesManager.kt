@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.dz.calculator.R
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
@@ -92,7 +93,7 @@ class NodePropertiesManager(
         binding.expressionEditText.alpha = 1.0f
         
         // Mostrar el teclado de calculadora
-        binding.keyboardContainer?.visibility = View.VISIBLE
+        binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.VISIBLE
         
         // Ocultar teclado del sistema
         val view = fragment.requireActivity().currentFocus ?: binding.root
@@ -118,14 +119,14 @@ class NodePropertiesManager(
             binding.expressionEditText.isFocusable = false
             binding.expressionEditText.isClickable = false
             binding.expressionEditText.alpha = 0.6f
-            binding.keyboardContainer?.visibility = View.GONE
+            binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.GONE
         } else {
             // Habilitar edición para nodos normales
             binding.expressionEditText.isEnabled = true
             binding.expressionEditText.isFocusable = true
             binding.expressionEditText.isClickable = true
             binding.expressionEditText.alpha = 1.0f
-            binding.keyboardContainer?.visibility = View.VISIBLE
+            binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.VISIBLE
             connectCalculatorKeyboard()
         }
     }
@@ -180,12 +181,12 @@ class NodePropertiesManager(
             if (hasFocus) {
                 showSystemKeyboard(view)
                 if (!isChildNode) {
-                    binding.keyboardContainer?.visibility = View.GONE
+                    binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.GONE
                 }
             } else {
                 val descriptionEditCheck = panelContainer.findViewById<EditText>(R.id.node_description_edit)
                 if (descriptionEditCheck?.hasFocus() != true && !isChildNode) {
-                    binding.keyboardContainer?.visibility = View.VISIBLE
+                    binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.VISIBLE
                 }
             }
         }
@@ -194,12 +195,12 @@ class NodePropertiesManager(
             if (hasFocus) {
                 showSystemKeyboard(view)
                 if (!isChildNode) {
-                    binding.keyboardContainer?.visibility = View.GONE
+                    binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.GONE
                 }
             } else {
                 val nameEditCheck = panelContainer.findViewById<EditText>(R.id.node_name_edit)
                 if (nameEditCheck?.hasFocus() != true && !isChildNode) {
-                    binding.keyboardContainer?.visibility = View.VISIBLE
+                    binding.root.findViewById<ViewPager2>(R.id.keyboard_container)?.visibility = View.VISIBLE
                 }
             }
         }

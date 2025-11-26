@@ -143,12 +143,20 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        gestureDetector.onTouchEvent(event)
+        // Solo procesar gestos si no estamos sobre un nodo
+        val touchingNode = when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> isTouchingNode(event.x, event.y)
+            else -> !isPanning
+        }
+        
+        if (!touchingNode) {
+            scaleGestureDetector.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
+        }
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                if (event.pointerCount == 1) {
+                if (event.pointerCount == 1 && !touchingNode) {
                     lastTouchX = event.x
                     lastTouchY = event.y
                     activePointerId = event.getPointerId(0)
@@ -181,7 +189,7 @@ class ZoomableCanvasContainer @JvmOverloads constructor(
                 activePointerId = MotionEvent.INVALID_POINTER_ID
             }
         }
-        return true
+        return if (touchingNode) false else true
     }
 
     // Verifica si el toque cae sobre una vista hija interactuable (Nodo)

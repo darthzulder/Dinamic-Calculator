@@ -122,15 +122,13 @@
     </FrameLayout>
 
     <!-- NEW: Keyboard Container -->
-    <androidx.fragment.app.FragmentContainerView
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/keyboard_container"
-        android:name="com.dz.calculator.fragments.CalculatorFragment"
         android:layout_width="0dp"
         android:layout_height="@dimen/_200sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout="@layout/fragment_calculator" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Trash Icon Overlay - Visible during drag -->
     <ImageView
