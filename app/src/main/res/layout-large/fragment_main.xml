@@ -36,7 +36,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline_display_top" />
 
-    <com.forz.calculator.expression.ExpressionEditText
+    <com.dz.calculator.expression.ExpressionEditText
         android:id="@+id/expressionEditText"
         style="@style/Expression"
         android:layout_width="0dp"
@@ -63,7 +63,7 @@
         app:layout_constraintGuide_percent="0.10" />
 
     <!-- NEW: Interactive Canvas with Zoom and Pan -->
-    <com.forz.calculator.canvas.ZoomableCanvasContainer
+    <com.dz.calculator.canvas.ZoomableCanvasContainer
         android:id="@+id/zoomable_canvas_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -82,14 +82,14 @@
             android:clipChildren="false">
 
             <!-- Connection Lines View - Dibuja las líneas de conexión entre nodos (debe estar debajo de los nodos) -->
-            <com.forz.calculator.canvas.ConnectionLinesView
+            <com.dz.calculator.canvas.ConnectionLinesView
                 android:id="@+id/connection_lines_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:elevation="0dp" />
         </FrameLayout>
-    </com.forz.calculator.canvas.ZoomableCanvasContainer>
+    </com.dz.calculator.canvas.ZoomableCanvasContainer>
 
     <!-- Node Properties Panel -->
     <FrameLayout
@@ -111,7 +111,7 @@
     <!-- NEW: Keyboard Container -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/keyboard_container"
-        android:name="com.forz.calculator.fragments.CalculatorFragment"
+        android:name="com.dz.calculator.fragments.CalculatorFragment"
         android:layout_width="0dp"
         android:layout_height="@dimen/_150sdp"
         app:layout_constraintBottom_toBottomOf="parent"

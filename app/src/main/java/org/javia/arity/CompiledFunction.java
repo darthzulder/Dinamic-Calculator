@@ -16,7 +16,7 @@
 
 package org.javia.arity;
 
-import com.forz.calculator.calculator.CalculatorViewModel;
+import com.dz.calculator.calculator.CalculatorViewModel;
 
 import java.util.Random;
 

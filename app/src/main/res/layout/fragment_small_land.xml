@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toTopOf="@id/pagerGuideline"/>
 
 
-    <com.forz.calculator.expression.ExpressionEditText
+    <com.dz.calculator.expression.ExpressionEditText
         android:id="@+id/expressionEditText"
         style="@style/Expression"
         app:layout_constraintBottom_toBottomOf="@id/background_expression"

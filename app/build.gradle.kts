@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.forz.calculator"
+    namespace = "com.dz.calculator"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.marktka.dinamicCalculator"
+        applicationId = "com.dz.dinamicCalculator"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
