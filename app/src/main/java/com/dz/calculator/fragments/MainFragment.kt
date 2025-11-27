@@ -56,7 +56,7 @@ import java.math.BigDecimal
 class MainFragment : Fragment(),
     OnMainActivityListener,
     CalculatorFragment.OnButtonClickListener,
-    HistoryFragment.OnButtonClickListener {
+    HistoryFragment.OnSessionInteractionListener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -66,6 +66,9 @@ class MainFragment : Fragment(),
 
     private val historyService: HistoryService
         get() = (requireContext().applicationContext as App).historyService
+    
+    private val sessionService: com.dz.calculator.session.SessionService
+        get() = (requireContext().applicationContext as App).sessionService
 
     // Estado de drag
     private var isDragInProgress = false
@@ -99,8 +102,11 @@ class MainFragment : Fragment(),
         }
 
 
-        // Restaurar nodos guardados antes de configurar los observadores
-        canvasViewModel.restoreNodes(requireContext())
+        // Inject SessionService into CanvasViewModel
+        canvasViewModel.setSessionService(sessionService)
+        
+        // Crear sesión inicial si no hay sesiones
+        initializeSession()
         
         initializeHandlers()
         setupToolbar()
@@ -110,6 +116,30 @@ class MainFragment : Fragment(),
         setupKeyboardDragListener()
         setupNodePropertiesPanel()
         setupViewPager()
+    }
+    
+    private fun initializeSession() {
+        // Temporary listener to check if sessions exist
+        var hasSession = false
+        val tempListener: com.dz.calculator.session.SessionDataListListener = { sessions ->
+            hasSession = sessions.isNotEmpty()
+            
+            // If we have sessions and no active session, load the most recent one
+            if (hasSession && canvasViewModel.activeSessionId == null) {
+                canvasViewModel.loadSession(sessions.first().id)
+            }
+        }
+        
+        // Add listener to get current session state
+        sessionService.addListener(tempListener)
+        
+        // If no sessions exist, create the first one
+        if (!hasSession) {
+            canvasViewModel.createNewSession()
+        }
+        
+        // Remove temporary listener
+        sessionService.removeListener(tempListener)
     }
     
     private fun initializeHandlers() {
@@ -556,14 +586,34 @@ class MainFragment : Fragment(),
         }
     }
 
-    override fun onExpressionTextClick(expression: String) {
-        val b = _binding ?: return
-        InsertInExpression.insertHistoryExpression(expression, b.expressionEditText)
+    override fun onSessionClick(sessionId: Int) {
+        // Check if canvas has nodes
+        val hasNodes = canvasViewModel.nodes.value.isNotEmpty()
+        
+        if (hasNodes) {
+            // Show confirmation dialog
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cargar Sesión")
+                .setMessage("¿Cargar esta sesión reemplazará y borrará el contenido actual del canvas. Desea continuar?")
+                .setPositiveButton("Continuar") { _, _ ->
+                    canvasViewModel.loadSession(sessionId)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        } else {
+            // Load session directly if canvas is empty
+            canvasViewModel.loadSession(sessionId)
+        }
     }
 
-    override fun onResultTextClick(result: String) {
-        val b = _binding ?: return
-        InsertInExpression.insertHistoryResult(result, b.expressionEditText)
+    override fun onNewSessionClick() {
+        canvasViewModel.createNewSession()
+        // Show brief confirmation
+        android.widget.Toast.makeText(
+            requireContext(),
+            "Nueva sesión creada",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun updateDegreeTitleText() {

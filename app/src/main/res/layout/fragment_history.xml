@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     tools:context=".fragments.CalculatorFragment"
     android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/newSessionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/new_session"
+        app:icon="@android:drawable/ic_menu_add"
+        style="@style/Widget.Material3.Button.TonalButton" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -18,6 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.dz.calculator.session.SessionService
 
 class CanvasViewModel : ViewModel() {
 
@@ -25,8 +26,14 @@ class CanvasViewModel : ViewModel() {
     val nodes: StateFlow<List<CalculationNode>> = _nodes
     
     private var updateJob: Job? = null
+    private var autoSaveJob: Job? = null
 
     private var pendingCombination: Pair<String, String>? = null
+    
+    // Session management
+    var activeSessionId: Int? = null
+        private set
+    private var sessionService: SessionService? = null
     
     // Colores contrastantes para las conexiones
     private val connectionColors = listOf(
@@ -59,6 +66,10 @@ class CanvasViewModel : ViewModel() {
         private const val X_TOLERANCE = 20f // Tolerancia en píxeles para considerar que dos nodos están en la misma columna X
     }
 
+    fun setSessionService(service: SessionService) {
+        this.sessionService = service
+    }
+    
     fun addNode(
         expression: String, 
         result: BigDecimal, 
@@ -103,6 +114,7 @@ class CanvasViewModel : ViewModel() {
             connectionColor = connectionColor
         )
         _nodes.value = _nodes.value + newNode
+        triggerAutoSave()
     }
     
     private fun getNextConnectionColor(): Int {
@@ -119,6 +131,7 @@ class CanvasViewModel : ViewModel() {
                 it
             }
         }
+        triggerAutoSave()
     }
 
     fun shiftAllNodes(dx: Float, dy: Float) {
@@ -233,10 +246,12 @@ class CanvasViewModel : ViewModel() {
         
         // Eliminar todos los nodos encontrados
         _nodes.value = _nodes.value.filter { !nodesToDelete.contains(it.id) }
+        triggerAutoSave()
     }
 
     fun clearNodes() {
         _nodes.value = emptyList()
+        triggerAutoSave()
     }
 
     fun updateNodeName(nodeId: String, name: String) {
@@ -247,6 +262,7 @@ class CanvasViewModel : ViewModel() {
                 it
             }
         }
+        triggerAutoSave()
     }
 
     fun updateNodeDescription(nodeId: String, description: String) {
@@ -257,6 +273,7 @@ class CanvasViewModel : ViewModel() {
                 it
             }
         }
+        triggerAutoSave()
     }
 
     fun updateNodeExpression(nodeId: String, expression: String) {
@@ -303,6 +320,7 @@ class CanvasViewModel : ViewModel() {
             }
             
             _nodes.value = finalNodes
+            triggerAutoSave()
         }
     }
     
@@ -670,5 +688,55 @@ class CanvasViewModel : ViewModel() {
             .replace("\\n", "\n")
             .replace("\\r", "\r")
             .replace("\\t", "\t")
+    }
+    
+    /**
+     * Triggers auto-save of the current session with debouncing
+     */
+    private fun triggerAutoSave() {
+        val sessionId = activeSessionId ?: return
+        val service = sessionService ?: return
+        
+        // Cancel previous save job
+        autoSaveJob?.cancel()
+        
+        // Launch new save job with debounce
+        autoSaveJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(300) // 300ms debounce
+            val canvasState = serializeNodes(_nodes.value)
+            service.updateSession(sessionId, canvasState)
+        }
+    }
+    
+    /**
+     * Creates a new session and clears the canvas
+     */
+    fun createNewSession() {
+        val service = sessionService ?: return
+        
+        // Clear the canvas
+        _nodes.value = emptyList()
+        
+        // Create new session with empty canvas state
+        val sessionData = service.createSession("")
+        activeSessionId = sessionData.id
+    }
+    
+    /**
+     * Loads a session from the database and restores canvas state
+     */
+    fun loadSession(sessionId: Int) {
+        val service = sessionService ?: return
+        val sessionData = service.getSessionById(sessionId) ?: return
+        
+        // Restore canvas state
+        if (sessionData.canvasState.isNotEmpty()) {
+            _nodes.value = deserializeNodes(sessionData.canvasState)
+        } else {
+            _nodes.value = emptyList()
+        }
+        
+        // Set as active session
+        activeSessionId = sessionId
     }
 }

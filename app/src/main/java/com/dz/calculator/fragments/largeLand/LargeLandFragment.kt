@@ -47,7 +47,6 @@ import kotlin.properties.Delegates.notNull
 class LargeLandFragment : Fragment(),
     OnMainActivityListener,
     CalculatorFragment.OnButtonClickListener,
-    HistoryFragment.OnButtonClickListener,
     UnitConverterFragment.OnButtonClickListener
 {
 
@@ -301,11 +300,11 @@ class LargeLandFragment : Fragment(),
         }
     }
 
-    override fun onExpressionTextClick(expression: String) {
+    fun onExpressionTextClick(expression: String) {
         InsertInExpression.insertHistoryExpression(expression, binding.expressionEditText)
     }
 
-    override fun onResultTextClick(result: String) {
+    fun onResultTextClick(result: String) {
         InsertInExpression.insertHistoryResult(result, binding.expressionEditText)
     }
 

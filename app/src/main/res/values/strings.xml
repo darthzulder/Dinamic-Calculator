@@ -361,4 +361,5 @@
     <string name="title_donate">Donate</string>
     <string name="title_email">Email</string>
     <string name="description_email">Send me an email</string>
+    <string name="new_session">New Session</string>
 </resources>

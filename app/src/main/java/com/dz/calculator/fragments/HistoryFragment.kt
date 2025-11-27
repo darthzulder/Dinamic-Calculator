@@ -12,12 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dz.calculator.App
 import com.dz.calculator.R
 import com.dz.calculator.databinding.FragmentHistoryBinding
-import com.dz.calculator.history.HistoryData
-import com.dz.calculator.history.HistoryDataActionListener
-import com.dz.calculator.history.HistoryDataAdapter
-import com.dz.calculator.history.HistoryDataListListener
-import com.dz.calculator.history.HistoryService
-import com.dz.calculator.utils.InteractionAndroid
+import com.dz.calculator.session.SessionData
+import com.dz.calculator.session.SessionDataActionListener
+import com.dz.calculator.session.SessionDataAdapter
+import com.dz.calculator.session.SessionDataListListener
+import com.dz.calculator.session.SessionService
 import kotlin.properties.Delegates.notNull
 
 class HistoryFragment : Fragment() {
@@ -33,16 +32,16 @@ class HistoryFragment : Fragment() {
     }
 
     private var binding: FragmentHistoryBinding by notNull()
-    private var adapter: HistoryDataAdapter by notNull()
-    private var callback: OnButtonClickListener? = null
+    private var adapter: SessionDataAdapter by notNull()
+    private var callback: OnSessionInteractionListener? = null
 
-    private val historyService: HistoryService
-        get() = (requireContext().applicationContext as App).historyService
+    private val sessionService: SessionService
+        get() = (requireContext().applicationContext as App).sessionService
 
 
-    interface OnButtonClickListener {
-        fun onExpressionTextClick(expression: String)
-        fun onResultTextClick(result: String)
+    interface OnSessionInteractionListener {
+        fun onSessionClick(sessionId: Int)
+        fun onNewSessionClick()
     }
 
     override fun onAttach(context: Context) {
@@ -53,9 +52,9 @@ class HistoryFragment : Fragment() {
     private fun setupCallback() {
         try {
             // En ViewPager2, el parentFragment es el fragment que contiene el ViewPager2
-            callback = parentFragment as? OnButtonClickListener
+            callback = parentFragment as? OnSessionInteractionListener
         } catch (e: ClassCastException) {
-            android.util.Log.e("HistoryFragment", "Parent fragment must implement OnButtonClickListener", e)
+            android.util.Log.e("HistoryFragment", "Parent fragment must implement OnSessionInteractionListener", e)
         }
     }
 
@@ -65,33 +64,13 @@ class HistoryFragment : Fragment() {
     ): View {
         binding = FragmentHistoryBinding.inflate(inflater, container, false)
 
-        adapter = HistoryDataAdapter(requireContext(), object : HistoryDataActionListener {
-            override fun onExpressionTextClick(expression: String) {
-                callback?.onExpressionTextClick(expression)
+        adapter = SessionDataAdapter(requireContext(), object : SessionDataActionListener {
+            override fun onSessionClick(sessionData: SessionData) {
+                callback?.onSessionClick(sessionData.id)
             }
 
-            override fun onResultTextClick(result: String) {
-                callback?.onResultTextClick(result)
-            }
-
-            override fun onExpressionTextLongClick(expression: String) {
-                InteractionAndroid.copyToClipboard(expression, requireContext())
-            }
-
-            override fun onResultTextLongClick(result: String) {
-                InteractionAndroid.copyToClipboard(result, requireContext())
-            }
-
-            override fun onCopyButtonClick(string: String) {
-                InteractionAndroid.copyToClipboard(string, requireContext())
-            }
-
-            override fun onShareButtonClick(string: String) {
-                InteractionAndroid.share(string, requireContext())
-            }
-
-            override fun onDeleteItemButtonClick(historyData: HistoryData) {
-                adapter.deleteHistoryData(historyData)
+            override fun onDeleteSessionClick(sessionData: SessionData) {
+                adapter.deleteSession(sessionData)
             }
         })
 
@@ -99,7 +78,12 @@ class HistoryFragment : Fragment() {
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
 
-        historyService.addListener(historyDataListListener)
+        // New Session button handler
+        binding.newSessionButton?.setOnClickListener {
+            callback?.onNewSessionClick()
+        }
+
+        sessionService.addListener(sessionDataListListener)
 
         return binding.root
     }
@@ -113,7 +97,7 @@ class HistoryFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        historyService.removeListener(historyDataListListener)
+        sessionService.removeListener(sessionDataListListener)
     }
 
     override fun onStop() {
@@ -125,13 +109,12 @@ class HistoryFragment : Fragment() {
 
 
 
-    private val historyDataListListener: HistoryDataListListener = {
-        adapter.historyDataList = it
+    private val sessionDataListListener: SessionDataListListener = {
+        adapter.sessionList = it
 
-        newSizeRecyclerViewHistory = adapter.historyDataList.size
+        newSizeRecyclerViewHistory = adapter.sessionList.size
 
         if (oldSizeRecyclerViewHistory < newSizeRecyclerViewHistory || recyclerViewHistoryElementIsAdded){
-            adapter.addHistoryDataUpdate()
             binding.recyclerView.scrollToPosition(0)
             if (recyclerViewHistoryIsRecreated){
                 recyclerViewHistoryElementIsAdded = !recyclerViewHistoryElementIsAdded
@@ -144,9 +127,9 @@ class HistoryFragment : Fragment() {
             binding.recyclerView.scrollToPosition(currentPositionRecyclerViewHistory)
         }
 
-        oldSizeRecyclerViewHistory = adapter.historyDataList.size
+        oldSizeRecyclerViewHistory = adapter.sessionList.size
 
-        if (adapter.historyDataList.isEmpty()){
+        if (adapter.sessionList.isEmpty()){
             val fadeInAnimation200: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in_200)
 
             binding.recyclerView.visibility = View.GONE
