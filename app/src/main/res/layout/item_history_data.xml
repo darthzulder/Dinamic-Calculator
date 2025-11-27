@@ -23,27 +23,29 @@
         tool:text="20 March 2023" />
 
     <TextView
-        android:id="@+id/expressionText"
+        android:id="@+id/sessionLabel"
         style="@style/ExpressionText"
-        app:layout_constraintEnd_toStartOf="@id/toolbar"
+        android:layout_width="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateText"
-        tool:text="(2400+3^2+100)-20%2323232424242" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tool:text="N° 2" />
 
     <TextView
-        android:id="@+id/resultText"
-        style="@style/ExpressionText.ResultText"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/sessionName"
+        style="@style/ExpressionText"
+        app:layout_constraintTop_toBottomOf="@id/dateText"
         app:layout_constraintEnd_toStartOf="@id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expressionText"
-        tool:text="493.128543424242424324242423432423424" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/sessionLabel"
+        tool:text="21:36" />
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         style="@style/HistoryToolbar"
-        app:layout_constraintBottom_toBottomOf="@id/resultText"
+        app:layout_constraintBottom_toBottomOf="@id/sessionName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/expressionText" />
+        app:layout_constraintTop_toTopOf="@id/sessionLabel"
+        android:background="@color/cardview_light_background"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

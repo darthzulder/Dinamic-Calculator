@@ -31,7 +31,6 @@ import com.dz.calculator.calculator.Evaluator
 import com.dz.calculator.calculator.TrigonometricFunction
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
-import com.dz.calculator.fragments.HistoryFragment
 import com.dz.calculator.fragments.adapters.ViewPageAdapter
 import com.dz.calculator.databinding.FragmentMainBinding
 import com.dz.calculator.expression.ExpressionViewModel
@@ -597,17 +596,20 @@ class MainFragment : Fragment(),
                 .setMessage("¿Cargar esta sesión reemplazará y borrará el contenido actual del canvas. Desea continuar?")
                 .setPositiveButton("Continuar") { _, _ ->
                     canvasViewModel.loadSession(sessionId)
+                    binding.zoomableCanvasContainer?.resetZoom()
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
         } else {
             // Load session directly if canvas is empty
             canvasViewModel.loadSession(sessionId)
+            binding.zoomableCanvasContainer?.resetZoom()
         }
     }
 
     override fun onNewSessionClick() {
         canvasViewModel.createNewSession()
+        binding.zoomableCanvasContainer?.resetZoom()
         // Show brief confirmation
         android.widget.Toast.makeText(
             requireContext(),

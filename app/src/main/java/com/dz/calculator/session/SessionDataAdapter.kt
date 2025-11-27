@@ -44,7 +44,8 @@ class SessionDataAdapter(
     private val context: Context,
     private val actionListener: SessionDataActionListener
 ) : RecyclerView.Adapter<SessionDataAdapter.SessionDataViewHolder>(),
-    View.OnClickListener {
+    View.OnClickListener,
+    View.OnLongClickListener {
 
     private val sessionService: SessionService
         get() = (context.applicationContext as App).sessionService
@@ -70,18 +71,30 @@ class SessionDataAdapter(
     override fun onClick(v: View) {
         val sessionData = v.tag as SessionData
         when (v.id) {
-            R.id.expressionText, R.id.resultText -> {
+            R.id.sessionLabel, R.id.sessionName -> {
                 actionListener.onSessionClick(sessionData)
             }
         }
+    }
+    
+    override fun onLongClick(v: View): Boolean {
+        val sessionData = v.tag as SessionData
+        when (v.id) {
+            R.id.sessionName -> {
+                showEditNameDialog(sessionData)
+                return true
+            }
+        }
+        return false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionDataViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemHistoryDataBinding.inflate(inflater, parent, false)
 
-        binding.expressionText.setOnClickListener(this)
-        binding.resultText.setOnClickListener(this)
+        binding.sessionLabel?.setOnClickListener(this)
+        binding.sessionName?.setOnClickListener(this)
+        binding.sessionName?.setOnLongClickListener(this)
 
         return SessionDataViewHolder(binding)
     }
@@ -95,8 +108,8 @@ class SessionDataAdapter(
         val sessionData = sessionList[position]
         with(holder.binding) {
             holder.itemView.tag = sessionData
-            expressionText.tag = sessionData
-            resultText.tag = sessionData
+            sessionLabel?.tag = sessionData
+            sessionName?.tag = sessionData
 
             toolbar.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
@@ -129,9 +142,21 @@ class SessionDataAdapter(
                 dateText.text = formatDate(sessionData.date)
             }
 
-            // Display session name as "expression" and hide result
-            expressionText.text = sessionData.name
-            resultText.visibility = View.GONE
+            // Separar el nombre de sesión en sus partes
+            // El formato del nombre es "N° X HH:MM" donde X es el número de sesión
+            // Queremos mostrar "N° X:" en sessionLabel y "HH:MM" en sessionDate
+            val parts = sessionData.name.split(" ")
+            
+            if (parts.size >= 3) {
+                // parts[0] = "N°", parts[1] = número, parts[2] = hora
+                sessionLabel?.text = "${parts[0]} ${parts[1]}:"  // "N° X:"
+                // Mostrar customName si existe, sino la hora por defecto
+                sessionName?.text = sessionData.customName.ifEmpty { parts[2] }
+            } else {
+                // Fallback si el formato no es el esperado
+                sessionLabel?.text = "N°:"
+                sessionName?.text = sessionData.customName.ifEmpty { sessionData.name }
+            }
 
             lastDate = sessionData.date
         }
@@ -139,89 +164,55 @@ class SessionDataAdapter(
 
     private fun formatDate(date: LocalDate): String {
         val dateNow = LocalDate.now()
-        val outputDate: String
-
-        val differenceInDays = ChronoUnit.DAYS.between(date, dateNow).toInt()
-        if (differenceInDays in 0..7) {
-            when (differenceInDays) {
-                0 -> {
-                    outputDate = context.getString(R.string.today_date)
-                }
-                1 -> {
-                    outputDate = context.getString(R.string.yesterday_date)
-                }
-                2 -> {
-                    outputDate = context.getString(R.string.days_ago_2_date)
-                }
-                3 -> {
-                    outputDate = context.getString(R.string.days_ago_3_date)
-                }
-                4 -> {
-                    outputDate = context.getString(R.string.days_ago_4_date)
-                }
-                5 -> {
-                    outputDate = context.getString(R.string.days_ago_5_date)
-                }
-                6 -> {
-                    outputDate = context.getString(R.string.days_ago_6_date)
-                }
-                else -> {
-                    outputDate = context.getString(R.string.days_ago_7_date)
-                }
-            }
-        } else {
-            val day = date.dayOfMonth.toString()
-            val month: String
-
-            when (date.month) {
-                Month.JANUARY -> {
-                    month = context.getString(R.string.month_1_date)
-                }
-                Month.FEBRUARY -> {
-                    month = context.getString(R.string.month_2_date)
-                }
-                Month.MARCH -> {
-                    month = context.getString(R.string.month_3_date)
-                }
-                Month.APRIL -> {
-                    month = context.getString(R.string.month_4_date)
-                }
-                Month.MAY -> {
-                    month = context.getString(R.string.month_5_date)
-                }
-                Month.JUNE -> {
-                    month = context.getString(R.string.month_6_date)
-                }
-                Month.JULY -> {
-                    month = context.getString(R.string.month_7_date)
-                }
-                Month.AUGUST -> {
-                    month = context.getString(R.string.month_8_date)
-                }
-                Month.SEPTEMBER -> {
-                    month = context.getString(R.string.month_9_date)
-                }
-                Month.OCTOBER -> {
-                    month = context.getString(R.string.month_10_date)
-                }
-                Month.NOVEMBER -> {
-                    month = context.getString(R.string.month_11_date)
-                }
-                else -> {
-                    month = context.getString(R.string.month_12_date)
-                }
-            }
-
-            val year: String = if (dateNow.year == date.year) {
-                ""
-            } else {
-                date.year.toString()
-            }
-
-            outputDate = "$day $month $year"
+        
+        // Si es hoy, mostrar "Today"
+        if (date == dateNow) {
+            return context.getString(R.string.today_date)
         }
-
-        return outputDate
+        
+        // Para cualquier otra fecha, usar el formato del dispositivo
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(date.year, date.monthValue - 1, date.dayOfMonth)
+        }
+        
+        val dateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM, context.resources.configuration.locale)
+        return dateFormat.format(calendar.time)
+    }
+    
+    private fun showEditNameDialog(sessionData: SessionData) {
+        val editText = android.widget.EditText(context).apply {
+            setText(sessionData.customName.ifEmpty { 
+                // Extraer la hora por defecto del nombre
+                val parts = sessionData.name.split(" ")
+                if (parts.size >= 3) parts[2] else ""
+            })
+            hint = "Nombre de la sesión"
+            inputType = android.text.InputType.TYPE_CLASS_TEXT
+            selectAll()
+        }
+        
+        val padding = (16 * context.resources.displayMetrics.density).toInt()
+        val container = android.widget.FrameLayout(context).apply {
+            setPadding(padding, padding / 2, padding, 0)
+            addView(editText)
+        }
+        
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
+            .setTitle("Editar nombre de sesión")
+            .setView(container)
+            .setPositiveButton("Guardar") { _, _ ->
+                val newName = editText.text.toString().trim()
+                sessionService.updateSessionName(sessionData.id, newName)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+            
+        // Mostrar el teclado
+        editText.requestFocus()
+        editText.post {
+            val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(editText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     class SessionDataViewHolder(

@@ -1,6 +1,7 @@
 package com.dz.calculator.session
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import java.time.LocalDate
@@ -8,11 +9,12 @@ import java.time.format.DateTimeFormatter
 
 typealias SessionDataListListener = (sessionList: List<SessionData>) -> Unit
 
-class SessionService(context: Context) {
+class SessionService(private val context: Context) {
     private var sessionList = mutableListOf<SessionData>()
     private val listeners = mutableSetOf<SessionDataListListener>()
     private val dbHelper = SessionDBHelper(context)
     private val mainHandler = Handler(Looper.getMainLooper())
+    private val prefs: SharedPreferences = context.getSharedPreferences("session_prefs", Context.MODE_PRIVATE)
 
     init {
         val data = dbHelper.selectAllOrderByTimestamp()
@@ -48,6 +50,19 @@ class SessionService(context: Context) {
                 canvasState = canvasState,
                 timestamp = System.currentTimeMillis()
             )
+            sessionList = ArrayList(sessionList)
+            sessionList[index] = updated
+            notifyChanges()
+        }
+    }
+    
+    fun updateSessionName(id: Int, customName: String) {
+        dbHelper.updateSessionName(id, customName)
+        
+        // Update in-memory list
+        val index = sessionList.indexOfFirst { it.id == id }
+        if (index != -1) {
+            val updated = sessionList[index].copy(customName = customName)
             sessionList = ArrayList(sessionList)
             sessionList[index] = updated
             notifyChanges()
@@ -91,14 +106,16 @@ class SessionService(context: Context) {
     }
 
     private fun generateSessionName(): String {
-        val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
-        val dateStr = LocalDate.now().format(formatter)
+        // Obtener y incrementar el contador de sesiones
+        val sessionCounter = prefs.getInt("session_counter", 0) + 1
+        prefs.edit().putInt("session_counter", sessionCounter).apply()
         
-        // Count sessions created today to generate unique number
-        val today = LocalDate.now()
-        val todaySessionCount = sessionList.count { it.date == today }
-        val sessionNumber = todaySessionCount + 1
+        // Obtener la hora actual en formato HH:MM
+        val calendar = java.util.Calendar.getInstance()
+        val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(java.util.Calendar.MINUTE)
+        val timeStr = String.format("%02d:%02d", hour, minute)
         
-        return "Session N° $dateStr"
+        return "N° $sessionCounter $timeStr"
     }
 }

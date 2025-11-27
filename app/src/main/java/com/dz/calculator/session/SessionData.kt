@@ -7,5 +7,6 @@ data class SessionData(
     val name: String,
     val canvasState: String,
     val timestamp: Long,
-    val date: LocalDate
+    val date: LocalDate,
+    val customName: String = "" // Nombre personalizado opcional
 )
