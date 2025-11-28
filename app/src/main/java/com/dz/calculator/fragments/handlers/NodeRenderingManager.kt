@@ -29,7 +29,29 @@ class NodeRenderingManager(
     private val createNodeViewCallback: (CalculationNode) -> View,
     private val getSelectedNode: () -> CalculationNode?
 ) {
-    
+    /**
+     * Formatea el texto de visualización para un nodo de cálculo.
+     * Esta función centraliza la lógica de formato para ser usada tanto al crear
+     * como al actualizar nodos.
+     * @param node El nodo de cálculo a formatear.
+     * @return El texto formateado para ser mostrado en la UI.
+     */
+    fun getFormattedNodeText(node: CalculationNode): String {
+        val formattedResult = NumberFormatter.formatResult(
+            node.result,
+            Config.numberPrecision,
+            Config.maxScientificNotationDigits,
+            Config.groupingSeparatorSymbol,
+            Config.decimalSeparatorSymbol
+        )
+
+        return if (node.name.isNotEmpty()) {
+            "${node.name}:\n${node.expression} = $formattedResult"
+        } else {
+            "${node.expression} = $formattedResult"
+        }
+    }
+
     var pendingPanAdjustment: Pair<Float, Float>? = null
     
     fun renderNodes(
@@ -164,22 +186,14 @@ class NodeRenderingManager(
         
         // Actualizar texto
         val textView = view.findViewById<TextView>(R.id.node_text)
-        val formattedResult = NumberFormatter.formatResult(
-            node.result,
-            Config.numberPrecision,
-            Config.maxScientificNotationDigits,
-            Config.groupingSeparatorSymbol,
-            Config.decimalSeparatorSymbol
-        )
-        val displayText = if (node.name.isNotEmpty()) {
-            "${node.name}: ${node.expression} = $formattedResult"
-        } else {
-            "${node.expression} = $formattedResult"
-        }
-        
+
+        // ↓↓↓ LÍNEAS MODIFICADAS ↓↓↓
+        val displayText = getFormattedNodeText(node) // Usamos la función centralizada
+
         if (textView?.text.toString() != displayText) {
             textView?.text = displayText
         }
+        // ↑↑↑ FIN DE LÍNEAS MODIFICADAS ↑↑↑
         
         // Actualizar visibilidad
         view.visibility = if (draggedNodeId != null && node.id == draggedNodeId) {

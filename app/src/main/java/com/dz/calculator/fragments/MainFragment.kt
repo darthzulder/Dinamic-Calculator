@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.google.android.material.card.MaterialCardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -31,41 +30,46 @@ import com.dz.calculator.calculator.Evaluator
 import com.dz.calculator.calculator.TrigonometricFunction
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
-import com.dz.calculator.fragments.adapters.ViewPageAdapter
 import com.dz.calculator.databinding.FragmentMainBinding
 import com.dz.calculator.expression.ExpressionViewModel
 import com.dz.calculator.expression.ExpressionViewModel.cursorPositionStart
 import com.dz.calculator.expression.ExpressionViewModel.expression
 import com.dz.calculator.expression.ExpressionViewModel.oldExpression
+import com.dz.calculator.fragments.adapters.ViewPageAdapter
+import com.dz.calculator.fragments.handlers.CanvasDragHandler
+import com.dz.calculator.fragments.handlers.KeyboardDragHandler
+import com.dz.calculator.fragments.handlers.NodePropertiesManager
+import com.dz.calculator.fragments.handlers.NodeRenderingManager
 import com.dz.calculator.history.HistoryService
 import com.dz.calculator.settings.Config
 import com.dz.calculator.settings.SettingsActivity
 import com.dz.calculator.utils.HapticAndSound
 import com.dz.calculator.utils.InsertInExpression
 import com.dz.calculator.utils.NumberFormatter
-import com.dz.calculator.fragments.handlers.CanvasDragHandler
-import com.dz.calculator.fragments.handlers.NodeRenderingManager
-import com.dz.calculator.fragments.handlers.NodePropertiesManager
-import com.dz.calculator.fragments.handlers.KeyboardDragHandler
+import com.google.android.material.card.MaterialCardView
+import java.math.BigDecimal
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.math.BigDecimal
 
 @Suppress("DEPRECATION")
-class MainFragment : Fragment(),
-    OnMainActivityListener,
-    CalculatorFragment.OnButtonClickListener,
-    HistoryFragment.OnSessionInteractionListener {
+class MainFragment :
+        Fragment(),
+        OnMainActivityListener,
+        CalculatorFragment.OnButtonClickListener,
+        HistoryFragment.OnSessionInteractionListener {
 
     private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private val binding
+        get() = _binding!!
 
-    private val hapticAndSound: HapticAndSound by lazy { HapticAndSound(requireContext(), emptyArray()) }
+    private val hapticAndSound: HapticAndSound by lazy {
+        HapticAndSound(requireContext(), emptyArray())
+    }
     private val canvasViewModel: CanvasViewModel by viewModels()
 
     private val historyService: HistoryService
         get() = (requireContext().applicationContext as App).historyService
-    
+
     private val sessionService: com.dz.calculator.session.SessionService
         get() = (requireContext().applicationContext as App).sessionService
 
@@ -73,7 +77,7 @@ class MainFragment : Fragment(),
     private var isDragInProgress = false
     private var needsRenderAfterDrag = false
     private var selectedNode: CalculationNode? = null
-        
+
     // Handlers delegados
     private lateinit var canvasDragHandler: CanvasDragHandler
     private lateinit var nodeRenderingManager: NodeRenderingManager
@@ -81,8 +85,9 @@ class MainFragment : Fragment(),
     private lateinit var keyboardDragHandler: KeyboardDragHandler
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
@@ -92,7 +97,7 @@ class MainFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         binding.expressionEditText.showSoftInputOnFocus = false
         binding.expressionEditText.requestFocus()
-        
+
         // Ocultar teclado del teléfono cuando ExpressionEditText tiene foco
         binding.expressionEditText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
@@ -100,13 +105,12 @@ class MainFragment : Fragment(),
             }
         }
 
-
         // Inject SessionService into CanvasViewModel
-        canvasViewModel.setSessionService(sessionService)
-        
+        canvasViewModel.setSessionService(sessionService, requireContext())
+
         // Crear sesión inicial si no hay sesiones
         initializeSession()
-        
+
         initializeHandlers()
         setupToolbar()
         setupExpressionInput()
@@ -116,62 +120,68 @@ class MainFragment : Fragment(),
         setupNodePropertiesPanel()
         setupViewPager()
     }
-    
+
     private fun initializeSession() {
-        // Temporary listener to check if sessions exist
-        var hasSession = false
+        // If there's already an active session, don't do anything
+        if (canvasViewModel.activeSessionId != null) {
+            return
+        }
+
+        // Check if there are any sessions in the database
         val tempListener: com.dz.calculator.session.SessionDataListListener = { sessions ->
-            hasSession = sessions.isNotEmpty()
-            
-            // If we have sessions and no active session, load the most recent one
-            if (hasSession && canvasViewModel.activeSessionId == null) {
-                canvasViewModel.loadSession(sessions.first().id)
+            // Only initialize if we still don't have an active session
+            if (canvasViewModel.activeSessionId == null) {
+                if (sessions.isNotEmpty()) {
+                    // Load the most recent session
+                    canvasViewModel.loadSession(sessions.first().id)
+                } else {
+                    // Create the first session
+                    canvasViewModel.createNewSession()
+                }
             }
         }
-        
+
         // Add listener to get current session state
         sessionService.addListener(tempListener)
-        
-        // If no sessions exist, create the first one
-        if (!hasSession) {
-            canvasViewModel.createNewSession()
-        }
-        
-        // Remove temporary listener
-        sessionService.removeListener(tempListener)
+
+        // Remove temporary listener after a short delay to allow it to execute
+        binding.root.postDelayed({ sessionService.removeListener(tempListener) }, 100)
     }
-    
+
     private fun initializeHandlers() {
-        canvasDragHandler = CanvasDragHandler(
-            getBinding = { _binding },
-            canvasViewModel = canvasViewModel,
-            onDragStateChanged = { isDragging -> isDragInProgress = isDragging },
-            onRenderRequested = { canvasViewModel.nodes.value.let { renderNodes(it) } },
-            getSelectedNode = { selectedNode },
-            hideNodePropertiesPanel = { nodePropertiesManager.hideNodePropertiesPanel() }
-        )
-        
-        nodeRenderingManager = NodeRenderingManager(
-            context = requireContext(),
-            getBinding = { _binding },
-            canvasViewModel = canvasViewModel,
-            createNodeViewCallback = { node -> createNodeView(node) },
-            getSelectedNode = { selectedNode }
-        )
-        
-        nodePropertiesManager = NodePropertiesManager(
-            fragment = this,
-            getBinding = { _binding },
-            canvasViewModel = canvasViewModel,
-            onRenderRequested = { canvasViewModel.nodes.value.let { renderNodes(it) } },
-            getSelectedNode = { selectedNode },
-            setSelectedNode = { node -> selectedNode = node }
-        )
-        
-        keyboardDragHandler = KeyboardDragHandler(
-            getBinding = { _binding },
-            canvasViewModel = canvasViewModel
-        )
+        canvasDragHandler =
+                CanvasDragHandler(
+                        getBinding = { _binding },
+                        canvasViewModel = canvasViewModel,
+                        onDragStateChanged = { isDragging -> isDragInProgress = isDragging },
+                        onRenderRequested = { canvasViewModel.nodes.value.let { renderNodes(it) } },
+                        getSelectedNode = { selectedNode },
+                        hideNodePropertiesPanel = {
+                            nodePropertiesManager.hideNodePropertiesPanel()
+                        }
+                )
+
+        nodeRenderingManager =
+                NodeRenderingManager(
+                        context = requireContext(),
+                        getBinding = { _binding },
+                        canvasViewModel = canvasViewModel,
+                        createNodeViewCallback = { node -> createNodeView(node) },
+                        getSelectedNode = { selectedNode }
+                )
+
+        nodePropertiesManager =
+                NodePropertiesManager(
+                        fragment = this,
+                        getBinding = { _binding },
+                        canvasViewModel = canvasViewModel,
+                        onRenderRequested = { canvasViewModel.nodes.value.let { renderNodes(it) } },
+                        getSelectedNode = { selectedNode },
+                        setSelectedNode = { node -> selectedNode = node }
+                )
+
+        keyboardDragHandler =
+                KeyboardDragHandler(getBinding = { _binding }, canvasViewModel = canvasViewModel)
     }
 
     override fun onDestroyView() {
@@ -198,15 +208,32 @@ class MainFragment : Fragment(),
     }
 
     private fun setupExpressionInput() {
-        binding.expressionEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val b = _binding ?: return
-                Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
-                updateDegreeTitleText()
-            }
-        })
+        binding.expressionEditText.addTextChangedListener(
+                object : TextWatcher {
+                    override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                    ) {}
+                    override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                    ) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        val b = _binding ?: return
+                        Evaluator.setResultTextView(
+                                b.expressionEditText,
+                                b.resultText,
+                                ExpressionViewModel.isSelected.value ?: false,
+                                requireContext()
+                        )
+                        updateDegreeTitleText()
+                    }
+                }
+        )
 
         binding.degreeTitleText?.setOnClickListener {
             CalculatorViewModel.updateDegreeModActivated()
@@ -216,24 +243,85 @@ class MainFragment : Fragment(),
     private fun observeViewModels() {
         ExpressionViewModel.isSelected.observe(viewLifecycleOwner) { isSelected ->
             val b = _binding ?: return@observe
-            Evaluator.setResultTextView(b.expressionEditText, b.resultText, isSelected, requireContext())
+            Evaluator.setResultTextView(
+                    b.expressionEditText,
+                    b.resultText,
+                    isSelected,
+                    requireContext()
+            )
         }
 
-        CalculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { isDegreeModActivated ->
+        CalculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { isDegreeModActivated
+            ->
             val b = _binding ?: return@observe
-            Evaluator.setResultTextView(b.expressionEditText, b.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+            Evaluator.setResultTextView(
+                    b.expressionEditText,
+                    b.resultText,
+                    ExpressionViewModel.isSelected.value ?: false,
+                    requireContext()
+            )
             updateDegreeTitleText()
         }
 
-        canvasViewModel.nodes.onEach { nodes ->
-            // No renderizar durante un drag activo para evitar ConcurrentModificationException
-            if (!isDragInProgress) {
-                renderNodes(nodes)
-            } else {
-                // Marcar que se necesita renderizar después del drag
-                needsRenderAfterDrag = true
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        canvasViewModel
+                .nodes
+                .onEach { nodes ->
+                    // No renderizar durante un drag activo para evitar
+                    // ConcurrentModificationException
+                    if (!isDragInProgress) {
+                        renderNodes(nodes)
+                    } else {
+                        // Marcar que se necesita renderizar después del drag
+                        needsRenderAfterDrag = true
+                    }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        canvasViewModel
+                .currentSession
+                .onEach { session ->
+                    val b = _binding ?: return@onEach
+                    if (session != null) {
+                        // Extraer número de sesión del nombre (formato "N° X HH:MM")
+                        val parts = session.name.split(" ")
+                        val sessionNumberLabel =
+                                if (parts.size >= 2) "${parts[0]} ${parts[1]}:" else "N° ?:"
+
+                        // Obtener nombre o hora (igual que en SessionDataAdapter)
+                        val nameOrTime =
+                                session.customName.ifEmpty { if (parts.size >= 3) parts[2] else "" }
+
+                        // Formatear fecha
+                        val dateNow = java.time.LocalDate.now()
+                        val dayName =
+                                if (session.date.isEqual(dateNow)) {
+                                    getString(R.string.today_date)
+                                } else {
+                                    val calendar =
+                                            java.util.Calendar.getInstance().apply {
+                                                set(
+                                                        session.date.year,
+                                                        session.date.monthValue - 1,
+                                                        session.date.dayOfMonth
+                                                )
+                                            }
+                                    java.text.DateFormat.getDateInstance(
+                                                    java.text.DateFormat.MEDIUM,
+                                                    java.util.Locale.getDefault()
+                                            )
+                                            .format(calendar.time)
+                                }
+
+                        // Construir texto: "N° X: Hora/Nombre - Día"
+                        val displayText = "$dayName - $nameOrTime"
+
+                        b.sessionName?.text = displayText
+                        b.sessionName?.visibility = View.VISIBLE
+                    } else {
+                        b.sessionName?.visibility = View.GONE
+                    }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun setupCanvasDragListener() {
@@ -246,9 +334,9 @@ class MainFragment : Fragment(),
 
     private fun renderNodes(nodes: List<CalculationNode>) {
         nodeRenderingManager.renderNodes(
-            nodes = nodes,
-            isDragInProgress = isDragInProgress,
-            onNeedsRenderAfterDrag = { needsRenderAfterDrag = true }
+                nodes = nodes,
+                isDragInProgress = isDragInProgress,
+                onNeedsRenderAfterDrag = { needsRenderAfterDrag = true }
         )
     }
 
@@ -264,27 +352,20 @@ class MainFragment : Fragment(),
 
         val textView = nodeView.findViewById<TextView>(R.id.node_text)
         if (textView != null) {
-            val formattedResult = NumberFormatter.formatResult(
-                node.result,
-                Config.numberPrecision,
-                Config.maxScientificNotationDigits,
-                Config.groupingSeparatorSymbol,
-                Config.decimalSeparatorSymbol
-            )
-            val displayText = if (node.name.isNotEmpty()) {
-                "${node.name}: ${node.expression} = $formattedResult"
-            } else {
-                "${node.expression} = $formattedResult"
-            }
+            // ↓↓↓ LÍNEAS MODIFICADAS ↓↓↓
+            // Ya no hay lógica de formato aquí. Llamamos a la fuente única de verdad.
+            val displayText = nodeRenderingManager.getFormattedNodeText(node)
             textView.text = displayText
+            // ↑↑↑ FIN DE LÍNEAS MODIFICADAS ↑↑↑
         } else {
             // Log para debugging
-            android.util.Log.e("MainFragment", "TextView with id 'node_text' not found in node_view.xml")
+            android.util.Log.e(
+                    "MainFragment",
+                    "TextView with id 'node_text' not found in node_view.xml"
+            )
         }
 
-        nodeView.setOnClickListener {
-            showNodePropertiesPanel(node)
-        }
+        nodeView.setOnClickListener { showNodePropertiesPanel(node) }
 
         nodeView.setOnLongClickListener { view ->
             // Deseleccionar el nodo actualmente seleccionado si hay uno
@@ -300,7 +381,7 @@ class MainFragment : Fragment(),
                 }
                 hideNodePropertiesPanel()
             }
-            
+
             val item = ClipData.Item(node.id)
             val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
             val clipData = ClipData(node.id, mimeTypes, item)
@@ -324,90 +405,119 @@ class MainFragment : Fragment(),
         return nodeView
     }
 
-    private val nodeDragListener = View.OnDragListener { view, event ->
-        val b = _binding ?: return@OnDragListener false
-        val targetCard = view as? MaterialCardView ?: return@OnDragListener false
-        when (event.action) {
-            DragEvent.ACTION_DRAG_STARTED -> true
-            DragEvent.ACTION_DRAG_ENTERED -> {
-                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_tertiaryContainer))
-                true
-            }
-            DragEvent.ACTION_DRAG_EXITED -> {
-                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
-                true
-            }
-            DragEvent.ACTION_DROP -> {
-                val clipData = event.clipData
-                if (clipData != null && clipData.itemCount > 0) {
-                    val sourceNodeId = clipData.getItemAt(0).text?.toString()
-                    val targetNodeId = targetCard.tag?.toString()
-                    
-                    if (sourceNodeId != null && targetNodeId != null && sourceNodeId != targetNodeId) {
-                        canvasViewModel.setPendingCombination(sourceNodeId, targetNodeId)
-                        showOperationsMenu(targetCard)
+    private val nodeDragListener =
+            View.OnDragListener { view, event ->
+                val b = _binding ?: return@OnDragListener false
+                val targetCard = view as? MaterialCardView ?: return@OnDragListener false
+                when (event.action) {
+                    DragEvent.ACTION_DRAG_STARTED -> true
+                    DragEvent.ACTION_DRAG_ENTERED -> {
+                        targetCard.setCardBackgroundColor(
+                                ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.md_theme_light_tertiaryContainer
+                                )
+                        )
+                        true
                     }
-                }
-                // Limpiar el tag del contenedor después de soltar
-                b.canvasContainer?.tag = null
-                true
-            }
-            DragEvent.ACTION_DRAG_ENDED -> {
-                targetCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_secondaryContainer))
-                // Limpiar el tag del contenedor cuando termine el drag
-                b.canvasContainer?.tag = null
-                isDragInProgress = false
-                // Diferir el re-renderizado hasta después de que termine el evento de drag
-                targetCard.post {
-                    if (needsRenderAfterDrag || _binding != null) {
-                        needsRenderAfterDrag = false
-                        canvasViewModel.nodes.value.let { renderNodes(it) }
+                    DragEvent.ACTION_DRAG_EXITED -> {
+                        targetCard.setCardBackgroundColor(
+                                ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.md_theme_light_secondaryContainer
+                                )
+                        )
+                        true
                     }
+                    DragEvent.ACTION_DROP -> {
+                        val clipData = event.clipData
+                        if (clipData != null && clipData.itemCount > 0) {
+                            val sourceNodeId = clipData.getItemAt(0).text?.toString()
+                            val targetNodeId = targetCard.tag?.toString()
+
+                            if (sourceNodeId != null &&
+                                            targetNodeId != null &&
+                                            sourceNodeId != targetNodeId
+                            ) {
+                                canvasViewModel.setPendingCombination(sourceNodeId, targetNodeId)
+                                showOperationsMenu(targetCard)
+                            }
+                        }
+                        // Limpiar el tag del contenedor después de soltar
+                        b.canvasContainer?.tag = null
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_ENDED -> {
+                        targetCard.setCardBackgroundColor(
+                                ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.md_theme_light_secondaryContainer
+                                )
+                        )
+                        // Limpiar el tag del contenedor cuando termine el drag
+                        b.canvasContainer?.tag = null
+                        isDragInProgress = false
+                        // Diferir el re-renderizado hasta después de que termine el evento de drag
+                        targetCard.post {
+                            if (needsRenderAfterDrag || _binding != null) {
+                                needsRenderAfterDrag = false
+                                canvasViewModel.nodes.value.let { renderNodes(it) }
+                            }
+                        }
+                        true
+                    }
+                    else -> true
                 }
-                true
             }
-            else -> true
-        }
-    }
 
     private fun showOperationsMenu(anchorView: View) {
         val inflater = LayoutInflater.from(requireContext())
         val popupView = inflater.inflate(R.layout.operation_popup_layout, null)
-        
-        val popupWindow = android.widget.PopupWindow(
-            popupView,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
-        
+
+        val popupWindow =
+                android.widget.PopupWindow(
+                        popupView,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
+                )
+
         // Configurar animación y estilo
         popupWindow.elevation = 12f
         popupWindow.animationStyle = android.R.style.Animation_Dialog
-        
+
         // Configurar listeners para cada botón
-        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_plus).setOnClickListener {
-            canvasViewModel.combineNodes(DefaultOperator.Plus.text)
-            popupWindow.dismiss()
-        }
-        
-        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_minus).setOnClickListener {
-            canvasViewModel.combineNodes(DefaultOperator.Minus.text)
-            popupWindow.dismiss()
-        }
-        
-        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_multiply).setOnClickListener {
-            canvasViewModel.combineNodes(DefaultOperator.Multiply.text)
-            popupWindow.dismiss()
-        }
-        
-        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_divide).setOnClickListener {
-            canvasViewModel.combineNodes(DefaultOperator.Divide.text)
-            popupWindow.dismiss()
-        }
-        
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_plus)
+                .setOnClickListener {
+                    canvasViewModel.combineNodes(DefaultOperator.Plus.text)
+                    popupWindow.dismiss()
+                }
+
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_minus)
+                .setOnClickListener {
+                    canvasViewModel.combineNodes(DefaultOperator.Minus.text)
+                    popupWindow.dismiss()
+                }
+
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_multiply)
+                .setOnClickListener {
+                    canvasViewModel.combineNodes(DefaultOperator.Multiply.text)
+                    popupWindow.dismiss()
+                }
+
+        popupView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_divide)
+                .setOnClickListener {
+                    canvasViewModel.combineNodes(DefaultOperator.Divide.text)
+                    popupWindow.dismiss()
+                }
+
         // Mostrar el popup centrado sobre el anchorView
-        popupWindow.showAsDropDown(anchorView, 0, -anchorView.height / 2, android.view.Gravity.CENTER)
+        popupWindow.showAsDropDown(
+                anchorView,
+                0,
+                -anchorView.height / 2,
+                android.view.Gravity.CENTER
+        )
     }
 
     override fun onStart() {
@@ -415,7 +525,7 @@ class MainFragment : Fragment(),
         val b = _binding ?: return
         b.expressionEditText.setText(expression)
         b.expressionEditText.setSelection(cursorPositionStart)
-        
+
         // Update ViewPager2 swipe setting
         val viewPager = b.root.findViewById<ViewPager2>(R.id.keyboard_container)
         viewPager?.isUserInputEnabled = Config.swipeMain
@@ -472,17 +582,19 @@ class MainFragment : Fragment(),
 
     override fun onClearExpressionButtonClick() {
         val b = _binding ?: return
-        
+
         com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Borrar todo")
-            .setMessage("¿Estás seguro de que quieres borrar todos los cálculos y restablecer la vista?")
-            .setPositiveButton("Borrar") { _, _ ->
-                InsertInExpression.clearExpression(b.expressionEditText)
-                canvasViewModel.clearNodes()
-                b.zoomableCanvasContainer?.resetZoom()
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+                .setTitle("Borrar todo")
+                .setMessage(
+                        "¿Estás seguro de que quieres borrar todos los cálculos y restablecer la vista?"
+                )
+                .setPositiveButton("Borrar") { _, _ ->
+                    InsertInExpression.clearExpression(b.expressionEditText)
+                    canvasViewModel.clearNodes()
+                    b.zoomableCanvasContainer?.resetZoom()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
     }
 
     override fun onOperatorButtonClick(operator: String) {
@@ -517,20 +629,22 @@ class MainFragment : Fragment(),
 
     override fun onEqualsButtonClick() {
         val b = _binding ?: return
-        
-        // Si hay un nodo seleccionado, salir de la selección (como cuando se hace tab fuera del frame)
+
+        // Si hay un nodo seleccionado, salir de la selección (como cuando se hace tab fuera del
+        // frame)
         if (selectedNode != null) {
             hideNodePropertiesPanel()
             return
         }
-        
+
         if (Evaluator.isCalculated) {
             val rawResultText = b.resultText.text.toString()
             val expressionText = b.expressionEditText.text.toString()
-            val parsableResult = rawResultText
-                .replace(Config.groupingSeparatorSymbol, "")
-                .replace(Config.decimalSeparatorSymbol, ".")
-                .replace(DefaultOperator.Minus.text, DefaultOperator.Minus.value)
+            val parsableResult =
+                    rawResultText
+                            .replace(Config.groupingSeparatorSymbol, "")
+                            .replace(Config.decimalSeparatorSymbol, ".")
+                            .replace(DefaultOperator.Minus.text, DefaultOperator.Minus.value)
 
             try {
                 val resultValue = BigDecimal(parsableResult)
@@ -569,16 +683,16 @@ class MainFragment : Fragment(),
 
     private fun setupViewPager() {
         val viewPager = binding.root.findViewById<ViewPager2>(R.id.keyboard_container)
-        
+
         val adapter = ViewPageAdapter(childFragmentManager, lifecycle)
         adapter.addFragment(HistoryFragment())
         adapter.addFragment(CalculatorFragment())
-        
+
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = 2
         viewPager.setCurrentItem(1, false)
         viewPager.isUserInputEnabled = Config.swipeMain
-        
+
         // Disable over-scroll effect
         viewPager.apply {
             (getChildAt(0) as? RecyclerView)?.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -588,18 +702,20 @@ class MainFragment : Fragment(),
     override fun onSessionClick(sessionId: Int) {
         // Check if canvas has nodes
         val hasNodes = canvasViewModel.nodes.value.isNotEmpty()
-        
+
         if (hasNodes) {
             // Show confirmation dialog
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Cargar Sesión")
-                .setMessage("¿Cargar esta sesión reemplazará y borrará el contenido actual del canvas. Desea continuar?")
-                .setPositiveButton("Continuar") { _, _ ->
-                    canvasViewModel.loadSession(sessionId)
-                    binding.zoomableCanvasContainer?.resetZoom()
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+                    .setTitle("Cargar Sesión")
+                    .setMessage(
+                            "¿Cargar esta sesión reemplazará y borrará el contenido actual del canvas. Desea continuar?"
+                    )
+                    .setPositiveButton("Continuar") { _, _ ->
+                        canvasViewModel.loadSession(sessionId)
+                        binding.zoomableCanvasContainer?.resetZoom()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
         } else {
             // Load session directly if canvas is empty
             canvasViewModel.loadSession(sessionId)
@@ -612,20 +728,23 @@ class MainFragment : Fragment(),
         binding.zoomableCanvasContainer?.resetZoom()
         // Show brief confirmation
         android.widget.Toast.makeText(
-            requireContext(),
-            "Nueva sesión creada",
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
+                        requireContext(),
+                        "Nueva sesión creada",
+                        android.widget.Toast.LENGTH_SHORT
+                )
+                .show()
     }
 
     private fun updateDegreeTitleText() {
         val b = _binding ?: return
         val expression = b.expressionEditText.text.toString()
-        val containsTrigFunction = TrigonometricFunction.entries.any { expression.contains(it.text) }
+        val containsTrigFunction =
+                TrigonometricFunction.entries.any { expression.contains(it.text) }
 
         if (containsTrigFunction) {
             b.degreeTitleText?.visibility = View.VISIBLE
-            b.degreeTitleText?.text = if (CalculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
+            b.degreeTitleText?.text =
+                    if (CalculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
         } else {
             b.degreeTitleText?.visibility = View.GONE
         }
