@@ -10,13 +10,12 @@ import com.dz.calculator.App
 import com.dz.calculator.R
 import com.dz.calculator.databinding.ItemHistoryDataBinding
 import java.time.LocalDate
-import java.time.Month
-import java.time.temporal.ChronoUnit
 
-// Al principio de SessionDataAdapter.kt, junto a los otros imports
-class SessionDataDiffCallback(
-    private val oldList: List<SessionData>,
-    private val newList: List<SessionData>
+data class SessionUiModel(val sessionData: SessionData, val showHeader: Boolean)
+
+class SessionUiDataDiffCallback(
+        private val oldList: List<SessionUiModel>,
+        private val newList: List<SessionUiModel>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {
@@ -28,44 +27,60 @@ class SessionDataDiffCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldSessionData = oldList[oldItemPosition]
-        val newSessionData = newList[newItemPosition]
-        return oldSessionData.id == newSessionData.id
+        return oldList[oldItemPosition].sessionData.id == newList[newItemPosition].sessionData.id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldSessionData = oldList[oldItemPosition]
-        val newSessionData = newList[newItemPosition]
-        return oldSessionData == newSessionData
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
 
 class SessionDataAdapter(
-    private val context: Context,
-    private val actionListener: SessionDataActionListener
-) : RecyclerView.Adapter<SessionDataAdapter.SessionDataViewHolder>(),
-    View.OnClickListener,
-    View.OnLongClickListener {
+        private val context: Context,
+        private val actionListener: SessionDataActionListener
+) :
+        RecyclerView.Adapter<SessionDataAdapter.SessionDataViewHolder>(),
+        View.OnClickListener,
+        View.OnLongClickListener {
 
     private val sessionService: SessionService
         get() = (context.applicationContext as App).sessionService
 
+    private var uiList: List<SessionUiModel> = emptyList()
+
     var sessionList: List<SessionData> = emptyList()
         set(newValue) {
-            val diffCallback = SessionDataDiffCallback(field, newValue)
+            val newUiList = generateUiList(newValue)
+            val diffCallback = SessionUiDataDiffCallback(uiList, newUiList)
             val diffResult = DiffUtil.calculateDiff(diffCallback)
+
             field = newValue
+            uiList = newUiList
+
             diffResult.dispatchUpdatesTo(this)
         }
 
+    private fun generateUiList(dataList: List<SessionData>): List<SessionUiModel> {
+        val uiList = mutableListOf<SessionUiModel>()
+        var lastDate: LocalDate? = null
+
+        for (data in dataList) {
+            // Mostrar encabezado si es el primer elemento o si la fecha es diferente al anterior
+            val showHeader = lastDate == null || !data.date.isEqual(lastDate)
+            uiList.add(SessionUiModel(data, showHeader))
+            lastDate = data.date
+        }
+        return uiList
+    }
+
     fun deleteSession(sessionData: SessionData) {
-        val index = sessionList.indexOfFirst { it.id == sessionData.id }
         val newSessionList = ArrayList(sessionList)
         newSessionList.removeIf { it.id == sessionData.id }
+
+        // Al actualizar sessionList, el setter se encargará de regenerar la UI list y notificar los
+        // cambios
         sessionList = newSessionList
         sessionService.deleteSession(sessionData.id)
-
-        notifyItemRangeChanged(index, 2)
     }
 
     override fun onClick(v: View) {
@@ -76,7 +91,7 @@ class SessionDataAdapter(
             }
         }
     }
-    
+
     override fun onLongClick(v: View): Boolean {
         val sessionData = v.tag as SessionData
         when (v.id) {
@@ -100,12 +115,13 @@ class SessionDataAdapter(
     }
 
     override fun getItemCount(): Int {
-        return sessionList.size
+        return uiList.size
     }
 
-    private var lastDate: LocalDate? = null
     override fun onBindViewHolder(holder: SessionDataViewHolder, position: Int) {
-        val sessionData = sessionList[position]
+        val uiModel = uiList[position]
+        val sessionData = uiModel.sessionData
+
         with(holder.binding) {
             holder.itemView.tag = sessionData
             sessionLabel?.tag = sessionData
@@ -121,13 +137,7 @@ class SessionDataAdapter(
                 }
             }
 
-            lastDate = if (position > 0) {
-                sessionList[position - 1].date
-            } else {
-                null
-            }
-
-            if (lastDate == sessionData.date) {
+            if (!uiModel.showHeader) {
                 dividingLine.visibility = View.GONE
                 dateText.visibility = View.GONE
                 dateText.text = ""
@@ -146,10 +156,10 @@ class SessionDataAdapter(
             // El formato del nombre es "N° X HH:MM" donde X es el número de sesión
             // Queremos mostrar "N° X:" en sessionLabel y "HH:MM" en sessionDate
             val parts = sessionData.name.split(" ")
-            
+
             if (parts.size >= 3) {
                 // parts[0] = "N°", parts[1] = número, parts[2] = hora
-                sessionLabel?.text = "${parts[0]} ${parts[1]}:"  // "N° X:"
+                sessionLabel?.text = "${parts[0]} ${parts[1]}:" // "N° X:"
                 // Mostrar customName si existe, sino la hora por defecto
                 sessionName?.text = sessionData.customName.ifEmpty { parts[2] }
             } else {
@@ -157,65 +167,73 @@ class SessionDataAdapter(
                 sessionLabel?.text = "N°:"
                 sessionName?.text = sessionData.customName.ifEmpty { sessionData.name }
             }
-
-            lastDate = sessionData.date
         }
     }
 
     private fun formatDate(date: LocalDate): String {
         val dateNow = LocalDate.now()
-        
+
         // Si es hoy, mostrar "Today"
         if (date == dateNow) {
             return context.getString(R.string.today_date)
         }
-        
+
         // Para cualquier otra fecha, usar el formato del dispositivo
-        val calendar = java.util.Calendar.getInstance().apply {
-            set(date.year, date.monthValue - 1, date.dayOfMonth)
-        }
-        
-        val dateFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM, context.resources.configuration.locale)
+        val calendar =
+                java.util.Calendar.getInstance().apply {
+                    set(date.year, date.monthValue - 1, date.dayOfMonth)
+                }
+
+        val dateFormat =
+                java.text.DateFormat.getDateInstance(
+                        java.text.DateFormat.MEDIUM,
+                        context.resources.configuration.locale
+                )
         return dateFormat.format(calendar.time)
     }
-    
+
     private fun showEditNameDialog(sessionData: SessionData) {
-        val editText = android.widget.EditText(context).apply {
-            setText(sessionData.customName.ifEmpty { 
-                // Extraer la hora por defecto del nombre
-                val parts = sessionData.name.split(" ")
-                if (parts.size >= 3) parts[2] else ""
-            })
-            hint = "Nombre de la sesión"
-            inputType = android.text.InputType.TYPE_CLASS_TEXT
-            selectAll()
-        }
-        
+        val editText =
+                android.widget.EditText(context).apply {
+                    setText(
+                            sessionData.customName.ifEmpty {
+                                // Extraer la hora por defecto del nombre
+                                val parts = sessionData.name.split(" ")
+                                if (parts.size >= 3) parts[2] else ""
+                            }
+                    )
+                    hint = "Nombre de la sesión"
+                    inputType = android.text.InputType.TYPE_CLASS_TEXT
+                    selectAll()
+                }
+
         val padding = (16 * context.resources.displayMetrics.density).toInt()
-        val container = android.widget.FrameLayout(context).apply {
-            setPadding(padding, padding / 2, padding, 0)
-            addView(editText)
-        }
-        
+        val container =
+                android.widget.FrameLayout(context).apply {
+                    setPadding(padding, padding / 2, padding, 0)
+                    addView(editText)
+                }
+
         com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-            .setTitle("Editar nombre de sesión")
-            .setView(container)
-            .setPositiveButton("Guardar") { _, _ ->
-                val newName = editText.text.toString().trim()
-                sessionService.updateSessionName(sessionData.id, newName)
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-            
+                .setTitle("Editar nombre de sesión")
+                .setView(container)
+                .setPositiveButton("Guardar") { _, _ ->
+                    val newName = editText.text.toString().trim()
+                    sessionService.updateSessionName(sessionData.id, newName)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+
         // Mostrar el teclado
         editText.requestFocus()
         editText.post {
-            val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            val imm =
+                    context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as
+                            android.view.inputmethod.InputMethodManager
             imm.showSoftInput(editText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
         }
     }
 
-    class SessionDataViewHolder(
-        val binding: ItemHistoryDataBinding
-    ) : RecyclerView.ViewHolder(binding.root)
+    class SessionDataViewHolder(val binding: ItemHistoryDataBinding) :
+            RecyclerView.ViewHolder(binding.root)
 }

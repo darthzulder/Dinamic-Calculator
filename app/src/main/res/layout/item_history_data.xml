@@ -45,7 +45,6 @@
         style="@style/HistoryToolbar"
         app:layout_constraintBottom_toBottomOf="@id/sessionName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sessionLabel"
-        android:background="@color/cardview_light_background"/>
+        app:layout_constraintTop_toTopOf="@id/sessionLabel"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
