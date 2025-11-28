@@ -322,6 +322,17 @@ class MainFragment :
                     }
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        canvasViewModel
+                .errorEvent
+                .onEach { errorMessage ->
+                    com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Error")
+                            .setMessage(errorMessage)
+                            .setPositiveButton("OK", null)
+                            .show()
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun setupCanvasDragListener() {
@@ -557,6 +568,10 @@ class MainFragment :
     }
 
     override fun onBackPressed(): Boolean {
+        if (selectedNode != null) {
+            hideNodePropertiesPanel()
+            return true
+        }
         return false
     }
 
@@ -584,16 +599,14 @@ class MainFragment :
         val b = _binding ?: return
 
         com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Borrar todo")
-                .setMessage(
-                        "¿Estás seguro de que quieres borrar todos los cálculos y restablecer la vista?"
-                )
-                .setPositiveButton("Borrar") { _, _ ->
+                .setTitle(getString(R.string.clear_all_dialog_title))
+                .setMessage(getString(R.string.clear_all_dialog_message))
+                .setPositiveButton(getString(R.string.clear_all_dialog_positive_button)) { _, _ ->
                     InsertInExpression.clearExpression(b.expressionEditText)
                     canvasViewModel.clearNodes()
                     b.zoomableCanvasContainer?.resetZoom()
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.clear_all_dialog_negative_button), null)
                 .show()
     }
 
@@ -658,6 +671,39 @@ class MainFragment :
             ExpressionViewModel.isResultDisplayed = true
             if (Config.autoSavingResults && !rawResultText.contains("Error")) {
                 historyService.addHistoryData(expressionText, rawResultText)
+            }
+        } else {
+            val expressionText = b.expressionEditText.text.toString()
+            val cleanExpression =
+                    NumberFormatter.clearExpression(
+                            expressionText,
+                            Config.groupingSeparatorSymbol,
+                            Config.decimalSeparatorSymbol
+                    )
+
+            if (cleanExpression.isNotEmpty()) {
+                try {
+                    val resultValue = BigDecimal(cleanExpression)
+                    canvasViewModel.addNode(expressionText, resultValue)
+
+                    val formattedResult =
+                            NumberFormatter.formatResult(
+                                    resultValue,
+                                    Config.numberPrecision,
+                                    Config.maxScientificNotationDigits,
+                                    Config.groupingSeparatorSymbol,
+                                    Config.decimalSeparatorSymbol
+                            )
+
+                    oldExpression = expressionText
+                    InsertInExpression.setExpression(formattedResult, b.expressionEditText)
+                    ExpressionViewModel.isResultDisplayed = true
+                    if (Config.autoSavingResults) {
+                        historyService.addHistoryData(expressionText, formattedResult)
+                    }
+                } catch (e: NumberFormatException) {
+                    // Node not created if result is not a valid number
+                }
             }
         }
     }
@@ -742,11 +788,11 @@ class MainFragment :
                 TrigonometricFunction.entries.any { expression.contains(it.text) }
 
         if (containsTrigFunction) {
-            b.degreeTitleText?.visibility = View.VISIBLE
-            b.degreeTitleText?.text =
+            b.degreeTitleText.visibility = View.VISIBLE
+            b.degreeTitleText.text =
                     if (CalculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
         } else {
-            b.degreeTitleText?.visibility = View.GONE
+            b.degreeTitleText.visibility = View.GONE
         }
     }
 }

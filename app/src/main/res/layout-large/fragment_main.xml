@@ -15,38 +15,54 @@
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline_display_bottom"/>
+        app:layout_constraintBottom_toTopOf="@id/guideline_display_bottom"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:menu="@menu/options_menu"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/appBarConstraintLayout"
+        style="@style/AppBarConstraintLayoutCalculator"
+        android:layout_height="67dp"
+        app:layout_constraintLeft_toLeftOf="@id/background_expression"
+        app:layout_constraintRight_toRightOf="@id/background_expression"
+        app:layout_constraintTop_toTopOf="@id/background_expression">
 
-    <TextView
-        android:id="@+id/resultText"
-        style="@style/Expression.Result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/background_expression"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline_display_top" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Toolbar"
+            android:layout_width="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/options_menu" />
 
-    <com.dz.calculator.expression.ExpressionEditText
-        android:id="@+id/expressionEditText"
-        style="@style/Expression"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@id/resultText"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/toolbar"
-        app:layout_constraintTop_toTopOf="@id/toolbar" />
+        <TextView
+            android:id="@+id/degreeTitleText"
+            style="@style/DegreeTitleText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.dz.calculator.expression.ExpressionEditText
+            android:id="@+id/expressionEditText"
+            style="@style/Expression"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="textNoSuggestions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/degreeTitleText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/resultText"
+            style="@style/Expression.Result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/degreeTitleText"
+            app:layout_constraintTop_toBottomOf="@id/expressionEditText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_display_top"
@@ -81,7 +97,6 @@
             android:layout_height="match_parent"
             android:clipChildren="false">
 
-            <!-- Connection Lines View - Dibuja las líneas de conexión entre nodos (debe estar debajo de los nodos) -->
             <com.dz.calculator.canvas.ConnectionLinesView
                 android:id="@+id/connection_lines_view"
                 android:layout_width="match_parent"
@@ -90,6 +105,19 @@
                 android:elevation="0dp" />
         </FrameLayout>
     </com.dz.calculator.canvas.ZoomableCanvasContainer>
+
+    <TextView
+        android:id="@+id/sessionName"
+        style="@style/DateText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:elevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarConstraintLayout"
+        android:background="#80000000" />
+
 
     <!-- Node Properties Panel -->
     <FrameLayout
@@ -109,15 +137,13 @@
     </FrameLayout>
 
     <!-- NEW: Keyboard Container -->
-    <androidx.fragment.app.FragmentContainerView
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/keyboard_container"
-        android:name="com.dz.calculator.fragments.CalculatorFragment"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_150sdp"
+        android:layout_height="@dimen/_200sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout="@layout/fragment_calculator" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Trash Icon Overlay - Visible during drag -->
     <ImageView

@@ -362,4 +362,10 @@
     <string name="title_email">Email</string>
     <string name="description_email">Send me an email</string>
     <string name="new_session">New Session</string>
+    <string name="clear_all_dialog_title">Delete All</string>
+    <string name="clear_all_dialog_message">Are you sure you want to delete all calculations and reset the view?</string>
+    <string name="clear_all_dialog_positive_button">Delete</string>
+    <string name="clear_all_dialog_negative_button">Cancel</string>
+
+
 </resources>

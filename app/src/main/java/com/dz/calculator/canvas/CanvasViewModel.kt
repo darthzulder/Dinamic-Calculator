@@ -14,8 +14,10 @@ import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class CanvasViewModel : ViewModel() {
@@ -27,6 +29,9 @@ class CanvasViewModel : ViewModel() {
     private var autoSaveJob: Job? = null
 
     private var pendingCombination: Pair<String, String>? = null
+
+    private val _errorEvent = MutableSharedFlow<String>()
+    val errorEvent = _errorEvent.asSharedFlow()
 
     // Session management
     var activeSessionId: Int? = null
@@ -69,8 +74,10 @@ class CanvasViewModel : ViewModel() {
         private const val NODE_HEIGHT_WITH_MARGIN =
                 150f // Altura aproximada del nodo + margen de separación
         private const val X_TOLERANCE =
-                20f // Tolerancia en píxeles para considerar que dos nodos están en la misma columna
+                65f // Tolerancia en píxeles para considerar que dos nodos están en la misma columna
         // X
+        private const val NAME_HEIGHT_OFFSET =
+                60f // Altura extra estimada cuando un nodo tiene nombre
     }
 
     private val sessionListListener: (List<com.dz.calculator.session.SessionData>) -> Unit =
@@ -142,8 +149,17 @@ class CanvasViewModel : ViewModel() {
                             } else {
                                 // Encontrar el nodo con la posición Y más baja (más abajo)
                                 val lowestNode = nodesInSameColumn.maxByOrNull { it.positionY }
+
+                                // Calcular altura extra si el nodo anterior tiene nombre (ocupa más
+                                // espacio vertical)
+                                val extraHeight =
+                                        if (lowestNode?.name?.isNotEmpty() == true)
+                                                NAME_HEIGHT_OFFSET
+                                        else 0f
+
                                 // Colocar el nuevo nodo debajo del nodo más bajo
-                                (lowestNode?.positionY ?: initialY) + NODE_HEIGHT_WITH_MARGIN
+                                (lowestNode?.positionY
+                                        ?: initialY) + NODE_HEIGHT_WITH_MARGIN + extraHeight
                             }
 
                     Pair(initialX, calculatedY)
@@ -254,8 +270,11 @@ class CanvasViewModel : ViewModel() {
                             Pair(resultX, resultY)
                     )
                 } catch (e: Exception) {
-                    // Calculation failed (e.g., division by zero). Do nothing to prevent a crash.
+                    // Calculation failed (e.g., division by zero).
                     e.printStackTrace()
+                    if (e is ArithmeticException) {
+                        viewModelScope.launch { _errorEvent.emit("Error: divicion entre cero") }
+                    }
                 }
             }
         }
