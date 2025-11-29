@@ -374,5 +374,31 @@
     <string name="prefs_key_nodes" translatable="false">nodes</string>
     <string name="prefs_key_active_session_id" translatable="false">active_session_id</string>
 
+    <!-- Dialog titles and buttons -->
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_ok_button">OK</string>
+    <string name="dialog_load_session_title">Load Session</string>
+    <string name="dialog_load_session_message">Loading this session will replace and delete the current canvas content. Do you want to continue?</string>
+    <string name="dialog_continue_button">Continue</string>
+    <string name="dialog_cancel_button">Cancel</string>
+
+    <!-- Toast messages -->
+    <string name="toast_new_session_created">New session created</string>
+
+    <!-- Log messages -->
+    <string name="log_textview_not_found">TextView with id \'node_text\' not found in node_view.xml</string>
+    <string name="log_history_fragment_tag" translatable="false">HistoryFragment</string>
+    <string name="log_parent_fragment_error">Parent fragment must implement OnSessionInteractionListener</string>
+    <string name="log_main_fragment_tag" translatable="false">MainFragment</string>
+
+    <!-- Session related strings -->
+    <string name="session_prefs" translatable="false">session_prefs</string>
+    <string name="session_counter_key" translatable="false">session_counter</string>
+    <string name="session_name_format" translatable="false">#%1$d %2$s</string>
+    <string name="session_label_fallback">#:</string>
+    <string name="session_name_hint">Session name</string>
+    <string name="dialog_edit_session_name_title">Edit session name</string>
+    <string name="dialog_save_button">Save</string>
+
 
 </resources>

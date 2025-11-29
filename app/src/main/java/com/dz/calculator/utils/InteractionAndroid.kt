@@ -9,7 +9,7 @@ import android.os.Build
 import android.widget.Toast
 
 object InteractionAndroid {
-    fun copyToClipboard(string: String, context: Context){
+    fun copyToClipboard(string: String?, context: Context){
         val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText(null, string)
         clipboardManager.setPrimaryClip(clipData)

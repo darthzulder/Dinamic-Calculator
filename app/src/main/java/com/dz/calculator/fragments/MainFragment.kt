@@ -327,9 +327,9 @@ class MainFragment :
                 .errorEvent
                 .onEach { errorMessage ->
                     com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                            .setTitle("Error")
+                            .setTitle(getString(R.string.dialog_error_title))
                             .setMessage(errorMessage)
-                            .setPositiveButton("OK", null)
+                            .setPositiveButton(getString(R.string.dialog_ok_button), null)
                             .show()
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -371,8 +371,8 @@ class MainFragment :
         } else {
             // Log para debugging
             android.util.Log.e(
-                    "MainFragment",
-                    "TextView with id 'node_text' not found in node_view.xml"
+                    getString(R.string.log_main_fragment_tag),
+                    getString(R.string.log_textview_not_found)
             )
         }
 
@@ -752,15 +752,13 @@ class MainFragment :
         if (hasNodes) {
             // Show confirmation dialog
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Cargar Sesión")
-                    .setMessage(
-                            "¿Cargar esta sesión reemplazará y borrará el contenido actual del canvas. Desea continuar?"
-                    )
-                    .setPositiveButton("Continuar") { _, _ ->
+                    .setTitle(getString(R.string.dialog_load_session_title))
+                    .setMessage(getString(R.string.dialog_load_session_message))
+                    .setPositiveButton(getString(R.string.dialog_continue_button)) { _, _ ->
                         canvasViewModel.loadSession(sessionId)
                         binding.zoomableCanvasContainer?.resetZoom()
                     }
-                    .setNegativeButton("Cancelar", null)
+                    .setNegativeButton(getString(R.string.dialog_cancel_button), null)
                     .show()
         } else {
             // Load session directly if canvas is empty
@@ -775,7 +773,7 @@ class MainFragment :
         // Show brief confirmation
         android.widget.Toast.makeText(
                         requireContext(),
-                        "Nueva sesión creada",
+                        getString(R.string.toast_new_session_created),
                         android.widget.Toast.LENGTH_SHORT
                 )
                 .show()
