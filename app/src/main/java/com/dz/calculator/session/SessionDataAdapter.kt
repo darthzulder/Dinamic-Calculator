@@ -164,7 +164,7 @@ class SessionDataAdapter(
                 sessionName?.text = sessionData.customName.ifEmpty { parts[2] }
             } else {
                 // Fallback si el formato no es el esperado
-                sessionLabel?.text = "N°:"
+                sessionLabel?.text = context.getString(R.string.session_label_fallback)
                 sessionName?.text = sessionData.customName.ifEmpty { sessionData.name }
             }
         }
@@ -202,7 +202,7 @@ class SessionDataAdapter(
                                 if (parts.size >= 3) parts[2] else ""
                             }
                     )
-                    hint = "Nombre de la sesión"
+                    hint = context.getString(R.string.session_name_hint)
                     inputType = android.text.InputType.TYPE_CLASS_TEXT
                     selectAll()
                 }
@@ -215,13 +215,13 @@ class SessionDataAdapter(
                 }
 
         com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-                .setTitle("Editar nombre de sesión")
+                .setTitle(context.getString(R.string.dialog_edit_session_name_title))
                 .setView(container)
-                .setPositiveButton("Guardar") { _, _ ->
+                .setPositiveButton(context.getString(R.string.dialog_save_button)) { _, _ ->
                     val newName = editText.text.toString().trim()
                     sessionService.updateSessionName(sessionData.id, newName)
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(context.getString(R.string.dialog_cancel_button), null)
                 .show()
 
         // Mostrar el teclado

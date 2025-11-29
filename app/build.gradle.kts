@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.dz.calculator"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.dz.dinamicCalculator"
         minSdk = 27
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
-        versionName = "0.4.4-alpha"
+        versionName = "0.4.5-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
