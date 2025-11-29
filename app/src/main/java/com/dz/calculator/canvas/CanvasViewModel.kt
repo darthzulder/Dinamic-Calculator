@@ -42,6 +42,7 @@ class CanvasViewModel : ViewModel() {
 
     private var sessionService: SessionService? = null
     private var sessionPrefs: SharedPreferences? = null
+    private var appContext: Context? = null
 
     // Colores contrastantes para las conexiones
     private val connectionColors =
@@ -92,13 +93,23 @@ class CanvasViewModel : ViewModel() {
 
     fun setSessionService(service: SessionService, context: Context) {
         this.sessionService = service
-        this.sessionPrefs = context.getSharedPreferences("canvas_session", Context.MODE_PRIVATE)
+        this.appContext = context.applicationContext
+        this.sessionPrefs =
+                context.getSharedPreferences(
+                        context.getString(com.dz.calculator.R.string.prefs_canvas_session),
+                        Context.MODE_PRIVATE
+                )
 
         // Registrar listener para actualizaciones
         service.addListener(sessionListListener)
 
         // Restore active session ID if it was saved
-        val savedSessionId = sessionPrefs?.getInt("active_session_id", -1) ?: -1
+        val savedSessionId =
+                sessionPrefs?.getInt(
+                        context.getString(com.dz.calculator.R.string.prefs_key_active_session_id),
+                        -1
+                )
+                        ?: -1
         if (savedSessionId != -1) {
             activeSessionId = savedSessionId
 
@@ -273,7 +284,14 @@ class CanvasViewModel : ViewModel() {
                     // Calculation failed (e.g., division by zero).
                     e.printStackTrace()
                     if (e is ArithmeticException) {
-                        viewModelScope.launch { _errorEvent.emit("Error: divicion entre cero") }
+                        viewModelScope.launch {
+                            val errorMessage =
+                                    appContext?.getString(
+                                            com.dz.calculator.R.string.error_division_by_zero
+                                    )
+                                            ?: "Division by zero"
+                            _errorEvent.emit(errorMessage)
+                        }
                     }
                 }
             }
@@ -572,18 +590,30 @@ class CanvasViewModel : ViewModel() {
 
     /** Guarda el estado de los nodos en SharedPreferences */
     fun saveNodes(context: Context) {
-        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
+        val preferences =
+                context.getSharedPreferences(
+                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                        Context.MODE_PRIVATE
+                )
         val editor = preferences.edit()
 
         val nodesJson = serializeNodes(_nodes.value)
-        editor.putString("nodes", nodesJson)
+        editor.putString(context.getString(com.dz.calculator.R.string.prefs_key_nodes), nodesJson)
         editor.apply()
     }
 
     /** Restaura el estado de los nodos desde SharedPreferences */
     fun restoreNodes(context: Context) {
-        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
-        val nodesJson = preferences.getString("nodes", null)
+        val preferences =
+                context.getSharedPreferences(
+                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                        Context.MODE_PRIVATE
+                )
+        val nodesJson =
+                preferences.getString(
+                        context.getString(com.dz.calculator.R.string.prefs_key_nodes),
+                        null
+                )
 
         if (nodesJson != null && nodesJson.isNotEmpty()) {
             val nodes = deserializeNodes(nodesJson)
@@ -593,8 +623,15 @@ class CanvasViewModel : ViewModel() {
 
     /** Limpia el estado guardado de los nodos */
     fun clearSavedNodes(context: Context) {
-        val preferences = context.getSharedPreferences("canvas_state", Context.MODE_PRIVATE)
-        preferences.edit().remove("nodes").apply()
+        val preferences =
+                context.getSharedPreferences(
+                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                        Context.MODE_PRIVATE
+                )
+        preferences
+                .edit()
+                .remove(context.getString(com.dz.calculator.R.string.prefs_key_nodes))
+                .apply()
     }
 
     /** Serializa una lista de nodos a JSON */
@@ -798,7 +835,17 @@ class CanvasViewModel : ViewModel() {
         _currentSession.value = sessionData
 
         // Save active session ID to preferences
-        sessionPrefs?.edit()?.putInt("active_session_id", sessionData.id)?.apply()
+        appContext?.let { context ->
+            sessionPrefs
+                    ?.edit()
+                    ?.putInt(
+                            context.getString(
+                                    com.dz.calculator.R.string.prefs_key_active_session_id
+                            ),
+                            sessionData.id
+                    )
+                    ?.apply()
+        }
     }
 
     /** Loads a session from the database and restores canvas state */
@@ -818,6 +865,16 @@ class CanvasViewModel : ViewModel() {
         _currentSession.value = sessionData
 
         // Save active session ID to preferences
-        sessionPrefs?.edit()?.putInt("active_session_id", sessionId)?.apply()
+        appContext?.let { context ->
+            sessionPrefs
+                    ?.edit()
+                    ?.putInt(
+                            context.getString(
+                                    com.dz.calculator.R.string.prefs_key_active_session_id
+                            ),
+                            sessionId
+                    )
+                    ?.apply()
+        }
     }
 }

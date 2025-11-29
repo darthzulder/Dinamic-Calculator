@@ -367,5 +367,12 @@
     <string name="clear_all_dialog_positive_button">Delete</string>
     <string name="clear_all_dialog_negative_button">Cancel</string>
 
+    <!-- Canvas ViewModel -->
+    <string name="error_division_by_zero">Division by zero</string>
+    <string name="prefs_canvas_session" translatable="false">canvas_session</string>
+    <string name="prefs_canvas_state" translatable="false">canvas_state</string>
+    <string name="prefs_key_nodes" translatable="false">nodes</string>
+    <string name="prefs_key_active_session_id" translatable="false">active_session_id</string>
+
 
 </resources>
