@@ -394,8 +394,9 @@
     <!-- Session related strings -->
     <string name="session_prefs" translatable="false">session_prefs</string>
     <string name="session_counter_key" translatable="false">session_counter</string>
-    <string name="session_name_format" translatable="false">#%1$d %2$s</string>
+    <string name="session_name_format" translatable="false">%2$s</string>
     <string name="session_label_fallback">#:</string>
+    <string name="session_label_format">Nº%1$d:</string>
     <string name="session_name_hint">Session name</string>
     <string name="dialog_edit_session_name_title">Edit session name</string>
     <string name="dialog_save_button">Save</string>

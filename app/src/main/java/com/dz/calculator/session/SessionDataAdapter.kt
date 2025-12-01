@@ -123,6 +123,7 @@ class SessionDataAdapter(
         val sessionData = uiModel.sessionData
 
         with(holder.binding) {
+            // --- 1. CONFIGURACIÓN INICIAL DE TAGS Y LISTENERS ---
             holder.itemView.tag = sessionData
             sessionLabel?.tag = sessionData
             sessionName?.tag = sessionData
@@ -137,36 +138,24 @@ class SessionDataAdapter(
                 }
             }
 
+            // --- 2. LÓGICA DE LA CABECERA DE FECHA (DIVIDING LINE Y DATE) ---
             if (!uiModel.showHeader) {
                 dividingLine.visibility = View.GONE
                 dateText.visibility = View.GONE
-                dateText.text = ""
             } else {
-                if (position == 0) {
-                    dividingLine.visibility = View.GONE
-                } else {
-                    dividingLine.visibility = View.VISIBLE
-                }
-
+                dividingLine.visibility = if (position == 0) View.GONE else View.VISIBLE
                 dateText.visibility = View.VISIBLE
                 dateText.text = formatDate(sessionData.date)
             }
 
-            // Separar el nombre de sesión en sus partes
-            // El formato del nombre es "N° X HH:MM" donde X es el número de sesión
-            // Queremos mostrar "N° X:" en sessionLabel y "HH:MM" en sessionDate
-            val parts = sessionData.name.split(" ")
+            // --- 3. LÓGICA DE TEXTO DE LA SESIÓN (CORREGIDA Y ÚNICA) ---
 
-            if (parts.size >= 3) {
-                // parts[0] = "N°", parts[1] = número, parts[2] = hora
-                sessionLabel?.text = "${parts[0]} ${parts[1]}:" // "N° X:"
-                // Mostrar customName si existe, sino la hora por defecto
-                sessionName?.text = sessionData.customName.ifEmpty { parts[2] }
-            } else {
-                // Fallback si el formato no es el esperado
-                sessionLabel?.text = context.getString(R.string.session_label_fallback)
-                sessionName?.text = sessionData.customName.ifEmpty { sessionData.name }
-            }
+            // Asignar el NÚMERO DE SESIÓN a 'sessionLabel'
+            val sessionNumber = itemCount - position
+            sessionLabel?.text = context.getString(R.string.session_label_format, sessionNumber)
+
+            // Asignar el NOMBRE PERSONALIZADO o la HORA por defecto a 'sessionName'
+            sessionName?.text = sessionData.customName.ifEmpty { sessionData.name }
         }
     }
 

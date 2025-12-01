@@ -282,14 +282,10 @@ class MainFragment :
                 .onEach { session ->
                     val b = _binding ?: return@onEach
                     if (session != null) {
-                        // Extraer número de sesión del nombre (formato "N° X HH:MM")
-                        val parts = session.name.split(" ")
-                        val sessionNumberLabel =
-                                if (parts.size >= 2) "${parts[0]} ${parts[1]}:" else "N° ?:"
 
-                        // Obtener nombre o hora (igual que en SessionDataAdapter)
-                        val nameOrTime =
-                                session.customName.ifEmpty { if (parts.size >= 3) parts[2] else "" }
+                        // 1. Obtener el nombre personalizado o la hora por defecto.
+                        //    'session.name' contiene la hora por defecto. 'customName' tiene la prioridad.
+                        val nameOrTime = session.customName.ifEmpty { session.name }
 
                         // Formatear fecha
                         val dateNow = java.time.LocalDate.now()
