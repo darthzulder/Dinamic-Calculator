@@ -110,8 +110,8 @@
     <string name="url_privacy_policy" translatable="false"></string>
     <string name="url_open_source" translatable="false"></string>
     <string name="url_translate" translatable="false"></string>
-    <string name="url_donate" translatable="false"></string>
-    <string name="url_email" translatable="false"></string>
+    <string name="url_donate" translatable="false">https://www.paypal.com/donate/?hosted_button_id=S5YQPGZHDE73L</string>
+    <string name="url_email" translatable="false">mailto:zulder.developer@gmail.com</string>
 
     <!--Dialogs-->
     <string name="clear_history_title">Clear the history?</string>
@@ -348,14 +348,14 @@
 
     <!-- Other existing strings... -->
 
-    <string name="description_donate">Default text for donate</string>
+    <string name="description_donate">Support this app with a PayPal donation</string>
 
-    <string name="description_rate">Default text for rate</string>
+    <string name="description_rate">Write a review about the app</string>
     <string name="description_translate">Default text for translate</string>
-    <string name="help_selection_text">Default help selection text</string>
-    <string name="love_text">Default love text</string>
-    <string name="support_selection_text">Default support selection text</string>
-    <string name="tap_me">Default tap me text</string>
+    <string name="help_selection_text">Help the project</string>
+    <string name="love_text">I hope this app will be useful to you.</string>
+    <string name="support_selection_text">Support</string>
+    <string name="tap_me">Tap me</string>
     <string name="title_rate">Rate app</string>
     <string name="title_translate">Translate</string>
     <string name="title_donate">Donate</string>
