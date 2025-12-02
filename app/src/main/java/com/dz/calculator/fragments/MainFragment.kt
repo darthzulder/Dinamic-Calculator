@@ -46,6 +46,8 @@ import com.dz.calculator.settings.SettingsActivity
 import com.dz.calculator.utils.HapticAndSound
 import com.dz.calculator.utils.InsertInExpression
 import com.dz.calculator.utils.NumberFormatter
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import java.math.BigDecimal
 import kotlinx.coroutines.flow.launchIn
@@ -119,6 +121,7 @@ class MainFragment :
         setupKeyboardDragListener()
         setupNodePropertiesPanel()
         setupViewPager()
+        setupAds()
     }
 
     private fun initializeSession() {
@@ -788,5 +791,18 @@ class MainFragment :
         } else {
             b.degreeTitleText.visibility = View.GONE
         }
+    }
+    private fun setupAds() {
+        // 1. Inicializa el SDK de Mobile Ads.
+        //    Esto solo necesita hacerse una vez en el ciclo de vida de la app.
+        //    Hacerlo aquí asegura que esté listo cuando el fragmento se cree.
+        MobileAds.initialize(requireContext()) {}
+
+        // 2. Crea una solicitud de anuncio.
+        //    El AdRequest.Builder() vacío es suficiente para empezar.
+        val adRequest = AdRequest.Builder().build()
+
+        // 3. Carga el anuncio en el AdView definido en tu XML.
+        binding.adView?.loadAd(adRequest)
     }
 }

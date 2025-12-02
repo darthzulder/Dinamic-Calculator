@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    tools:context=".fragments.MainFragment">
+    tools:context=".fragments.MainFragment"
+    android:fitsSystemWindows="true">
 
     <!-- Top Display Area (remains the same) -->
     <View
@@ -141,7 +142,7 @@
         android:id="@+id/keyboard_container"
         android:layout_width="0dp"
         android:layout_height="@dimen/_200sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/adView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -159,5 +160,15 @@
         app:layout_constraintBottom_toBottomOf="@id/keyboard_container"
         app:layout_constraintStart_toStartOf="@id/keyboard_container"
         app:layout_constraintEnd_toEndOf="@id/keyboard_container" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

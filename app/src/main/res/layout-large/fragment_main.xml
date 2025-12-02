@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    tools:context=".fragments.MainFragment">
+    tools:context=".fragments.MainFragment"
+    android:fitsSystemWindows="true">
 
     <!-- Top Display Area (remains the same) -->
     <View

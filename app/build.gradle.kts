@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.dz.calculator"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.dz.dinamicCalculator"
         minSdk = 27
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 2
-        versionName = "0.4.5-alpha"
+        versionName = "0.5.0-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -62,6 +62,7 @@ dependencies {
     implementation("com.mikhaellopez:circleview:1.4.1")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
+    implementation("com.google.android.gms:play-services-ads-api:24.8.0")
     //    implementation("androidx.activity:activity-ktx:1.9.0")
 
     //    debugImplementation ("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
