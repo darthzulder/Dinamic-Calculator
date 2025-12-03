@@ -2,36 +2,41 @@ package com.dz.calculator.fragments
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.dz.calculator.utils.Anim
-import com.dz.calculator.utils.HapticAndSound
 import com.dz.calculator.R
+import com.dz.calculator.calculator.AdditionalOperator
+import com.dz.calculator.calculator.CalculatorViewModel.isScienceModActivated
+import com.dz.calculator.calculator.CalculatorViewModel.previousScienceModActivated
+import com.dz.calculator.calculator.CalculatorViewModel.updateScienceModActivated
+import com.dz.calculator.calculator.Constant
+import com.dz.calculator.calculator.DefaultOperator
+import com.dz.calculator.calculator.ScientificFunction
 import com.dz.calculator.databinding.FragmentCalculatorBinding
 import com.dz.calculator.fragments.Fragments.DIGIT_FRAGMENT
 import com.dz.calculator.fragments.Fragments.SCIENTIFIC_FUNCTION_FRAGMENT
 import com.dz.calculator.fragments.adapters.ViewPageAdapter
 import com.dz.calculator.settings.Config
-import com.dz.calculator.calculator.CalculatorViewModel.isScienceModActivated
-import com.dz.calculator.calculator.CalculatorViewModel.previousScienceModActivated
-import com.dz.calculator.calculator.CalculatorViewModel.updateScienceModActivated
-import com.dz.calculator.calculator.AdditionalOperator
-import com.dz.calculator.calculator.Constant
-import com.dz.calculator.calculator.DefaultOperator
-import com.dz.calculator.calculator.ScientificFunction
+import com.dz.calculator.utils.Anim
+import com.dz.calculator.utils.HapticAndSound
 import kotlin.properties.Delegates.notNull
 
-class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, ScientificFunctionFragment.OnButtonClickListener {
+class CalculatorFragment :
+        Fragment(),
+        DigitFragment.OnButtonClickListener,
+        ScientificFunctionFragment.OnButtonClickListener {
 
     private var binding: FragmentCalculatorBinding by notNull()
     private var hapticAndSound: HapticAndSound by notNull()
     private var callback: OnButtonClickListener? = null
 
     interface OnButtonClickListener {
+
+        fun onHistoryButtonClick()
         fun onDigitButtonClick(digit: String)
         fun onDotButtonClick()
         fun onBackspaceButtonClick()
@@ -57,14 +62,16 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = FragmentCalculatorBinding.inflate(inflater, container, false)
 
-        val views: Array<View> = arrayOf(
+        val views: Array<View> = listOfNotNull(
             binding.scienceModButton,
             binding.sqrtButton,
+            binding.historyModButton,
             binding.piButton,
             binding.powerButton,
             binding.factorialButton,
@@ -77,10 +84,9 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
             binding.plusButton,
             binding.equalsButton,
             binding.backspaceButton
-        )
+        ).toTypedArray()
 
         hapticAndSound = HapticAndSound(requireContext(), views)
-
 
         val adapter = ViewPageAdapter(childFragmentManager, lifecycle)
         adapter.addFragment(ScientificFunctionFragment())
@@ -92,55 +98,66 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
         }
 
         val userScroll = arrayListOf<Int>()
-        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                if (userScroll.contains(1)) {
-                    updateScienceModActivated()
+        binding.pager.registerOnPageChangeCallback(
+                object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        if (userScroll.contains(1)) {
+                            updateScienceModActivated()
+                        }
+                        userScroll.clear()
+                    }
+                    override fun onPageScrollStateChanged(state: Int) {
+                        userScroll.add(state)
+                        if ((userScroll.contains(0) &&
+                                        userScroll.contains(1) &&
+                                        userScroll.contains(2)) || userScroll.contains(0)
+                        ) {
+                            userScroll.clear()
+                        }
+                    }
                 }
-                userScroll.clear()
-            }
-            override fun onPageScrollStateChanged(state: Int) {
-                userScroll.add(state)
-                if ((userScroll.contains(0) && userScroll.contains(1) && userScroll.contains(2)) || userScroll.contains(0)){
-                    userScroll.clear()
-                }
-            }
-        })
+        )
 
         binding.scienceModButton.setOnClickListener {
             updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
 
+        binding.historyModButton?.setOnClickListener {
+            //toggleHistoryActivated()
+            callback?.onHistoryButtonClick()
+            hapticAndSound.vibrateEffectClick()
+        }
 
         isScienceModActivated.observe(viewLifecycleOwner) { isScienceModActivated ->
-            if (isScienceModActivated != previousScienceModActivated){
-                if (isScienceModActivated){
-                    Anim.startVectorAnimation(binding.scienceModButton, R.drawable.anim_science_to_123)
+            if (isScienceModActivated != previousScienceModActivated) {
+                if (isScienceModActivated) {
+                    Anim.startVectorAnimation(
+                            binding.scienceModButton,
+                            R.drawable.anim_science_to_123
+                    )
 
                     binding.pager.setCurrentItem(SCIENTIFIC_FUNCTION_FRAGMENT, true)
-                } else{
-                    Anim.startVectorAnimation(binding.scienceModButton, R.drawable.anim_123_to_science)
+                } else {
+                    Anim.startVectorAnimation(
+                            binding.scienceModButton,
+                            R.drawable.anim_123_to_science
+                    )
 
                     binding.pager.setCurrentItem(DIGIT_FRAGMENT, true)
                 }
-            } else{
-                if (isScienceModActivated){
+            } else {
+                if (isScienceModActivated) {
                     binding.scienceModButton.setImageResource(R.drawable.baseline_123)
 
                     binding.pager.setCurrentItem(SCIENTIFIC_FUNCTION_FRAGMENT, false)
-                } else{
+                } else {
                     binding.scienceModButton.setImageResource(R.drawable.baseline_science)
 
                     binding.pager.setCurrentItem(DIGIT_FRAGMENT, false)
                 }
             }
-
         }
-
-
-
-
 
         binding.backspaceButton.setOnClickListener {
             callback?.onBackspaceButtonClick()
@@ -232,7 +249,6 @@ class CalculatorFragment : Fragment(), DigitFragment.OnButtonClickListener, Scie
         hapticAndSound.setSoundEffects()
         binding.pager.isUserInputEnabled = Config.swipeDigitsAndScientificFunctions
     }
-
 
     override fun onDigitButtonClick(digit: String) {
         callback?.onDigitButtonClick(digit)

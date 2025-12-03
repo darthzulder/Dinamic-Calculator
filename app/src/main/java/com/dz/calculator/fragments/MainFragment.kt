@@ -266,6 +266,16 @@ class MainFragment :
             updateDegreeTitleText()
         }
 
+        CalculatorViewModel.isHistoryActivated.observe(viewLifecycleOwner) { isHistoryActivated ->
+            val b = _binding ?: return@observe
+            val viewPager = b.root.findViewById<ViewPager2>(R.id.keyboard_container)
+            if (isHistoryActivated) {
+                if (viewPager.currentItem != 0) viewPager.setCurrentItem(0, true)
+            } else {
+                if (viewPager.currentItem != 1) viewPager.setCurrentItem(1, true)
+            }
+        }
+
         canvasViewModel
                 .nodes
                 .onEach { nodes ->
@@ -287,7 +297,8 @@ class MainFragment :
                     if (session != null) {
 
                         // 1. Obtener el nombre personalizado o la hora por defecto.
-                        //    'session.name' contiene la hora por defecto. 'customName' tiene la prioridad.
+                        //    'session.name' contiene la hora por defecto. 'customName' tiene la
+                        // prioridad.
                         val nameOrTime = session.customName.ifEmpty { session.name }
 
                         // Formatear fecha
@@ -613,6 +624,9 @@ class MainFragment :
         val b = _binding ?: return
         InsertInExpression.enterOperator(operator, b.expressionEditText)
     }
+    override fun onHistoryButtonClick() {
+        CalculatorViewModel.setHistoryActivated(true)
+    }
 
     override fun onScienceFunctionButtonClick(scienceFunction: String) {
         val b = _binding ?: return
@@ -742,6 +756,14 @@ class MainFragment :
         viewPager.apply {
             (getChildAt(0) as? RecyclerView)?.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         }
+
+        viewPager.registerOnPageChangeCallback(
+                object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        CalculatorViewModel.setHistoryActivated(position == 0)
+                    }
+                }
+        )
     }
 
     override fun onSessionClick(sessionId: Int) {

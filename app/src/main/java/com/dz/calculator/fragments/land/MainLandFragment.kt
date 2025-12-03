@@ -234,6 +234,12 @@ class MainLandFragment : Fragment(),
         }
     }
 
+    // ... other functions in your class
+    override fun onHistoryButtonClick() {
+        // TODO: Implement the logic for what should happen when the history button is clicked.
+        // For example, you might want to open a HistoryFragment or display a history dialog.
+    }
+
     override fun onDigitButtonClick(digit: String) {
         InsertInExpression.enterDigit(digit, binding.expressionEditText)
     }
