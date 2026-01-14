@@ -11,7 +11,7 @@ android {
         applicationId = "com.dz.dinamicCalculator"
         minSdk = 27
         targetSdk = 36
-        versionCode = 3
+        versionCode = 4
         versionName = "0.5.1-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
