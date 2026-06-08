@@ -8,7 +8,7 @@
 /graphify-out/
 *.env*
 *.env
-/build/
+build/
 /.vscode/
 /.github/
 .github/

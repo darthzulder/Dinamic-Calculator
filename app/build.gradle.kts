@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    implementation(project(":arity"))
 
     //    debugImplementation ("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
 }
