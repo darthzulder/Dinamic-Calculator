@@ -663,33 +663,43 @@ class MainFragment :
             return
         }
 
-        if (calculatorViewModel.isCalculated) {
-            val rawResultText = b.resultText.text.toString()
-            val expressionText = b.expressionEditText.text.toString()
+        val expressionText = b.expressionEditText.text.toString()
+        val sanitizedExpression = NumberFormatter.sanitizeExpression(
+                expressionText,
+                Config.groupingSeparatorSymbol,
+                Config.decimalSeparatorSymbol
+        )
+
+        if (sanitizedExpression.isEmpty()) {
+            return
+        }
+
+        val evalResult = Evaluator.evaluate(sanitizedExpression, requireContext())
+
+        if (evalResult.isCalculated) {
             val parsableResult =
-                    rawResultText
+                    evalResult.resultString
                             .replace(Config.groupingSeparatorSymbol, "")
                             .replace(Config.decimalSeparatorSymbol, ".")
                             .replace(DefaultOperator.Minus.text, DefaultOperator.Minus.value)
 
             try {
                 val resultValue = BigDecimal(parsableResult)
-                canvasViewModel.addNode(expressionText, resultValue)
+                canvasViewModel.addNode(sanitizedExpression, resultValue)
             } catch (e: NumberFormatException) {
                 // Node not created if result is not a valid number
             }
 
-            oldExpression = expressionText
-            InsertInExpression.setExpression(rawResultText, b.expressionEditText)
+            oldExpression = sanitizedExpression
+            InsertInExpression.setExpression(evalResult.resultString, b.expressionEditText)
             ExpressionViewModel.isResultDisplayed = true
-            if (Config.autoSavingResults && !rawResultText.contains("Error")) {
-                historyService.addHistoryData(expressionText, rawResultText)
+            if (Config.autoSavingResults && !evalResult.resultString.contains("Error")) {
+                historyService.addHistoryData(sanitizedExpression, evalResult.resultString)
             }
         } else {
-            val expressionText = b.expressionEditText.text.toString()
             val cleanExpression =
                     NumberFormatter.clearExpression(
-                            expressionText,
+                            sanitizedExpression,
                             Config.groupingSeparatorSymbol,
                             Config.decimalSeparatorSymbol
                     )
@@ -697,7 +707,7 @@ class MainFragment :
             if (cleanExpression.isNotEmpty()) {
                 try {
                     val resultValue = BigDecimal(cleanExpression)
-                    canvasViewModel.addNode(expressionText, resultValue)
+                    canvasViewModel.addNode(sanitizedExpression, resultValue)
 
                     val formattedResult =
                             NumberFormatter.formatResult(
@@ -708,11 +718,11 @@ class MainFragment :
                                     Config.decimalSeparatorSymbol
                             )
 
-                    oldExpression = expressionText
+                    oldExpression = sanitizedExpression
                     InsertInExpression.setExpression(formattedResult, b.expressionEditText)
                     ExpressionViewModel.isResultDisplayed = true
                     if (Config.autoSavingResults) {
-                        historyService.addHistoryData(expressionText, formattedResult)
+                        historyService.addHistoryData(sanitizedExpression, formattedResult)
                     }
                 } catch (e: NumberFormatException) {
                     // Node not created if result is not a valid number

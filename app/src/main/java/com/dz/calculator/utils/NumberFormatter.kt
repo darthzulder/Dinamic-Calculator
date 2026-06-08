@@ -233,4 +233,52 @@ object NumberFormatter {
 
         return exp
     }
+
+    fun sanitizeExpression(expression: String, groupingSeparatorSymbol: String, decimalSeparatorSymbol: String): String {
+        var exp = expression.trim()
+
+        val trailingTokens = listOf(
+            "+", "–", "-", "×", "*", "÷", "/", "^", "E",
+            "(", "ln(", "log(", "exp(", "√(", "abs(",
+            "sin(", "cos(", "tan(", "sin⁻¹(", "cos⁻¹(", "tan⁻¹(",
+            decimalSeparatorSymbol
+        ).sortedByDescending { it.length }
+
+        var changed = true
+        while (changed && exp.isNotEmpty()) {
+            changed = false
+            for (token in trailingTokens) {
+                if (exp.endsWith(token)) {
+                    exp = exp.substring(0, exp.length - token.length).trim()
+                    changed = true
+                    break
+                }
+            }
+        }
+
+        return balanceParentheses(exp)
+    }
+
+    private fun balanceParentheses(exp: String): String {
+        val sb = StringBuilder()
+        var depth = 0
+        for (char in exp) {
+            if (char == '(') {
+                depth++
+                sb.append(char)
+            } else if (char == ')') {
+                if (depth > 0) {
+                    depth--
+                    sb.append(char)
+                }
+            } else {
+                sb.append(char)
+            }
+        }
+        while (depth > 0) {
+            sb.append(')')
+            depth--
+        }
+        return sb.toString()
+    }
 }

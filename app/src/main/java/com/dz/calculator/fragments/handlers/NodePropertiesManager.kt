@@ -12,6 +12,8 @@ import com.dz.calculator.R
 import com.dz.calculator.canvas.CalculationNode
 import com.dz.calculator.canvas.CanvasViewModel
 import com.dz.calculator.databinding.FragmentMainBinding
+import com.dz.calculator.utils.NumberFormatter
+import com.dz.calculator.settings.Config
 
 /**
  * Gestiona el panel de propiedades de nodos.
@@ -103,6 +105,19 @@ class NodePropertiesManager(
         panelContainer.findViewById<EditText>(R.id.node_name_edit)?.clearFocus()
         panelContainer.findViewById<EditText>(R.id.node_description_edit)?.clearFocus()
         
+        // Sanitizar la expresión del nodo seleccionado al cerrar
+        getSelectedNode()?.let { node ->
+            val text = binding.expressionEditText.text.toString()
+            val sanitized = NumberFormatter.sanitizeExpression(
+                text,
+                Config.groupingSeparatorSymbol,
+                Config.decimalSeparatorSymbol
+            )
+            if (sanitized.isNotEmpty() && sanitized != node.expression) {
+                canvasViewModel.updateNodeExpression(node.id, sanitized)
+            }
+        }
+
         // Desconectar el teclado de calculadora
         disconnectCalculatorKeyboard()
         
