@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -65,6 +66,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-ads-api:24.8.0")
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
 
     //    debugImplementation ("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
 }

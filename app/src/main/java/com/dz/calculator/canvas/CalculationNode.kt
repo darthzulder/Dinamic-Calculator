@@ -2,10 +2,14 @@ package com.dz.calculator.canvas
 
 import java.math.BigDecimal
 import java.util.UUID
+import kotlinx.serialization.Serializable
+import com.dz.calculator.utils.BigDecimalSerializer
 
+@Serializable
 data class CalculationNode(
     val id: String = UUID.randomUUID().toString(),
     val expression: String,
+    @Serializable(with = BigDecimalSerializer::class)
     val result: BigDecimal,
     var positionX: Float,
     var positionY: Float,
