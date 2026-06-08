@@ -1,9 +1,10 @@
 package com.dz.calculator.canvas
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.dz.calculator.calculator.DefaultOperator
 import com.dz.calculator.calculator.Evaluator
@@ -23,7 +24,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 
-class CanvasViewModel : ViewModel() {
+class CanvasViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _nodes = MutableStateFlow<List<CalculationNode>>(emptyList())
     val nodes: StateFlow<List<CalculationNode>> = _nodes
@@ -43,9 +44,11 @@ class CanvasViewModel : ViewModel() {
     private val _currentSession = MutableStateFlow<com.dz.calculator.session.SessionData?>(null)
     val currentSession: StateFlow<com.dz.calculator.session.SessionData?> = _currentSession
 
-    private var sessionService: SessionService? = null
-    private var sessionPrefs: SharedPreferences? = null
-    private var appContext: Context? = null
+    private val sessionService = (application as com.dz.calculator.App).sessionService
+    private val sessionPrefs = application.getSharedPreferences(
+            application.getString(com.dz.calculator.R.string.prefs_canvas_session),
+            Context.MODE_PRIVATE
+    )
 
     // Colores contrastantes para las conexiones
     private val connectionColors =
@@ -65,16 +68,6 @@ class CanvasViewModel : ViewModel() {
 
     // Constantes para posicionamiento de nodos
     companion object {
-        // Obtenemos las dimensiones reales de la pantalla
-        val displayMetrics = android.content.res.Resources.getSystem().displayMetrics
-        val screenWidth = displayMetrics.widthPixels.toFloat()
-        val screenHeight = displayMetrics.heightPixels.toFloat()
-
-        // Para un canvas de 3x centrado, el centro visible está en 1.5x la dimensión de la pantalla
-        // (Una pantalla completa de margen izquierdo + media pantalla para llegar al centro)
-        private val INITIAL_X = screenWidth / 2f
-        private val INITIAL_Y = screenHeight / 3f
-
         private const val NODE_HEIGHT_WITH_MARGIN =
                 150f // Altura aproximada del nodo + margen de separación
         private const val X_TOLERANCE =
@@ -94,30 +87,21 @@ class CanvasViewModel : ViewModel() {
                 }
             }
 
-    fun setSessionService(service: SessionService, context: Context) {
-        this.sessionService = service
-        this.appContext = context.applicationContext
-        this.sessionPrefs =
-                context.getSharedPreferences(
-                        context.getString(com.dz.calculator.R.string.prefs_canvas_session),
-                        Context.MODE_PRIVATE
-                )
-
+    init {
         // Registrar listener para actualizaciones
-        service.addListener(sessionListListener)
+        sessionService.addListener(sessionListListener)
 
         // Restore active session ID if it was saved
         val savedSessionId =
-                sessionPrefs?.getInt(
-                        context.getString(com.dz.calculator.R.string.prefs_key_active_session_id),
+                sessionPrefs.getInt(
+                        application.getString(com.dz.calculator.R.string.prefs_key_active_session_id),
                         -1
                 )
-                        ?: -1
         if (savedSessionId != -1) {
             activeSessionId = savedSessionId
 
             // Restore canvas state from the saved session
-            val sessionData = service.getSessionById(savedSessionId)
+            val sessionData = sessionService.getSessionById(savedSessionId)
             if (sessionData != null) {
                 _currentSession.value = sessionData
                 if (sessionData.canvasState.isNotEmpty()) {
@@ -129,7 +113,7 @@ class CanvasViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        sessionService?.removeListener(sessionListListener)
+        sessionService.removeListener(sessionListListener)
     }
 
     fun addNode(
@@ -144,9 +128,12 @@ class CanvasViewModel : ViewModel() {
                     // Usar posición personalizada (para nodos resultantes de combinaciones)
                     customPosition
                 } else {
-                    // Calcular posición automática (para nodos creados normalmente)
-                    val initialX = INITIAL_X
-                    val initialY = INITIAL_Y
+                    // Calcular posición automática (para nodos creados normalmente) de forma dinámica
+                    val displayMetrics = getApplication<Application>().resources.displayMetrics
+                    val screenWidth = displayMetrics.widthPixels.toFloat()
+                    val screenHeight = displayMetrics.heightPixels.toFloat()
+                    val initialX = screenWidth / 2f
+                    val initialY = screenHeight / 3f
 
                     // Buscar todos los nodos que estén en la misma posición X (misma columna)
                     // con una tolerancia para considerar que están alineados verticalmente
@@ -288,11 +275,11 @@ class CanvasViewModel : ViewModel() {
                     e.printStackTrace()
                     if (e is ArithmeticException) {
                         viewModelScope.launch {
+                            val application = getApplication<Application>()
                             val errorMessage =
-                                    appContext?.getString(
+                                    application.getString(
                                             com.dz.calculator.R.string.error_division_by_zero
                                     )
-                                            ?: "Division by zero"
                             _errorEvent.emit(errorMessage)
                         }
                     }
@@ -592,29 +579,31 @@ class CanvasViewModel : ViewModel() {
     }
 
     /** Guarda el estado de los nodos en SharedPreferences */
-    fun saveNodes(context: Context) {
+    fun saveNodes() {
+        val application = getApplication<Application>()
         val preferences =
-                context.getSharedPreferences(
-                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                application.getSharedPreferences(
+                        application.getString(com.dz.calculator.R.string.prefs_canvas_state),
                         Context.MODE_PRIVATE
                 )
         val editor = preferences.edit()
 
         val nodesJson = serializeNodes(_nodes.value)
-        editor.putString(context.getString(com.dz.calculator.R.string.prefs_key_nodes), nodesJson)
+        editor.putString(application.getString(com.dz.calculator.R.string.prefs_key_nodes), nodesJson)
         editor.apply()
     }
 
     /** Restaura el estado de los nodos desde SharedPreferences */
-    fun restoreNodes(context: Context) {
+    fun restoreNodes() {
+        val application = getApplication<Application>()
         val preferences =
-                context.getSharedPreferences(
-                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                application.getSharedPreferences(
+                        application.getString(com.dz.calculator.R.string.prefs_canvas_state),
                         Context.MODE_PRIVATE
                 )
         val nodesJson =
                 preferences.getString(
-                        context.getString(com.dz.calculator.R.string.prefs_key_nodes),
+                        application.getString(com.dz.calculator.R.string.prefs_key_nodes),
                         null
                 )
 
@@ -625,15 +614,16 @@ class CanvasViewModel : ViewModel() {
     }
 
     /** Limpia el estado guardado de los nodos */
-    fun clearSavedNodes(context: Context) {
+    fun clearSavedNodes() {
+        val application = getApplication<Application>()
         val preferences =
-                context.getSharedPreferences(
-                        context.getString(com.dz.calculator.R.string.prefs_canvas_state),
+                application.getSharedPreferences(
+                        application.getString(com.dz.calculator.R.string.prefs_canvas_state),
                         Context.MODE_PRIVATE
                 )
         preferences
                 .edit()
-                .remove(context.getString(com.dz.calculator.R.string.prefs_key_nodes))
+                .remove(application.getString(com.dz.calculator.R.string.prefs_key_nodes))
                 .apply()
     }
 
@@ -662,7 +652,6 @@ class CanvasViewModel : ViewModel() {
     /** Triggers auto-save of the current session with debouncing */
     private fun triggerAutoSave() {
         val sessionId = activeSessionId ?: return
-        val service = sessionService ?: return
 
         // Cancel previous save job
         autoSaveJob?.cancel()
@@ -672,40 +661,35 @@ class CanvasViewModel : ViewModel() {
                 viewModelScope.launch(Dispatchers.IO) {
                     delay(300) // 300ms debounce
                     val canvasState = serializeNodes(_nodes.value)
-                    service.updateSession(sessionId, canvasState)
+                    sessionService.updateSession(sessionId, canvasState)
                 }
     }
 
     /** Creates a new session and clears the canvas */
     fun createNewSession() {
-        val service = sessionService ?: return
-
         // Clear the canvas
         _nodes.value = emptyList()
 
         // Create new session with empty canvas state
-        val sessionData = service.createSession("")
+        val sessionData = sessionService.createSession("")
         activeSessionId = sessionData.id
         _currentSession.value = sessionData
 
         // Save active session ID to preferences
-        appContext?.let { context ->
-            sessionPrefs
-                    ?.edit()
-                    ?.putInt(
-                            context.getString(
-                                    com.dz.calculator.R.string.prefs_key_active_session_id
-                            ),
-                            sessionData.id
-                    )
-                    ?.apply()
-        }
+        val application = getApplication<Application>()
+        sessionPrefs.edit()
+                .putInt(
+                        application.getString(
+                                com.dz.calculator.R.string.prefs_key_active_session_id
+                        ),
+                        sessionData.id
+                )
+                .apply()
     }
 
     /** Loads a session from the database and restores canvas state */
     fun loadSession(sessionId: Int) {
-        val service = sessionService ?: return
-        val sessionData = service.getSessionById(sessionId) ?: return
+        val sessionData = sessionService.getSessionById(sessionId) ?: return
 
         // Restore canvas state
         if (sessionData.canvasState.isNotEmpty()) {
@@ -719,16 +703,14 @@ class CanvasViewModel : ViewModel() {
         _currentSession.value = sessionData
 
         // Save active session ID to preferences
-        appContext?.let { context ->
-            sessionPrefs
-                    ?.edit()
-                    ?.putInt(
-                            context.getString(
-                                    com.dz.calculator.R.string.prefs_key_active_session_id
-                            ),
-                            sessionId
-                    )
-                    ?.apply()
-        }
+        val application = getApplication<Application>()
+        sessionPrefs.edit()
+                .putInt(
+                        application.getString(
+                                com.dz.calculator.R.string.prefs_key_active_session_id
+                        ),
+                        sessionId
+                )
+                .apply()
     }
 }

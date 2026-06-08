@@ -109,8 +109,7 @@ class MainFragment :
             }
         }
 
-        // Inject SessionService into CanvasViewModel
-        canvasViewModel.setSessionService(sessionService, requireContext())
+        // SessionService is automatically managed within CanvasViewModel (AndroidViewModel)
 
         // Crear sesión inicial si no hay sesiones
         initializeSession()
@@ -568,7 +567,7 @@ class MainFragment :
         super.onPause()
         // Guardar el estado de los nodos antes de que se destruya el fragment
         // onPause se llama antes de onStop, así que es más seguro para guardar antes de recrear
-        canvasViewModel.saveNodes(requireContext())
+        canvasViewModel.saveNodes()
     }
 
     override fun onStop() {
