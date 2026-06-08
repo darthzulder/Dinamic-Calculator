@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.service.quicksettings.TileService
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.activity.viewModels
 import com.dz.calculator.databinding.ActivityMainBinding
 import com.dz.calculator.fragments.HistoryFragment.Companion.recyclerViewHistoryIsRecreated
 import com.dz.calculator.fragments.MainFragment
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding by notNull()
     private var preferences: Preferences by notNull()
+    private val calculatorViewModel: CalculatorViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             preferences.getVibration(),
             preferences.getSoundEffects()
         )
-        CalculatorViewModel.init(preferences.getDegreeMod())
+        calculatorViewModel.init(preferences.getDegreeMod())
         UnitConverterFragment.physicalQuantity = preferences.getPhysicalQuantity()
         UnitConverterFragment.unit = preferences.getUnit()
 
@@ -128,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        Evaluator.converterResult.observe(this){
+        calculatorViewModel.converterResult.observe(this){
             val componentName = ComponentName(this, MyQSTileService::class.java)
             TileService.requestListeningState(this, componentName)
         }
@@ -153,7 +155,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
 
-        preferences.setDegreeMod(CalculatorViewModel.isDegreeModActivated.value!!)
+        preferences.setDegreeMod(calculatorViewModel.isDegreeModActivated.value!!)
         preferences.setPhysicalQuantity(UnitConverterFragment.physicalQuantity)
         preferences.setUnit(UnitConverterFragment.unit)
     }

@@ -6,9 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.dz.calculator.utils.HapticAndSound
 import com.dz.calculator.databinding.FragmentScientificFunctionBinding
-import com.dz.calculator.calculator.CalculatorViewModel.updateScienceModActivated
+import com.dz.calculator.calculator.CalculatorViewModel
 import com.dz.calculator.calculator.Constant
 import com.dz.calculator.calculator.ScientificFunction
 import com.dz.calculator.calculator.TrigonometricFunction
@@ -19,6 +20,7 @@ class ScientificFunctionFragment : Fragment() {
     private var binding: FragmentScientificFunctionBinding by Delegates.notNull()
     private var hapticAndSound: HapticAndSound by Delegates.notNull()
     private var callback: OnButtonClickListener? = null
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
     interface OnButtonClickListener {
         fun onScienceFunctionButtonClick(scienceFunction: String)
@@ -58,57 +60,57 @@ class ScientificFunctionFragment : Fragment() {
 
         binding.absButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(ScientificFunction.Absolute.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.lnButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(ScientificFunction.Ln.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.logButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(ScientificFunction.Log.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.sinButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.Sin.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.cosButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.Cos.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.tanButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.Tan.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.asinButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.ASin.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.acosButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.ACos.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.atanButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(TrigonometricFunction.ATan.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.eButton.setOnClickListener {
             callback?.onConstantButtonClick(Constant.E.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
         binding.expButton.setOnClickListener {
             callback?.onScienceFunctionButtonClick(ScientificFunction.PowerE.text)
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
 

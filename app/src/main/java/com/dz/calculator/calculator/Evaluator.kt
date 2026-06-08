@@ -1,13 +1,8 @@
 package com.dz.calculator.calculator
 
 import android.content.Context
-import android.widget.TextView
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.dz.calculator.utils.NumberFormatter
 import com.dz.calculator.R
-import com.dz.calculator.expression.ExpressionEditText
 import com.dz.calculator.settings.Config.decimalSeparatorSymbol
 import com.dz.calculator.settings.Config.groupingSeparatorSymbol
 import com.dz.calculator.settings.Config.maxScientificNotationDigits
@@ -15,15 +10,16 @@ import com.dz.calculator.settings.Config.numberPrecision
 import org.javia.arity.Symbols
 import java.math.BigDecimal
 
-object Evaluator: ViewModel() {
-    var isCalculated = false
+data class EvaluationResult(
+    val resultString: String,
+    val numericResult: Double?,
+    val isCalculated: Boolean
+)
 
-    private val _converterResult = MutableLiveData<Double?>()
-    val converterResult: LiveData<Double?> get() = _converterResult
-
+object Evaluator {
     private val symbols: Symbols = Symbols()
 
-    // NEW Public method for calculation without Context
+    // Public method for calculation without Context (e.g. for CanvasViewModel)
     fun evaluate(expression: String): BigDecimal {
         val cleanExpression = NumberFormatter.clearExpression(expression, groupingSeparatorSymbol, decimalSeparatorSymbol)
         if (cleanExpression.isEmpty()) {
@@ -41,62 +37,38 @@ object Evaluator: ViewModel() {
         }
     }
 
-    private fun evaluate(expr: String, context: Context): String {
+    fun evaluate(expr: String, context: Context): EvaluationResult {
         var exp = expr
 
         if (exp == "Anastasia" || exp == "Анастасия"){
-            _converterResult.value = null
-            isCalculated = false
-            return "I love you❤\uFE0F"
+            return EvaluationResult("I love you❤\uFE0F", null, false)
         }
 
         exp = NumberFormatter.clearExpression(exp, groupingSeparatorSymbol, decimalSeparatorSymbol)
         if (exp.isEmpty()) {
-            _converterResult.value = null
-            isCalculated = false
-            return ""
-        }else if (exp.toDoubleOrNull() != null) {
-            _converterResult.value = exp.toDouble()
-            isCalculated = false
-            return ""
+            return EvaluationResult("", null, false)
+        } else if (exp.toDoubleOrNull() != null) {
+            return EvaluationResult("", exp.toDouble(), false)
         }
 
         try {
             val result: Double = symbols.eval(exp)
             if (java.lang.Double.isNaN(result)) {
-                _converterResult.value = null
-                isCalculated = false
-                return context.getString(R.string.expression_error)
+                return EvaluationResult(context.getString(R.string.expression_error), null, false)
             } else if (result.isInfinite()){
-                _converterResult.value = null
-                isCalculated = false
-                return context.getString(R.string.expression_infinity)
-            }else{
-                _converterResult.value = result
-                isCalculated = true
-                return NumberFormatter.formatResult(BigDecimal.valueOf(result), numberPrecision, maxScientificNotationDigits, groupingSeparatorSymbol, decimalSeparatorSymbol)
+                return EvaluationResult(context.getString(R.string.expression_infinity), null, false)
+            } else {
+                val formatted = NumberFormatter.formatResult(
+                    BigDecimal.valueOf(result),
+                    numberPrecision,
+                    maxScientificNotationDigits,
+                    groupingSeparatorSymbol,
+                    decimalSeparatorSymbol
+                )
+                return EvaluationResult(formatted, result, true)
             }
         } catch (e: Exception) {
-            _converterResult.value = null
-            isCalculated = false
-            return context.getString(R.string.expression_error)
+            return EvaluationResult(context.getString(R.string.expression_error), null, false)
         }
-    }
-
-    fun getResult(expressionEditText: ExpressionEditText, isSelected: Boolean, context: Context): String{
-        return if (isSelected){
-            evaluate(
-                expressionEditText.text
-                    .toString()
-                    .substring(
-                        expressionEditText.selectionStart, expressionEditText.selectionEnd),
-                context)
-        }else{
-            evaluate(expressionEditText.text.toString(), context)
-        }
-    }
-
-    fun setResultTextView(expressionEditText: ExpressionEditText, resultTextView: TextView, isSelected: Boolean, context: Context){
-        resultTextView.text = getResult(expressionEditText, isSelected, context)
     }
 }

@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.activityViewModels
 import com.dz.calculator.R
 import com.dz.calculator.calculator.AdditionalOperator
-import com.dz.calculator.calculator.CalculatorViewModel.isScienceModActivated
-import com.dz.calculator.calculator.CalculatorViewModel.previousScienceModActivated
-import com.dz.calculator.calculator.CalculatorViewModel.updateScienceModActivated
+import com.dz.calculator.calculator.CalculatorViewModel
 import com.dz.calculator.calculator.Constant
 import com.dz.calculator.calculator.DefaultOperator
 import com.dz.calculator.calculator.ScientificFunction
@@ -33,6 +32,7 @@ class CalculatorFragment :
     private var binding: FragmentCalculatorBinding by notNull()
     private var hapticAndSound: HapticAndSound by notNull()
     private var callback: OnButtonClickListener? = null
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
     interface OnButtonClickListener {
 
@@ -102,7 +102,7 @@ class CalculatorFragment :
                 object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         if (userScroll.contains(1)) {
-                            updateScienceModActivated()
+                            calculatorViewModel.updateScienceModActivated()
                         }
                         userScroll.clear()
                     }
@@ -119,7 +119,7 @@ class CalculatorFragment :
         )
 
         binding.scienceModButton.setOnClickListener {
-            updateScienceModActivated()
+            calculatorViewModel.updateScienceModActivated()
             hapticAndSound.vibrateEffectClick()
         }
 
@@ -129,8 +129,8 @@ class CalculatorFragment :
             hapticAndSound.vibrateEffectClick()
         }
 
-        isScienceModActivated.observe(viewLifecycleOwner) { isScienceModActivated ->
-            if (isScienceModActivated != previousScienceModActivated) {
+        calculatorViewModel.isScienceModActivated.observe(viewLifecycleOwner) { isScienceModActivated ->
+            if (isScienceModActivated != calculatorViewModel.previousScienceModActivated) {
                 if (isScienceModActivated) {
                     Anim.startVectorAnimation(
                             binding.scienceModButton,

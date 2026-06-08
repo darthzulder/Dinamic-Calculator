@@ -16,8 +16,6 @@
 
 package org.javia.arity;
 
-import com.dz.calculator.calculator.CalculatorViewModel;
-
 import java.util.Random;
 
 /**
@@ -49,7 +47,7 @@ public class CompiledFunction extends ContextFunction {
     private final Function funcs[];
     private final byte code[];
     private final int arity; // >= 0
-    private final boolean isDegreeModActivated = Boolean.TRUE.equals(CalculatorViewModel.INSTANCE.isDegreeModActivated().getValue());
+    private final boolean isDegreeModActivated = ArityConfig.isDegreeMode;
 
     CompiledFunction(int arity, byte[] code, double[] constsRe, double[] constsIm, Function funcs[]) {
         this.arity = arity;

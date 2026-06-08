@@ -14,6 +14,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.activityViewModels
 import com.dz.calculator.AboutActivity
 import com.dz.calculator.App
 import com.dz.calculator.MainActivity
@@ -55,6 +56,7 @@ class SmallFragment : Fragment(),
     private var result: String by notNull()
     private var binding: FragmentSmallBinding by notNull()
     private var hapticAndSound: HapticAndSound by notNull()
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
 
     private val historyService: HistoryService
@@ -116,7 +118,7 @@ class SmallFragment : Fragment(),
                 currentItemMainPager = position
 
                 if (currentItemMainPager == HISTORY_FRAGMENT){
-                    if (Evaluator.isCalculated && autoSavingResults){
+                    if (calculatorViewModel.isCalculated && autoSavingResults){
                         val result = result
 
                         val expression: String = if (ExpressionViewModel.isSelected.value == true){
@@ -187,7 +189,7 @@ class SmallFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
             override fun afterTextChanged(p0: Editable?) {
-                result = Evaluator.getResult(binding.expressionEditText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+                evaluateExpression()
                 binding.expressionEditText.autoSizeTextExpressionEditText(binding.expressionTextView)
 
                 if (TrigonometricFunction.entries.any { binding.expressionEditText.text!!.contains(it.text) }){
@@ -205,26 +207,43 @@ class SmallFragment : Fragment(),
             }
         })
 
-        ExpressionViewModel.isSelected.observe(requireActivity()){ isSelected ->
-            result = Evaluator.getResult(binding.expressionEditText, isSelected, requireContext())
+        ExpressionViewModel.isSelected.observe(requireActivity()){ _ ->
+            evaluateExpression()
         }
 
         binding.degreeTitleText.setOnClickListener {
-            CalculatorViewModel.updateDegreeModActivated()
+            calculatorViewModel.updateDegreeModActivated()
             hapticAndSound.vibrateEffectClick()
         }
 
-        CalculatorViewModel.isDegreeModActivated.observe(requireActivity()) { isDegreeModActivated ->
+        calculatorViewModel.isDegreeModActivated.observe(requireActivity()) { isDegreeModActivated ->
             if (isDegreeModActivated) {
                 binding.degreeTitleText.text = getString(R.string.deg)
             } else {
                 binding.degreeTitleText.text = getString(R.string.rad)
             }
 
-            result = Evaluator.getResult(binding.expressionEditText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+            evaluateExpression()
         }
 
         return binding.root
+    }
+
+    private fun evaluateExpression() {
+        val isSelected = ExpressionViewModel.isSelected.value ?: false
+        val text = binding.expressionEditText.text.toString()
+        val selectionStart = binding.expressionEditText.selectionStart
+        val selectionEnd = binding.expressionEditText.selectionEnd
+
+        val exprToEval = if (isSelected && selectionStart in 0..selectionEnd && selectionEnd <= text.length) {
+            text.substring(selectionStart, selectionEnd)
+        } else {
+            text
+        }
+
+        val evalResult = Evaluator.evaluate(exprToEval, requireContext())
+        calculatorViewModel.updateConverterResult(evalResult.numericResult, evalResult.isCalculated)
+        result = evalResult.resultString
     }
 
     override fun onStart() {
@@ -243,7 +262,7 @@ class SmallFragment : Fragment(),
         expression = binding.expressionEditText.text.toString()
         cursorPositionStart = binding.expressionEditText.selectionStart
 
-        if (Evaluator.isCalculated && autoSavingResults){
+        if (calculatorViewModel.isCalculated && autoSavingResults){
             val result = result
 
             val expression: String = if (ExpressionViewModel.isSelected.value == true){
@@ -319,7 +338,7 @@ class SmallFragment : Fragment(),
     }
 
     override fun onEqualsButtonClick() {
-        if (Evaluator.isCalculated){
+        if (calculatorViewModel.isCalculated){
             val result = result
 
             val expression: String = if (ExpressionViewModel.isSelected.value == true){

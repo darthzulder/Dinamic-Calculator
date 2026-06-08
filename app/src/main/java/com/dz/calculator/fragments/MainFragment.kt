@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -68,6 +69,7 @@ class MainFragment :
         HapticAndSound(requireContext(), emptyArray())
     }
     private val canvasViewModel: CanvasViewModel by viewModels()
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
     private val historyService: HistoryService
         get() = (requireContext().applicationContext as App).historyService
@@ -226,47 +228,46 @@ class MainFragment :
                             count: Int
                     ) {}
                     override fun afterTextChanged(s: Editable?) {
-                        val b = _binding ?: return
-                        Evaluator.setResultTextView(
-                                b.expressionEditText,
-                                b.resultText,
-                                ExpressionViewModel.isSelected.value ?: false,
-                                requireContext()
-                        )
+                        updateResultText()
                         updateDegreeTitleText()
                     }
                 }
         )
 
         binding.degreeTitleText?.setOnClickListener {
-            CalculatorViewModel.updateDegreeModActivated()
+            calculatorViewModel.updateDegreeModActivated()
         }
     }
 
-    private fun observeViewModels() {
-        ExpressionViewModel.isSelected.observe(viewLifecycleOwner) { isSelected ->
-            val b = _binding ?: return@observe
-            Evaluator.setResultTextView(
-                    b.expressionEditText,
-                    b.resultText,
-                    isSelected,
-                    requireContext()
-            )
+    private fun updateResultText() {
+        val b = _binding ?: return
+        val isSelected = ExpressionViewModel.isSelected.value ?: false
+        val text = b.expressionEditText.text.toString()
+        val selectionStart = b.expressionEditText.selectionStart
+        val selectionEnd = b.expressionEditText.selectionEnd
+
+        val exprToEval = if (isSelected && selectionStart in 0..selectionEnd && selectionEnd <= text.length) {
+            text.substring(selectionStart, selectionEnd)
+        } else {
+            text
         }
 
-        CalculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { isDegreeModActivated
-            ->
-            val b = _binding ?: return@observe
-            Evaluator.setResultTextView(
-                    b.expressionEditText,
-                    b.resultText,
-                    ExpressionViewModel.isSelected.value ?: false,
-                    requireContext()
-            )
+        val evalResult = Evaluator.evaluate(exprToEval, requireContext())
+        calculatorViewModel.updateConverterResult(evalResult.numericResult, evalResult.isCalculated)
+        b.resultText.text = evalResult.resultString
+    }
+
+    private fun observeViewModels() {
+        ExpressionViewModel.isSelected.observe(viewLifecycleOwner) { _ ->
+            updateResultText()
+        }
+
+        calculatorViewModel.isDegreeModActivated.observe(viewLifecycleOwner) { _ ->
+            updateResultText()
             updateDegreeTitleText()
         }
 
-        CalculatorViewModel.isHistoryActivated.observe(viewLifecycleOwner) { isHistoryActivated ->
+        calculatorViewModel.isHistoryActivated.observe(viewLifecycleOwner) { isHistoryActivated ->
             val b = _binding ?: return@observe
             val viewPager = b.root.findViewById<ViewPager2>(R.id.keyboard_container)
             if (isHistoryActivated) {
@@ -625,7 +626,7 @@ class MainFragment :
         InsertInExpression.enterOperator(operator, b.expressionEditText)
     }
     override fun onHistoryButtonClick() {
-        CalculatorViewModel.setHistoryActivated(true)
+        calculatorViewModel.setHistoryActivated(true)
     }
 
     override fun onScienceFunctionButtonClick(scienceFunction: String) {
@@ -663,7 +664,7 @@ class MainFragment :
             return
         }
 
-        if (Evaluator.isCalculated) {
+        if (calculatorViewModel.isCalculated) {
             val rawResultText = b.resultText.text.toString()
             val expressionText = b.expressionEditText.text.toString()
             val parsableResult =
@@ -760,7 +761,7 @@ class MainFragment :
         viewPager.registerOnPageChangeCallback(
                 object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
-                        CalculatorViewModel.setHistoryActivated(position == 0)
+                        calculatorViewModel.setHistoryActivated(position == 0)
                     }
                 }
         )
@@ -809,7 +810,7 @@ class MainFragment :
         if (containsTrigFunction) {
             b.degreeTitleText.visibility = View.VISIBLE
             b.degreeTitleText.text =
-                    if (CalculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
+                    if (calculatorViewModel.isDegreeModActivated.value == true) "DEG" else "RAD"
         } else {
             b.degreeTitleText.visibility = View.GONE
         }

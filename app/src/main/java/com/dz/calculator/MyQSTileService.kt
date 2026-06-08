@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.TileService
+import com.dz.calculator.calculator.CalculatorViewModel
 import com.dz.calculator.calculator.Evaluator
 import com.dz.calculator.settings.Config.decimalSeparatorSymbol
 import com.dz.calculator.settings.Config.groupingSeparatorSymbol
@@ -20,9 +21,10 @@ class MyQSTileService: TileService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             val tile = qsTile ?: return
 
-            if (Evaluator.converterResult.value != null){
+            val lastResult = CalculatorViewModel.lastConverterResult
+            if (lastResult != null){
                 tile.subtitle = NumberFormatter.formatResult(
-                    BigDecimal(Evaluator.converterResult.value!!),
+                    BigDecimal.valueOf(lastResult),
                     numberPrecision,
                     maxScientificNotationDigits,
                     groupingSeparatorSymbol,

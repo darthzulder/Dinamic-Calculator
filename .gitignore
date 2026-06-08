@@ -5,3 +5,10 @@
 /app/build/
 /app/release/
 /app/buildBundletool/
+/graphify-out/
+*.env*
+*.env
+/build/
+/.vscode/
+/.github/
+.github/

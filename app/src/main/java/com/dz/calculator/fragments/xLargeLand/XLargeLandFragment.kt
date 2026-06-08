@@ -14,6 +14,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.activityViewModels
 import com.dz.calculator.AboutActivity
 import com.dz.calculator.App
 import com.dz.calculator.utils.HapticAndSound
@@ -52,6 +53,7 @@ class XLargeLandFragment : Fragment(),
 
     private var binding: FragmentXLargeLandBinding by notNull()
     private var hapticAndSound: HapticAndSound by notNull()
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
 
     private val historyService: HistoryService
@@ -148,7 +150,7 @@ class XLargeLandFragment : Fragment(),
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
             override fun afterTextChanged(p0: Editable?) {
-                Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+                updateResultText()
                 binding.expressionEditText.autoSizeTextExpressionEditText(binding.expressionTextView)
 
                 if (TrigonometricFunction.entries.any { binding.expressionEditText.text!!.contains(it.text) }){
@@ -166,26 +168,43 @@ class XLargeLandFragment : Fragment(),
             }
         })
 
-        ExpressionViewModel.isSelected.observe(requireActivity()){ isSelected ->
-            Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, isSelected, requireContext())
+        ExpressionViewModel.isSelected.observe(requireActivity()){ _ ->
+            updateResultText()
         }
 
         binding.degreeTitleText.setOnClickListener {
-            CalculatorViewModel.updateDegreeModActivated()
+            calculatorViewModel.updateDegreeModActivated()
             hapticAndSound.vibrateEffectClick()
         }
 
-        CalculatorViewModel.isDegreeModActivated.observe(requireActivity()) { isDegreeModActivated ->
+        calculatorViewModel.isDegreeModActivated.observe(requireActivity()) { isDegreeModActivated ->
             if (isDegreeModActivated) {
                 binding.degreeTitleText.text = getString(R.string.deg)
             } else {
                 binding.degreeTitleText.text = getString(R.string.rad)
             }
 
-            Evaluator.setResultTextView(binding.expressionEditText, binding.resultText, ExpressionViewModel.isSelected.value ?: false, requireContext())
+            updateResultText()
         }
 
         return binding.root
+    }
+
+    private fun updateResultText() {
+        val isSelected = ExpressionViewModel.isSelected.value ?: false
+        val text = binding.expressionEditText.text.toString()
+        val selectionStart = binding.expressionEditText.selectionStart
+        val selectionEnd = binding.expressionEditText.selectionEnd
+
+        val exprToEval = if (isSelected && selectionStart in 0..selectionEnd && selectionEnd <= text.length) {
+            text.substring(selectionStart, selectionEnd)
+        } else {
+            text
+        }
+
+        val evalResult = Evaluator.evaluate(exprToEval, requireContext())
+        calculatorViewModel.updateConverterResult(evalResult.numericResult, evalResult.isCalculated)
+        binding.resultText.text = evalResult.resultString
     }
 
     override fun onStart() {
@@ -204,7 +223,7 @@ class XLargeLandFragment : Fragment(),
         expression = binding.expressionEditText.text.toString()
         cursorPositionStart = binding.expressionEditText.selectionStart
 
-        if (Evaluator.isCalculated && autoSavingResults){
+        if (calculatorViewModel.isCalculated && autoSavingResults){
             val result = binding.resultText.text.toString()
 
             val expression: String = if (ExpressionViewModel.isSelected.value == true){
@@ -271,7 +290,7 @@ class XLargeLandFragment : Fragment(),
     }
 
     override fun onEqualsButtonClick() {
-        if (Evaluator.isCalculated){
+        if (calculatorViewModel.isCalculated){
             val result = binding.resultText.text.toString()
 
             val expression: String = if (ExpressionViewModel.isSelected.value == true){

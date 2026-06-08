@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.activityViewModels
 import com.dz.calculator.R
+import com.dz.calculator.calculator.CalculatorViewModel
 import com.dz.calculator.calculator.Evaluator
 import com.dz.calculator.converter.UnitActionListener
 import com.dz.calculator.converter.UnitAdapter
@@ -37,6 +39,8 @@ import com.dz.calculator.utils.InteractionAndroid
 import kotlin.properties.Delegates.notNull
 
 class UnitConverterFragment : Fragment() {
+
+    private val calculatorViewModel: CalculatorViewModel by activityViewModels()
 
     companion object {
         var physicalQuantity = 10
@@ -151,11 +155,11 @@ class UnitConverterFragment : Fragment() {
         binding.unitAutoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
             binding.unitAutoCompleteTextView.contentDescription = binding.unitAutoCompleteTextView.text
             unit = physicalQuantities.find { it.second.id == physicalQuantity }!!.second.units[position].id
-            updateUnitPager(Evaluator.converterResult.value, physicalQuantities.find { it.second.id == physicalQuantity }!!.second, unit)
+            updateUnitPager(calculatorViewModel.converterResult.value, physicalQuantities.find { it.second.id == physicalQuantity }!!.second, unit)
         }
 
 
-        Evaluator.converterResult.observe(requireActivity()){ converterResult ->
+        calculatorViewModel.converterResult.observe(viewLifecycleOwner){ converterResult ->
             updateUnitPager(converterResult, physicalQuantities.find { it.second.id == physicalQuantity }!!.second, unit)
         }
 
@@ -178,7 +182,7 @@ class UnitConverterFragment : Fragment() {
                 binding.unitAutoCompleteTextView.setText(getString(units[0].name), false)
             }
 
-            updateUnitPager(Evaluator.converterResult.value, unitConverter, unit)
+            updateUnitPager(calculatorViewModel.converterResult.value, unitConverter, unit)
         }
     }
 
