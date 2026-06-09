@@ -21,6 +21,35 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     private var posX = 0f
     private var posY = 0f
 
+    private val gridPaint = android.graphics.Paint().apply {
+        style = android.graphics.Paint.Style.STROKE
+        strokeWidth = 1f * context.resources.displayMetrics.density
+        isAntiAlias = true
+    }
+
+    init {
+        setWillNotDraw(false)
+        updateGridColor()
+    }
+
+    private fun updateGridColor() {
+        val typedValue = android.util.TypedValue()
+        context.theme.resolveAttribute(
+            com.google.android.material.R.attr.colorOnSurface,
+            typedValue,
+            true
+        )
+        val baseColor = if (typedValue.resourceId != 0) {
+            androidx.core.content.ContextCompat.getColor(context, typedValue.resourceId)
+        } else {
+            typedValue.data
+        }
+        // Opacidad muy sutil del 7%
+        val alpha = (255 * 0.07f).toInt()
+        gridPaint.color = baseColor
+        gridPaint.alpha = alpha
+    }
+
     // Tracking para modo Panning
     private var isPanning = false
     private var lastTouchX = 0f
@@ -239,6 +268,43 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         child.scaleY = scaleFactor
         // Eliminé updateChildSize() porque para un "Infinite Canvas" real
         // es mejor mover la vista visualmente que cambiar sus LayoutParams (performance).
+        invalidate()
+    }
+
+    override fun onDraw(canvas: android.graphics.Canvas) {
+        super.onDraw(canvas)
+
+        val density = resources.displayMetrics.density
+        val gridSize = 80f * density // Tamaño base de la cuadrícula en dp
+        val scaledGridSize = gridSize * scaleFactor
+
+        // Cálculos de compensación por desplazamiento (Panning)
+        var startX = posX % scaledGridSize
+        if (startX < 0) {
+            startX += scaledGridSize
+        }
+
+        var startY = posY % scaledGridSize
+        if (startY < 0) {
+            startY += scaledGridSize
+        }
+
+        val w = width.toFloat()
+        val h = height.toFloat()
+
+        // Dibujar líneas verticales de la cuadrícula
+        var x = startX
+        while (x < w) {
+            canvas.drawLine(x, 0f, x, h, gridPaint)
+            x += scaledGridSize
+        }
+
+        // Dibujar líneas horizontales de la cuadrícula
+        var y = startY
+        while (y < h) {
+            canvas.drawLine(0f, y, w, y, gridPaint)
+            y += scaledGridSize
+        }
     }
 
     private var isInitialized = false

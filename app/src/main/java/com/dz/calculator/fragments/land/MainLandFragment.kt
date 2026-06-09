@@ -116,7 +116,7 @@ class MainLandFragment : Fragment(),
             when(menuItem.itemId) {
                 R.id.settings -> {
                     val intent = Intent(requireActivity(), SettingsActivity::class.java)
-                    startActivityForResult(intent, MainActivity.REQUEST_CODE_CHILD)
+                    requireActivity().startActivityForResult(intent, MainActivity.REQUEST_CODE_CHILD)
                     true
                 }
                 R.id.about -> {

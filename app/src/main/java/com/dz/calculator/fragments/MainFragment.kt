@@ -198,7 +198,7 @@ class MainFragment :
             when (menuItem.itemId) {
                 R.id.settings -> {
                     val intent = Intent(requireActivity(), SettingsActivity::class.java)
-                    startActivityForResult(intent, MainActivity.REQUEST_CODE_CHILD)
+                    requireActivity().startActivityForResult(intent, MainActivity.REQUEST_CODE_CHILD)
                     true
                 }
                 R.id.about -> {
@@ -426,6 +426,16 @@ class MainFragment :
         return nodeView
     }
 
+    private fun getThemeColor(attr: Int): Int {
+        val typedValue = android.util.TypedValue()
+        requireContext().theme.resolveAttribute(attr, typedValue, true)
+        return if (typedValue.resourceId != 0) {
+            ContextCompat.getColor(requireContext(), typedValue.resourceId)
+        } else {
+            typedValue.data
+        }
+    }
+
     private val nodeDragListener =
             View.OnDragListener { view, event ->
                 val b = _binding ?: return@OnDragListener false
@@ -434,19 +444,13 @@ class MainFragment :
                     DragEvent.ACTION_DRAG_STARTED -> true
                     DragEvent.ACTION_DRAG_ENTERED -> {
                         targetCard.setCardBackgroundColor(
-                                ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.md_theme_light_tertiaryContainer
-                                )
+                                getThemeColor(com.google.android.material.R.attr.colorTertiaryContainer)
                         )
                         true
                     }
                     DragEvent.ACTION_DRAG_EXITED -> {
                         targetCard.setCardBackgroundColor(
-                                ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.md_theme_light_secondaryContainer
-                                )
+                                getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer)
                         )
                         true
                     }
@@ -470,10 +474,7 @@ class MainFragment :
                     }
                     DragEvent.ACTION_DRAG_ENDED -> {
                         targetCard.setCardBackgroundColor(
-                                ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.md_theme_light_secondaryContainer
-                                )
+                                getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer)
                         )
                         // Limpiar el tag del contenedor cuando termine el drag
                         b.canvasContainer?.tag = null

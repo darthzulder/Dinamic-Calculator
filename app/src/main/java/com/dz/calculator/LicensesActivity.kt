@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dz.calculator.databinding.ActivityLicensesBinding
@@ -25,16 +26,26 @@ class LicensesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         preferences = Preferences(this)
 
-        if (!Config.isDynamicColor){
-            setTheme(resources.getIdentifier(preferences.getColor(), "style", packageName))
-        }else{
-            setTheme(R.style.dynamicColors)
+        when (preferences.getTheme()) {
+            -1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            2 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
         }
 
-        val typedValue = TypedValue()
-        this.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
-        window.statusBarColor = ContextCompat.getColor(this, typedValue.resourceId)
-
+        if (!Config.isDynamicColor) {
+            setTheme(resources.getIdentifier(Config.color, "style", packageName))
+        } else {
+            setTheme(R.style.dynamicColors)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this)
+            }
+        }
 
         super.onCreate(savedInstanceState)
         binding = ActivityLicensesBinding.inflate(layoutInflater).also { setContentView(it.root) }

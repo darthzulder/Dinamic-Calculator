@@ -64,16 +64,26 @@ class SettingsActivity : AppCompatActivity() {
         preferences = Preferences(this)
         vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-        if (!isDynamicColor){
-            setTheme(resources.getIdentifier(preferences.getColor(), "style", packageName))
-        }else{
-            setTheme(R.style.dynamicColors)
+        when (preferences.getTheme()) {
+            -1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            2 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
         }
 
-        val typedValue = TypedValue()
-        this.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
-        window.statusBarColor = ContextCompat.getColor(this, typedValue.resourceId)
-
+        if (!isDynamicColor) {
+            setTheme(resources.getIdentifier(color, "style", packageName))
+        } else {
+            setTheme(R.style.dynamicColors)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this)
+            }
+        }
 
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater).also { setContentView(it.root) }
@@ -173,12 +183,13 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.dynamicColorsLayout.setOnClickListener {
-            isDynamicColor = switchSwitch(binding.dynamicColorsSwitch)
-            recreate()
+            binding.dynamicColorsSwitch.toggle()
         }
         binding.dynamicColorsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            isDynamicColor = isChecked
-            recreate()
+            if (isDynamicColor != isChecked) {
+                isDynamicColor = isChecked
+                recreate()
+            }
         }
 
 

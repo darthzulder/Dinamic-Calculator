@@ -63,13 +63,6 @@ class MainActivity : AppCompatActivity() {
         UnitConverterFragment.unit = preferences.getUnit()
 
 
-        if (!preferences.getDynamicColor()){
-            setTheme(resources.getIdentifier(preferences.getColor(), "style", packageName))
-        }else{
-            setTheme(R.style.dynamicColors)
-        }
-
-
         when (preferences.getTheme()) {
             -1 -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -79,6 +72,15 @@ class MainActivity : AppCompatActivity() {
             }
             2 -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
+
+        if (!Config.isDynamicColor) {
+            setTheme(resources.getIdentifier(Config.color, "style", packageName))
+        } else {
+            setTheme(R.style.dynamicColors)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this)
             }
         }
 
@@ -184,7 +186,7 @@ class MainActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == REQUEST_CODE_CHILD) {
+        if (requestCode == REQUEST_CODE_CHILD) {
             firstCreatedSettingsActivity = true
             recreate()
         }
